@@ -1,0 +1,893 @@
+/* Sephral’s Tavern Games */
+
+.stg-tavern .window-content {
+  padding: 0;
+}
+
+.stg-tavern .stg-body {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+}
+
+.stg-tavern button {
+  width: auto;
+  min-height: 0;
+  height: 30px;
+  margin: 0;
+  padding: 0 12px;
+  line-height: 28px;
+  white-space: nowrap;
+}
+
+.stg-tavern .stg-spacer {
+  flex: 1;
+}
+
+.stg-tavern .stg-empty {
+  padding: 12px;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.stg-tavern .stg-warning {
+  margin: 6px 0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgb(200 60 40 / 0.3);
+  font-size: var(--font-size-12, 12px);
+}
+
+/* Tables on the left */
+.stg-tavern .stg-list {
+  display: flex;
+  flex: 0 0 250px;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border-right: 1px solid var(--color-border, rgb(255 255 255 / 0.15));
+  overflow-y: auto;
+  background: linear-gradient(180deg, #3a2618, #2a1b11);
+}
+
+.stg-tavern .stg-new {
+  height: 34px;
+}
+
+.stg-tavern .stg-list ol {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+}
+
+.stg-tavern .stg-entry button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: auto;
+  padding: 6px 8px;
+  border: 1px solid rgb(255 220 160 / 0.15);
+  background: rgb(0 0 0 / 0.25);
+  color: #f1e3c8;
+  line-height: 1.2;
+  text-align: left;
+  white-space: normal;
+}
+
+.stg-tavern .stg-entry.selected button {
+  border-color: #e0a84f;
+  background: rgb(224 168 79 / 0.2);
+}
+
+.stg-tavern .stg-entry.done button {
+  opacity: 0.7;
+}
+
+.stg-tavern .stg-entry-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.stg-tavern .stg-entry-text small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.75;
+}
+
+.stg-tavern .stg-entry-status {
+  font-size: var(--font-size-11, 11px);
+  opacity: 0.8;
+}
+
+.stg-tavern .stg-entry.playing .stg-entry-status {
+  color: #9fe08a;
+}
+
+/* The table */
+.stg-tavern .stg-table {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  background: radial-gradient(ellipse at center, #2f5a3a 0%, #1e3d27 70%, #15291b 100%);
+  color: #f3ead8;
+}
+
+.stg-tavern .stg-felt {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  padding: 12px 16px;
+}
+
+.stg-tavern .stg-head h2 {
+  margin: 0;
+  border: none;
+  color: #ffe4b0;
+  font-size: var(--font-size-20, 20px);
+}
+
+.stg-tavern .stg-line {
+  margin: 2px 0 8px;
+  opacity: 0.9;
+}
+
+.stg-tavern .stg-line.mine {
+  color: #ffd27a;
+  font-weight: bold;
+}
+
+.stg-tavern .stg-seats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 0;
+}
+
+.stg-tavern .stg-seat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 4px;
+  border: 1px solid rgb(255 255 255 / 0.15);
+  border-radius: 18px;
+  background: rgb(0 0 0 / 0.25);
+}
+
+.stg-tavern .stg-seat img {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.stg-tavern .stg-seat.turn {
+  border-color: #ffd27a;
+  box-shadow: 0 0 8px rgb(255 210 122 / 0.5);
+}
+
+.stg-tavern .stg-seat.winner {
+  border-color: #9fe08a;
+}
+
+.stg-tavern .stg-seat small {
+  opacity: 0.7;
+}
+
+.stg-tavern .stg-mark {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+
+.stg-tavern .stg-mark.x::before {
+  content: "✕";
+  display: block;
+  margin-top: -3px;
+  color: #ffb36b;
+  font-weight: bold;
+}
+
+.stg-tavern .stg-mark.o {
+  border: 3px solid #8fd0ff;
+}
+
+.stg-tavern .stg-mark.red {
+  background: #d9443b;
+}
+
+.stg-tavern .stg-mark.yellow {
+  background: #f2c94c;
+}
+
+.stg-tavern .stg-board {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  gap: 10px;
+}
+
+/* The guide of a game, a scrap of parchment (in the tavern and in the New table dialog) */
+.stg-guide {
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  border: 1px solid #8a6a3a;
+  border-radius: 3px;
+  background: #e9d8b0;
+  color: #3a2614;
+  font-family: var(--font-body, serif);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.stg-tavern .stg-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stg-tavern .stg-guide-toggle {
+  height: 24px;
+  padding: 0 6px;
+  font-size: var(--font-size-14, 14px);
+  opacity: 0.7;
+}
+
+.stg-tavern .stg-guide-toggle.active {
+  opacity: 1;
+}
+
+.stg-tavern .stg-note {
+  margin: 0;
+  opacity: 0.85;
+}
+
+.stg-tavern .stg-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.stg-tavern .stg-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+}
+
+.stg-tavern .stg-actions button,
+.stg-tavern .stg-buttons button {
+  border-color: rgb(255 220 160 / 0.35);
+  background: rgb(0 0 0 / 0.35);
+  color: #f3ead8;
+}
+
+.stg-tavern .stg-buttons button:not(:disabled):hover,
+.stg-tavern .stg-actions button:hover {
+  background: rgb(224 168 79 / 0.35);
+}
+
+.stg-tavern .stg-icon {
+  width: 30px;
+  padding: 0;
+}
+
+/* Tic-tac-toe */
+.stg-tavern .stg-ttt {
+  display: grid;
+  grid-template-columns: repeat(3, 92px);
+  gap: 8px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #5b3a22;
+  box-shadow: inset 0 0 12px rgb(0 0 0 / 0.5);
+}
+
+.stg-tavern .stg-cell {
+  width: 92px;
+  height: 92px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: #e9d6b0;
+  font-size: 56px;
+  line-height: 92px;
+}
+
+.stg-tavern .stg-cell.x::before {
+  content: "✕";
+  color: #b8541f;
+}
+
+.stg-tavern .stg-cell.o::before {
+  content: "◯";
+  color: #2f6fa0;
+}
+
+.stg-tavern .stg-cell:not(:disabled):hover {
+  background: #f6e7c8;
+}
+
+.stg-tavern .stg-cell.win {
+  background: #a8e08f;
+}
+
+.stg-tavern .stg-cell.last {
+  box-shadow: inset 0 0 0 3px rgb(255 210 122 / 0.8);
+}
+
+/* Four in a row */
+.stg-tavern .stg-four {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stg-tavern .stg-four-drops,
+.stg-tavern .stg-four-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 46px);
+  gap: 6px;
+}
+
+.stg-tavern .stg-four-grid {
+  padding: 8px;
+  border-radius: 10px;
+  background: #2b5ea8;
+  box-shadow: inset 0 0 10px rgb(0 0 0 / 0.5);
+}
+
+.stg-tavern .stg-drop {
+  width: 46px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  background: rgb(255 255 255 / 0.1);
+  color: #ffd27a;
+}
+
+.stg-tavern .stg-drop:disabled {
+  visibility: hidden;
+}
+
+.stg-tavern .stg-hole {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #14223a;
+  box-shadow: inset 0 3px 6px rgb(0 0 0 / 0.6);
+}
+
+.stg-tavern .stg-hole.red {
+  background: radial-gradient(circle at 35% 35%, #ff8073, #c8352d);
+}
+
+.stg-tavern .stg-hole.yellow {
+  background: radial-gradient(circle at 35% 35%, #fff2a0, #e0b232);
+}
+
+.stg-tavern .stg-hole.win {
+  box-shadow: 0 0 0 3px #fff, 0 0 12px #fff;
+}
+
+.stg-tavern .stg-hole.last:not(.win) {
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.6);
+}
+
+/* Matches */
+.stg-tavern .stg-sticks {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  background: #5b3a22;
+}
+
+.stg-tavern .stg-stick {
+  position: relative;
+  width: 8px;
+  height: 90px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #e4c592, #c79a5c);
+}
+
+.stg-tavern .stg-stick::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: -3px;
+  width: 14px;
+  height: 16px;
+  border-radius: 50%;
+  background: #b4271e;
+}
+
+.stg-tavern .stg-stick.gone {
+  opacity: 0.12;
+}
+
+/* Pig */
+.stg-tavern .stg-pig {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: min(460px, 100%);
+}
+
+.stg-tavern .stg-scores {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.stg-tavern .stg-scores li {
+  display: grid;
+  grid-template-columns: 130px 1fr 40px;
+  align-items: center;
+  gap: 8px;
+}
+
+.stg-tavern .stg-scores li.turn span:first-child {
+  color: #ffd27a;
+  font-weight: bold;
+}
+
+.stg-tavern .stg-bar {
+  height: 12px;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 0.35);
+  overflow: hidden;
+}
+
+.stg-tavern .stg-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #e0a84f, #ffd27a);
+}
+
+.stg-tavern .stg-pig-turn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--font-size-18, 18px);
+}
+
+.stg-tavern .stg-pig-turn.busted {
+  color: #ff8a7a;
+}
+
+.stg-tavern .stg-die {
+  color: #fff;
+  font-size: 48px;
+  filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.6));
+}
+
+/* Twenty-one */
+.stg-tavern .stg-twentyone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.stg-tavern .stg-hand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(560px, 100%);
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: rgb(0 0 0 / 0.15);
+}
+
+.stg-tavern .stg-hand.turn {
+  border-color: #ffd27a;
+}
+
+.stg-tavern .stg-hand.win {
+  border-color: #9fe08a;
+}
+
+.stg-tavern .stg-hand.lose {
+  opacity: 0.75;
+}
+
+.stg-tavern .stg-hand-name {
+  display: flex;
+  flex: 0 0 150px;
+  flex-direction: column;
+}
+
+.stg-tavern .stg-hand-name small {
+  opacity: 0.8;
+}
+
+.stg-tavern .stg-result {
+  color: #ffd27a;
+}
+
+.stg-tavern .stg-cards {
+  display: flex;
+  gap: 6px;
+}
+
+.stg-tavern .stg-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 62px;
+  border-radius: 5px;
+  background: #fbf7ee;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.5);
+  color: #222;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.stg-tavern .stg-card small {
+  font-size: 18px;
+}
+
+.stg-tavern .stg-card.red {
+  color: #c0322b;
+}
+
+.stg-tavern .stg-card.back {
+  background: repeating-linear-gradient(45deg, #7a2b25, #7a2b25 6px, #93362f 6px, #93362f 12px);
+}
+
+/* Welcome */
+.stg-tavern .stg-welcome {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.stg-tavern .stg-welcome > i {
+  color: #ffd27a;
+  font-size: 64px;
+}
+
+/* Chat cards */
+.stg-chat .stg-card-title {
+  margin: 0 0 4px;
+  font-weight: bold;
+}
+
+/* Gear in the title bar: a plain header icon like the close button */
+.stg-tavern .window-header .header-control {
+  height: auto;
+  padding: 0;
+  line-height: inherit;
+}
+
+/* No games on offer */
+.stg-tavern .stg-no-games {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* A player who left a running game */
+.stg-tavern .stg-seat.left,
+.stg-tavern .stg-scores li.left {
+  opacity: 0.5;
+}
+
+.stg-tavern .stg-left {
+  font-style: italic;
+}
+
+/* Tavern settings */
+.stg-settings .stg-game-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+}
+
+.stg-settings .stg-game-choice label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stg-settings .stg-game-choice i {
+  width: 18px;
+  text-align: center;
+}
+
+.stg-settings .stg-game-choice span {
+  flex: 1;
+}
+
+.stg-settings .stg-game-choice small {
+  opacity: 0.7;
+}
+
+/* Nine men's morris */
+.stg-tavern .stg-morris {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.stg-tavern .stg-morris-hands {
+  display: flex;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+}
+
+.stg-tavern .stg-morris-hands li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stg-tavern .stg-man {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #2a1b11;
+}
+
+.stg-tavern .stg-man.white,
+.stg-tavern .stg-point.white {
+  background: radial-gradient(circle at 35% 35%, #fffaf0, #d8cbb0);
+}
+
+.stg-tavern .stg-man.black,
+.stg-tavern .stg-point.black {
+  background: radial-gradient(circle at 35% 35%, #6b4a32, #1f130b);
+}
+
+.stg-tavern .stg-man.black {
+  border-color: #f0dcb4;
+}
+
+.stg-tavern .stg-morris-board {
+  position: relative;
+  width: min(330px, 100%);
+  aspect-ratio: 1;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #c79a5b, #a8783f);
+  box-shadow: inset 0 0 18px rgb(0 0 0 / 0.35);
+}
+
+.stg-tavern .stg-morris-board svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #3a2614;
+  stroke-width: 0.06;
+}
+
+.stg-tavern .stg-morris-board .stg-point {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  min-height: 0;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: #3a2614;
+  transform: translate(-50%, -50%) scale(0.45);
+  transition: transform 0.15s;
+}
+
+.stg-tavern .stg-morris-board .stg-point.white,
+.stg-tavern .stg-morris-board .stg-point.black {
+  border-color: #2a1b11;
+  transform: translate(-50%, -50%);
+}
+
+.stg-tavern .stg-morris-board .stg-point.white {
+  background: radial-gradient(circle at 35% 35%, #fffaf0, #d8cbb0);
+}
+
+.stg-tavern .stg-morris-board .stg-point.black {
+  background: radial-gradient(circle at 35% 35%, #6b4a32, #1f130b);
+  border-color: #f0dcb4;
+}
+
+.stg-tavern .stg-morris-board .stg-point.target {
+  background: rgb(255 210 122 / 0.85);
+  cursor: pointer;
+  transform: translate(-50%, -50%) scale(0.6);
+}
+
+.stg-tavern .stg-morris-board .stg-point.pick {
+  cursor: pointer;
+  box-shadow: 0 0 0 2px rgb(255 210 122 / 0.6);
+}
+
+.stg-tavern .stg-morris-board .stg-point.selected {
+  box-shadow: 0 0 0 3px #ffd27a, 0 0 10px #ffd27a;
+}
+
+.stg-tavern .stg-morris-board .stg-point.take {
+  cursor: crosshair;
+  box-shadow: 0 0 0 3px #ff6b5a;
+}
+
+.stg-tavern .stg-morris-board .stg-point.mill {
+  box-shadow: 0 0 0 3px #7ad0ff;
+}
+
+.stg-tavern .stg-morris-board .stg-point.last:not(.mill):not(.selected) {
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.55);
+}
+
+.stg-tavern .stg-morris-board .stg-point:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+/* Liar's dice and ship, captain and crew */
+.stg-tavern .stg-liars,
+.stg-tavern .stg-ship {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: min(520px, 100%);
+}
+
+.stg-tavern .stg-cups {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.stg-tavern .stg-cups li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.stg-tavern .stg-cups li.turn span:first-child {
+  color: #ffd27a;
+  font-weight: bold;
+}
+
+.stg-tavern .stg-cups li.out {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+
+.stg-tavern .stg-cup-dice {
+  display: flex;
+  gap: 3px;
+  color: #e9d8b0;
+}
+
+.stg-tavern .stg-own-dice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stg-tavern .stg-liars .stg-die,
+.stg-tavern .stg-ship .stg-die {
+  font-size: 34px;
+}
+
+.stg-tavern .stg-bid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.stg-tavern .stg-bid .stg-die {
+  font-size: 26px;
+}
+
+.stg-tavern .stg-bid-form {
+  align-items: center;
+}
+
+.stg-tavern .stg-bid-form select {
+  width: auto;
+  min-width: 52px;
+}
+
+.stg-tavern .stg-reveal {
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 0.25);
+}
+
+.stg-tavern .stg-reveal p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 2px 0;
+}
+
+.stg-tavern .stg-reveal .stg-die {
+  font-size: 22px;
+  opacity: 0.45;
+}
+
+.stg-tavern .stg-reveal .stg-die.hit {
+  color: #ffd27a;
+  opacity: 1;
+}
+
+.stg-tavern .stg-reveal-cup span {
+  min-width: 120px;
+}
+
+.stg-tavern .stg-ship .stg-scores li {
+  grid-template-columns: 1fr 40px;
+}
+
+.stg-tavern .stg-aboard {
+  display: flex;
+  gap: 14px;
+}
+
+.stg-tavern .stg-crew {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 4px;
+  opacity: 0.4;
+  font-size: 20px;
+}
+
+.stg-tavern .stg-crew.aboard {
+  border-color: #ffd27a;
+  color: #ffd27a;
+  opacity: 1;
+}
+
+.stg-tavern .stg-ship-dice {
+  display: flex;
+  gap: 8px;
+  min-height: 40px;
+}
+
+.stg-tavern .stg-ship .stg-scores li.winner span:first-child {
+  color: #ffd27a;
+}

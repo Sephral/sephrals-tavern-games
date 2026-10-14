@@ -1,0 +1,221 @@
+{
+  "STG": {
+    "Title": "Tavern",
+    "NoGM": "No GM is online. The tables need a GM, you can still watch.",
+    "Welcome": "Pull up a chair. Open a table and play against a friend or one of the regulars.",
+    "LANGUAGE": {
+      "default": "Follow Foundry",
+      "de": "Deutsch",
+      "en": "English"
+    },
+    "Game": {
+      "tictactoe": {
+        "name": "Tic-tac-toe",
+        "guide": "Hearken! Upon a board of nine fields ye set your marks in turn, and the cross goeth first. Whoso setteth three marks in a row, be it across, down or aslant, is the victor. Be every field filled and no row complete, ye share the honour."
+      },
+      "fourinarow": {
+        "name": "Four in a row",
+        "guide": "Mark well: cast thy disc into a column of thy choosing, and it falleth unto the lowest free place. Whoso first joineth four discs of their colour in a line, upright, flat or aslant, winneth the day. Red beginneth."
+      },
+      "morris": {
+        "name": "Nine men's morris",
+        "guide": "Each of ye hath nine men. Place them upon the points in turn, then move them along the lines to a free neighbour. Who setteth three in a row hath built a mill and may take a man of the foe, yet none from a closed mill whilst others stand free. With but three men left, thy men may leap to any free point. Whoso hath fewer than three men, or cannot move, is beaten."
+      },
+      "matches": {
+        "name": "The matchstick game",
+        "guide": "Fifteen matches lie upon the board. Each in turn taketh one, two or three, as they see fit. Whoso must take the last match hath lost, and the whole tavern shall mock them."
+      },
+      "pig": {
+        "name": "Pig",
+        "guide": "Cast the die as oft as thy courage alloweth and gather its pips. Hold, and thy gathering is safe in thy purse. Yet should the die show but a single eye, all thou gathered this turn is lost. Whoso first reacheth the goal winneth."
+      },
+      "ship": {
+        "name": "Ship, captain and crew",
+        "guide": "Thou hast three throws of five dice. First thou needest a six for the ship, then a five for the captain, then a four for the crew, and in this order alone. Once all are aboard, the two dice remaining are thy cargo: cast them anew whilst throws remain, or drop anchor and keep it. Without a crew thou bringest home nought. The richest cargo winneth."
+      },
+      "liars": {
+        "name": "Liar's dice",
+        "guide": "Each of ye shaketh five dice beneath a cup and looketh only upon their own. In turn ye wager how many dice of one face lie upon the whole board, ever higher than the wager before: more dice, or as many of a greater face. Or cry \"Liar!\" Then all cups are lifted. Should the wager hold, the accuser loseth a die, else the liar. Who loseth their last die leaveth the game, the last with dice in hand is victor."
+      },
+      "twentyone": {
+        "name": "Twenty-one",
+        "guide": "Ye play against the house, and Greta the innkeeper dealeth. Draw a card, or stand content with what thou holdest. Come nigher to one and twenty than the house, yet never beyond, and thou winnest. Aces count one or eleven, the courtly cards ten. The house must draw unto seventeen."
+      }
+    },
+    "Guest": {
+      "bertram": {
+        "name": "Old Bertram"
+      },
+      "mirela": {
+        "name": "Mirela the Quick"
+      },
+      "jasper": {
+        "name": "Jasper One Eye"
+      },
+      "dealer": {
+        "name": "Greta the innkeeper"
+      }
+    },
+    "Level": {
+      "easy": "easy going",
+      "medium": "sharp",
+      "hard": "unbeatable"
+    },
+    "Status": {
+      "open": "waiting",
+      "playing": "playing",
+      "done": "finished"
+    },
+    "Table": {
+      "new": "New table",
+      "none": "No tables yet.",
+      "game": "Game",
+      "opponent": "Opponent",
+      "players": "Wait for other players",
+      "newHint": "Against a regular the game starts right away. Otherwise the table waits until somebody joins, and at Pig the host can invite regulars to the free seats. Twenty-one is always played against the house: pick a regular to play alone, or wait for others to join you.",
+      "open": "Open the table",
+      "join": "Join",
+      "start": "Start",
+      "addGuest": "Invite a regular",
+      "guest": "Regular",
+      "invite": "Invite",
+      "rematch": "Play again",
+      "leave": "Leave",
+      "leaveConfirm": "Leave the running game? It counts as lost. At Pig and twenty-one the others play on.",
+      "close": "Take the table away",
+      "waiting": "Waiting for players. Free seats: {free}.",
+      "yourTurn": "Your turn.",
+      "turnOf": "{name} is thinking.",
+      "left": "left the table",
+      "guide": "How to play"
+    },
+    "Matches": {
+      "left": "{count} matches left",
+      "take": "Take {count}",
+      "took": "{name} took {count}"
+    },
+    "Pig": {
+      "busted": "A one! The turn is lost.",
+      "turnTotal": "This turn: {total}",
+      "goal": "Goal: {goal}",
+      "roll": "Roll",
+      "hold": "Hold"
+    },
+    "Morris": {
+      "hand": "{count} to place",
+      "take": "A mill! Take a man of your opponent.",
+      "pick": "Choose one of your men.",
+      "target": "Choose where it goes."
+    },
+    "Ship": {
+      "ship": "Ship (six)",
+      "captain": "Captain (five)",
+      "crew": "Crew (four)",
+      "roll": "Throw",
+      "stop": "Keep the cargo",
+      "throws": "{count} throws left",
+      "cargo": "Cargo {value}",
+      "noCrew": "No crew aboard yet",
+      "last": "{name} sails home with {score}"
+    },
+    "Liars": {
+      "yourDice": "Your dice",
+      "count": "How many",
+      "face": "Face",
+      "bid": "Bid",
+      "call": "Liar!",
+      "noBid": "No bid yet.",
+      "currentBid": "{name} bids {count} ×",
+      "revealHolds": "{caller} doubted the bid of {name} on {count}, and {shown} lie on the table. The bid holds, {loser} loses a die.",
+      "revealLie": "{caller} doubted the bid of {name} on {count}, and only {shown} lie on the table. A lie, {loser} loses a die."
+    },
+    "Twentyone": {
+      "hit": "Card",
+      "stand": "Stand",
+      "bust": "over 21",
+      "stood": "stands",
+      "win": "wins",
+      "lose": "loses",
+      "push": "a tie"
+    },
+    "Result": {
+      "win": "{winner} beats {others} at {game}.",
+      "draw": "{names} play a draw at {game}.",
+      "twentyone": {
+        "win": "{name} beats the house",
+        "lose": "{name} loses to the house",
+        "push": "{name} ties with the house"
+      }
+    },
+    "Card": {
+      "speaker": "Tavern",
+      "open": "To the table",
+      "invite": "{name} is looking for an opponent at {game}."
+    },
+    "Notice": {
+      "yourTurn": "Your turn at {game}."
+    },
+    "Error": {
+      "noGM": "No GM is online.",
+      "timeout": "The GM's client did not answer in time.",
+      "failed": "That did not work. See the console for details.",
+      "unknownAction": "Unknown request.",
+      "unknownGame": "Unknown game.",
+      "unknownGuest": "Unknown regular.",
+      "tableGone": "That table is gone.",
+      "notOpen": "That table does not take players anymore.",
+      "seated": "You already sit at that table.",
+      "full": "That table is full.",
+      "notHost": "Only whoever opened the table can do that.",
+      "tooFew": "Not enough players yet.",
+      "notPlaying": "That game does not run.",
+      "notSeated": "You do not sit at that table.",
+      "illegal": "That move is not allowed now.",
+      "notDone": "That game is not over yet.",
+      "gameOff": "The tavern does not offer this game right now."
+    },
+    "Config": {
+      "title": "Tavern settings",
+      "open": "Settings",
+      "games": "Games on offer",
+      "gamesHint": "Only these games can be chosen for a new table. Tables already running are played to the end.",
+      "table": "At the tables",
+      "personal": "For you",
+      "save": "Save",
+      "menuLabel": "Tavern settings",
+      "menuHint": "The games on offer, the chat messages and the goal in Pig in one window. The gear in the tavern's title bar opens it too.",
+      "seatsFixed": "{count} players",
+      "seatsRange": "{min} to {max} players"
+    },
+    "SETTINGS": {
+      "uiLanguage": {
+        "name": "Module language",
+        "hint": "Language of the tavern for you. Follow Foundry uses Foundry's language."
+      },
+      "chatCards": {
+        "name": "Chat messages",
+        "hint": "Messages in the chat when somebody looks for an opponent and when a game ends.",
+        "all": "Invitations and results",
+        "results": "Only results",
+        "off": "None"
+      },
+      "pigGoal": {
+        "name": "Goal in Pig",
+        "hint": "The score that wins a game of Pig."
+      }
+    },
+    "SELFTEST": {
+      "Title": "Tavern self test",
+      "Run": "Run self test",
+      "Hint": "Every game plays a round against itself, and the connection to the GM is checked.",
+      "Passed": "Self test passed: {checks} checks.",
+      "Problems": "Self test: {problems} of {checks} checks failed. See the chat message.",
+      "NewVersions": "The tavern was verified with an older Foundry than {versions}. Run the self test in the module settings.",
+      "Socket": "The module socket is missing.",
+      "Storage": "The storage of the tables is missing.",
+      "NoGM": "No GM is online, the tables cannot run.",
+      "Game": "{game} could not be played to the end."
+    },
+    "NoGames": "The tavern offers no games right now."
+  }
+}

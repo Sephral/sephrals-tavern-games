@@ -1,0 +1,53 @@
+<div class="stg-settings-body">
+  {{#if isGM}}
+  <fieldset>
+    <legend>{{localize "STG.Config.games"}}</legend>
+    <p class="hint">{{localize "STG.Config.gamesHint"}}</p>
+    <ul class="stg-game-choice plain">
+      {{#each games}}
+      <li>
+        <label>
+          <input type="checkbox" name="games.{{id}}" {{#if checked}}checked{{/if}}>
+          <i class="fa-solid {{icon}}" inert></i>
+          <span>{{name}}</span>
+          <small>{{seats}}</small>
+        </label>
+      </li>
+      {{/each}}
+    </ul>
+  </fieldset>
+
+  <fieldset>
+    <legend>{{localize "STG.Config.table"}}</legend>
+    <div class="form-group">
+      <label for="stg-chat-cards">{{localize "STG.SETTINGS.chatCards.name"}}</label>
+      <div class="form-fields">
+        <select id="stg-chat-cards" name="chatCards">
+          {{#each chatCards}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+        </select>
+      </div>
+      <p class="hint">{{localize "STG.SETTINGS.chatCards.hint"}}</p>
+    </div>
+    <div class="form-group">
+      <label for="stg-pig-goal">{{localize "STG.SETTINGS.pigGoal.name"}}</label>
+      <div class="form-fields">
+        <range-picker id="stg-pig-goal" name="pigGoal" value="{{pigGoal}}" min="20" max="100" step="10"></range-picker>
+      </div>
+      <p class="hint">{{localize "STG.SETTINGS.pigGoal.hint"}}</p>
+    </div>
+  </fieldset>
+  {{/if}}
+
+  <fieldset>
+    <legend>{{localize "STG.Config.personal"}}</legend>
+    <div class="form-group">
+      <label for="stg-language">{{localize "STG.SETTINGS.uiLanguage.name"}}</label>
+      <div class="form-fields">
+        <select id="stg-language" name="uiLanguage">
+          {{#each languages}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+        </select>
+      </div>
+      <p class="hint">{{localize "STG.SETTINGS.uiLanguage.hint"}}</p>
+    </div>
+  </fieldset>
+</div>

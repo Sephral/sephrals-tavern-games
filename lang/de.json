@@ -1,0 +1,221 @@
+{
+  "STG": {
+    "Title": "Taverne",
+    "NoGM": "Keine Spielleitung online. Die Tische brauchen eine Spielleitung, zuschauen geht trotzdem.",
+    "Welcome": "Setz dich. Eröffne einen Tisch und spiel gegen Freunde oder einen der Stammgäste.",
+    "LANGUAGE": {
+      "default": "Wie Foundry",
+      "de": "Deutsch",
+      "en": "English"
+    },
+    "Game": {
+      "tictactoe": {
+        "name": "Drei gewinnt",
+        "guide": "Höret! Auf einem Brett von neun Feldern setzet ihr abwechselnd euer Zeichen, und das Kreuz beginnet. Wer drei Zeichen in eine Reihe bringt, waagrecht, senkrecht oder schräg, der sei Sieger. Sind alle Felder besetzt und keine Reihe vollbracht, so teilet ihr die Ehre."
+      },
+      "fourinarow": {
+        "name": "Vier in einer Reihe",
+        "guide": "Merket wohl: Werfet eure Scheibe in eine Spalte nach Belieben, so fällt sie hinab auf den untersten freien Platz. Wer zuerst vier Scheiben seiner Farbe in eine Linie bringt, aufrecht, liegend oder schräg, der träget den Sieg davon. Rot beginnet."
+      },
+      "morris": {
+        "name": "Mühle",
+        "guide": "Ein jeder von euch hat neun Steine. Setzet sie abwechselnd auf die Punkte, dann ziehet sie die Linien entlang auf einen freien Nachbarn. Wer drei in eine Reihe bringt, hat eine Mühle gebaut und darf dem Gegner einen Stein nehmen, doch keinen aus einer geschlossenen Mühle, solange andere frei stehen. Bleiben dir nur drei Steine, so dürfen sie auf jeden freien Punkt springen. Wer weniger als drei Steine hat oder nicht ziehen kann, ist geschlagen."
+      },
+      "matches": {
+        "name": "Streichholzspiel",
+        "guide": "Fünfzehn Hölzer liegen auf dem Tische. Ein jeder nimmt der Reihe nach eins, zwei oder drei, wie es ihm beliebt. Wer das letzte Holz nehmen muss, hat verloren und sei vom ganzen Wirtshaus verspottet."
+      },
+      "pig": {
+        "name": "Schweinchen",
+        "guide": "Werfet den Würfel, so oft euer Mut es erlaubt, und sammelt seine Augen. Haltet ihr inne, so ist das Gesammelte sicher im Beutel. Zeiget der Würfel aber ein einzig Auge, so ist alles verloren, was ihr in diesem Zuge gesammelt. Wer zuerst das Ziel erreichet, gewinnet."
+      },
+      "ship": {
+        "name": "Schiff, Kapitän und Mannschaft",
+        "guide": "Du hast drei Würfe mit fünf Würfeln. Zuerst brauchst du eine Sechs für das Schiff, dann eine Fünf für den Kapitän, dann eine Vier für die Mannschaft, und allein in dieser Folge. Sind alle an Bord, so sind die zwei übrigen Würfel deine Ladung: Wirf sie erneut, solange dir Würfe bleiben, oder wirf Anker und behalte sie. Ohne Mannschaft bringst du nichts heim. Die reichste Ladung gewinnet."
+      },
+      "liars": {
+        "name": "Lügenwürfel",
+        "guide": "Ein jeder schüttelt fünf Würfel unter seinem Becher und schaut allein auf die eigenen. Reihum wettet ihr, wie viele Würfel einer Zahl auf dem ganzen Tische liegen, stets höher als die Wette zuvor: mehr Würfel oder ebenso viele einer höheren Zahl. Oder ihr rufet \"Lügner!\" Dann werden alle Becher gehoben. Hält die Wette, verliert der Ankläger einen Würfel, sonst der Lügner. Wer seinen letzten Würfel verliert, scheidet aus, und wer zuletzt noch Würfel hat, ist Sieger."
+      },
+      "twentyone": {
+        "name": "Einundzwanzig",
+        "guide": "Ihr spielet wider das Haus, und Wirtin Greta gibt die Karten. Ziehet eine Karte oder seid zufrieden mit dem, was ihr haltet. Kommet ihr näher an einundzwanzig als das Haus und doch nicht darüber, so habt ihr gewonnen. Asse zählen eins oder elf, die Hofkarten zehn. Das Haus muss ziehen bis siebzehn."
+      }
+    },
+    "Guest": {
+      "bertram": {
+        "name": "Der alte Bertram"
+      },
+      "mirela": {
+        "name": "Mirela die Flinke"
+      },
+      "jasper": {
+        "name": "Jasper Einauge"
+      },
+      "dealer": {
+        "name": "Wirtin Greta"
+      }
+    },
+    "Level": {
+      "easy": "gemütlich",
+      "medium": "gerissen",
+      "hard": "unschlagbar"
+    },
+    "Status": {
+      "open": "wartet",
+      "playing": "läuft",
+      "done": "beendet"
+    },
+    "Table": {
+      "new": "Neuer Tisch",
+      "none": "Noch keine Tische.",
+      "game": "Spiel",
+      "opponent": "Gegner",
+      "players": "Auf andere Spieler warten",
+      "newHint": "Gegen einen Stammgast geht es sofort los. Sonst wartet der Tisch, bis sich jemand dazusetzt, und bei Pig kann der Gastgeber Stammgäste auf die freien Plätze einladen. Einundzwanzig spielt man immer gegen das Haus: Wähle einen Stammgast, um allein zu spielen, oder warte auf Mitspieler.",
+      "open": "Tisch eröffnen",
+      "join": "Dazusetzen",
+      "start": "Anfangen",
+      "addGuest": "Stammgast einladen",
+      "guest": "Stammgast",
+      "invite": "Einladen",
+      "rematch": "Noch einmal",
+      "leave": "Aufstehen",
+      "leaveConfirm": "Das laufende Spiel verlassen? Es zählt als verloren. Bei Pig und Einundzwanzig spielen die anderen weiter.",
+      "close": "Tisch abräumen",
+      "waiting": "Wartet auf Spieler. Freie Plätze: {free}.",
+      "yourTurn": "Du bist dran.",
+      "turnOf": "{name} überlegt.",
+      "left": "aufgestanden",
+      "guide": "Spielanleitung"
+    },
+    "Matches": {
+      "left": "Noch {count} Hölzer",
+      "take": "{count} nehmen",
+      "took": "{name} nahm {count}"
+    },
+    "Pig": {
+      "busted": "Eine Eins! Der Zug ist verloren.",
+      "turnTotal": "In diesem Zug: {total}",
+      "goal": "Ziel: {goal}",
+      "roll": "Würfeln",
+      "hold": "Sichern"
+    },
+    "Morris": {
+      "hand": "{count} zu setzen",
+      "take": "Eine Mühle! Nimm einen Stein des Gegners.",
+      "pick": "Wähle einen deiner Steine.",
+      "target": "Wähle, wohin er zieht."
+    },
+    "Ship": {
+      "ship": "Schiff (Sechs)",
+      "captain": "Kapitän (Fünf)",
+      "crew": "Mannschaft (Vier)",
+      "roll": "Werfen",
+      "stop": "Ladung behalten",
+      "throws": "noch {count} Würfe",
+      "cargo": "Ladung {value}",
+      "noCrew": "Noch keine Mannschaft an Bord",
+      "last": "{name} segelt mit {score} heim"
+    },
+    "Liars": {
+      "yourDice": "Deine Würfel",
+      "count": "Wie viele",
+      "face": "Zahl",
+      "bid": "Wetten",
+      "call": "Lügner!",
+      "noBid": "Noch keine Wette.",
+      "currentBid": "{name} wettet {count} ×",
+      "revealHolds": "{caller} zweifelte an der Wette von {name} auf {count}, und {shown} liegen auf dem Tisch. Die Wette hält, {loser} verliert einen Würfel.",
+      "revealLie": "{caller} zweifelte an der Wette von {name} auf {count}, und nur {shown} liegen auf dem Tisch. Gelogen, {loser} verliert einen Würfel."
+    },
+    "Twentyone": {
+      "hit": "Karte",
+      "stand": "Genug",
+      "bust": "über 21",
+      "stood": "bleibt",
+      "win": "gewinnt",
+      "lose": "verliert",
+      "push": "unentschieden"
+    },
+    "Result": {
+      "win": "{winner} schlägt {others} bei {game}.",
+      "draw": "{names} spielen unentschieden bei {game}.",
+      "twentyone": {
+        "win": "{name} schlägt das Haus",
+        "lose": "{name} verliert gegen das Haus",
+        "push": "{name} und das Haus spielen unentschieden"
+      }
+    },
+    "Card": {
+      "speaker": "Taverne",
+      "open": "Zum Tisch",
+      "invite": "{name} sucht einen Gegner für {game}."
+    },
+    "Notice": {
+      "yourTurn": "Du bist dran bei {game}."
+    },
+    "Error": {
+      "noGM": "Keine Spielleitung online.",
+      "timeout": "Der Client der Spielleitung hat nicht rechtzeitig geantwortet.",
+      "failed": "Das hat nicht geklappt. Details stehen in der Konsole.",
+      "unknownAction": "Unbekannte Anfrage.",
+      "unknownGame": "Unbekanntes Spiel.",
+      "unknownGuest": "Unbekannter Stammgast.",
+      "tableGone": "Diesen Tisch gibt es nicht mehr.",
+      "notOpen": "An diesem Tisch kann sich niemand mehr dazusetzen.",
+      "seated": "Du sitzt schon an diesem Tisch.",
+      "full": "Dieser Tisch ist voll.",
+      "notHost": "Das kann nur, wer den Tisch eröffnet hat.",
+      "tooFew": "Noch nicht genug Spieler.",
+      "notPlaying": "Dieses Spiel läuft nicht.",
+      "notSeated": "Du sitzt nicht an diesem Tisch.",
+      "illegal": "Dieser Zug geht gerade nicht.",
+      "notDone": "Dieses Spiel ist noch nicht vorbei.",
+      "gameOff": "Dieses Spiel bietet die Taverne gerade nicht an."
+    },
+    "Config": {
+      "title": "Einstellungen der Taverne",
+      "open": "Einstellungen",
+      "games": "Spiele im Angebot",
+      "gamesHint": "Nur diese Spiele stehen für einen neuen Tisch zur Wahl. Laufende Tische werden zu Ende gespielt.",
+      "table": "An den Tischen",
+      "personal": "Für dich",
+      "save": "Speichern",
+      "menuLabel": "Einstellungen der Taverne",
+      "menuHint": "Die Spiele im Angebot, die Chatnachrichten und das Ziel bei Pig in einem Fenster. Das Zahnrad in der Titelleiste der Taverne öffnet es auch.",
+      "seatsFixed": "{count} Spieler",
+      "seatsRange": "{min} bis {max} Spieler"
+    },
+    "SETTINGS": {
+      "uiLanguage": {
+        "name": "Modulsprache",
+        "hint": "Sprache der Taverne für dich. Wie Foundry nutzt die Sprache von Foundry."
+      },
+      "chatCards": {
+        "name": "Chatnachrichten",
+        "hint": "Nachrichten im Chat, wenn jemand einen Gegner sucht und wenn ein Spiel endet.",
+        "all": "Einladungen und Ergebnisse",
+        "results": "Nur Ergebnisse",
+        "off": "Keine"
+      },
+      "pigGoal": {
+        "name": "Ziel bei Schweinchen",
+        "hint": "Die Punktzahl, mit der man ein Spiel Schweinchen gewinnt."
+      }
+    },
+    "SELFTEST": {
+      "Title": "Selbsttest Taverne",
+      "Run": "Selbsttest starten",
+      "Hint": "Jedes Spiel spielt eine Runde gegen sich selbst, und die Verbindung zur Spielleitung wird geprüft.",
+      "Passed": "Selbsttest bestanden: {checks} Prüfungen.",
+      "Problems": "Selbsttest: {problems} von {checks} Prüfungen fehlgeschlagen. Details in der Chatnachricht.",
+      "NewVersions": "Die Taverne wurde mit einem älteren Foundry als {versions} geprüft. Starte den Selbsttest in den Moduleinstellungen.",
+      "Socket": "Der Socket des Moduls fehlt.",
+      "Storage": "Der Speicher der Tische fehlt.",
+      "NoGM": "Keine Spielleitung online, die Tische können nicht laufen.",
+      "Game": "{game} konnte nicht zu Ende gespielt werden."
+    },
+    "NoGames": "Die Taverne bietet gerade keine Spiele an."
+  }
+}

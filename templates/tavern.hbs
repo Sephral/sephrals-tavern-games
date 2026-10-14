@@ -1,0 +1,235 @@
+<div class="stg-body">
+  <aside class="stg-list">
+    {{#if canCreate}}
+    <button type="button" class="stg-new" data-action="newTable"><i class="fa-solid fa-plus" inert></i> {{localize "STG.Table.new"}}</button>
+    {{else}}
+    <p class="stg-warning stg-no-games"><i class="fa-solid fa-store-slash" inert></i> {{localize "STG.NoGames"}}{{#if isGM}}
+      <button type="button" data-action="openSettings"><i class="fa-solid fa-gear" inert></i> {{localize "STG.Config.open"}}</button>{{/if}}</p>
+    {{/if}}
+    {{#if noGM}}<p class="stg-warning"><i class="fa-solid fa-triangle-exclamation" inert></i> {{localize "STG.NoGM"}}</p>{{/if}}
+    <ol class="plain">
+      {{#each tables}}
+      <li class="stg-entry {{statusClass}} {{#if selected}}selected{{/if}}" data-table-id="{{id}}">
+        <button type="button" data-action="choose">
+          <i class="fa-solid {{icon}}" inert></i>
+          <span class="stg-entry-text">
+            <strong>{{game}}</strong>
+            <small>{{players}}</small>
+          </span>
+          <span class="stg-entry-status">{{status}}{{#if mine}} <i class="fa-solid fa-user" inert></i>{{/if}}</span>
+        </button>
+      </li>
+      {{else}}
+      <li class="stg-empty">{{localize "STG.Table.none"}}</li>
+      {{/each}}
+    </ol>
+  </aside>
+
+  <section class="stg-table">
+    {{#if table}}
+    <div class="stg-felt" data-table-id="{{table.id}}" data-game="{{table.game}}">
+      <header class="stg-head">
+        <h2><i class="fa-solid {{table.icon}}" inert></i> {{table.name}}
+          <button type="button" class="stg-icon stg-guide-toggle {{#if table.showGuide}}active{{/if}}" data-action="toggleGuide"
+            data-tooltip="{{localize "STG.Table.guide"}}" aria-label="{{localize "STG.Table.guide"}}"><i class="fa-solid fa-scroll" inert></i></button></h2>
+        <p class="stg-line {{#if table.myTurn}}mine{{/if}}">{{table.line}}</p>
+      </header>
+      {{#if table.showGuide}}<blockquote class="stg-guide">{{table.guide}}</blockquote>{{/if}}
+
+      <ol class="stg-seats plain">
+        {{#each table.seats}}
+        <li class="stg-seat {{#if isTurn}}turn{{/if}} {{#if isMe}}me{{/if}} {{#if winner}}winner{{/if}} {{#if left}}left{{/if}}">
+          {{#if mark}}<span class="stg-mark {{mark}}"></span>{{/if}}
+          <img src="{{img}}" alt="">
+          <span>{{name}}{{#if guest}} <small>{{level}}</small>{{/if}}{{#if left}} <small class="stg-left">{{localize "STG.Table.left"}}</small>{{/if}}</span>
+          {{#if winner}}<i class="fa-solid fa-trophy" inert></i>{{/if}}
+        </li>
+        {{/each}}
+      </ol>
+
+      <div class="stg-board">
+        {{#if table.ttt}}
+        <div class="stg-ttt">
+          {{#each table.ttt}}
+          <button type="button" class="stg-cell {{#if mark}}{{mark}}{{/if}} {{#if win}}win{{/if}} {{#if last}}last{{/if}}"
+            {{#if playable}}data-action="play" data-move="{{i}}"{{else}}disabled{{/if}} aria-label="{{i}}"></button>
+          {{/each}}
+        </div>
+        {{/if}}
+
+        {{#if table.four}}
+        <div class="stg-four">
+          <div class="stg-four-drops">
+            {{#each table.four.columns}}
+            <button type="button" class="stg-drop" {{#if playable}}data-action="play" data-move="{{c}}"{{else}}disabled{{/if}} aria-label="{{c}}"><i class="fa-solid fa-caret-down" inert></i></button>
+            {{/each}}
+          </div>
+          <div class="stg-four-grid">
+            {{#each table.four.rows}}{{#each this}}<span class="stg-hole {{#if mark}}{{mark}}{{/if}} {{#if win}}win{{/if}} {{#if last}}last{{/if}}"></span>{{/each}}{{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if table.matches}}
+        <div class="stg-matches">
+          <div class="stg-sticks">
+            {{#each table.matches.sticks}}<span class="stg-stick {{#if gone}}gone{{/if}}"></span>{{/each}}
+          </div>
+          <p class="stg-note">{{localize "STG.Matches.left" count=table.matches.left}}{{#if table.matches.last}} · {{table.matches.last}}{{/if}}</p>
+          <div class="stg-buttons">
+            {{#each table.matches.takes}}
+            <button type="button" {{#if playable}}data-action="play" data-move="{{n}}"{{else}}disabled{{/if}}>{{localize "STG.Matches.take" count=n}}</button>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if table.pig}}
+        <div class="stg-pig">
+          <ol class="stg-scores plain">
+            {{#each table.pig.scores}}
+            <li class="{{#if isTurn}}turn{{/if}} {{#if left}}left{{/if}}">
+              <span>{{name}}{{#if left}} <small>{{localize "STG.Table.left"}}</small>{{/if}}</span>
+              <span class="stg-bar"><span style="width: {{percent}}%"></span></span>
+              <strong>{{score}}</strong>
+            </li>
+            {{/each}}
+          </ol>
+          <div class="stg-pig-turn {{#if table.pig.busted}}busted{{/if}}">
+            {{#if table.pig.lastRoll}}<i class="fa-solid {{table.pig.lastRoll}} stg-die" inert></i>{{/if}}
+            <span>{{#if table.pig.busted}}{{localize "STG.Pig.busted"}}{{else}}{{localize "STG.Pig.turnTotal" total=table.pig.turnTotal}}{{/if}}</span>
+          </div>
+          <p class="stg-note">{{localize "STG.Pig.goal" goal=table.pig.goal}}</p>
+          <div class="stg-buttons">
+            <button type="button" {{#if table.pig.canRoll}}data-action="play" data-move="roll"{{else}}disabled{{/if}}><i class="fa-solid fa-dice" inert></i> {{localize "STG.Pig.roll"}}</button>
+            <button type="button" {{#if table.pig.canHold}}data-action="play" data-move="hold"{{else}}disabled{{/if}}><i class="fa-solid fa-hand" inert></i> {{localize "STG.Pig.hold"}}</button>
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if table.morris}}
+        <div class="stg-morris">
+          <ol class="stg-morris-hands plain">
+            {{#each table.morris.hands}}<li><span class="stg-man {{mark}}"></span> {{name}} <small>{{hand}}</small></li>{{/each}}
+          </ol>
+          <div class="stg-morris-board">
+            <svg viewBox="-0.5 -0.5 7 7" aria-hidden="true">
+              <rect x="0" y="0" width="6" height="6"/><rect x="1" y="1" width="4" height="4"/><rect x="2" y="2" width="2" height="2"/>
+              <line x1="3" y1="0" x2="3" y2="2"/><line x1="3" y1="4" x2="3" y2="6"/><line x1="0" y1="3" x2="2" y2="3"/><line x1="4" y1="3" x2="6" y2="3"/>
+            </svg>
+            {{#each table.morris.points}}
+            <button type="button" class="stg-point {{man}} {{#if last}}last{{/if}} {{#if mill}}mill{{/if}} {{#if selected}}selected{{/if}} {{#if move}}target{{/if}} {{#if take}}take{{/if}} {{#if pick}}pick{{/if}}"
+              style="left: {{left}}%; top: {{top}}%" data-point="{{i}}"
+              {{#if move}}data-action="play" data-move="{{move}}"{{else if pick}}data-action="morrisPick"{{else}}disabled{{/if}} aria-label="{{i}}"></button>
+            {{/each}}
+          </div>
+          {{#if table.morris.hint}}<p class="stg-note">{{table.morris.hint}}</p>{{/if}}
+        </div>
+        {{/if}}
+
+        {{#if table.liars}}
+        <div class="stg-liars">
+          <ol class="stg-cups plain">
+            {{#each table.liars.cups}}
+            <li class="{{#if isTurn}}turn{{/if}} {{#if out}}out{{/if}}">
+              <span>{{name}}</span>
+              <span class="stg-cup-dice">{{#each dice}}<i class="fa-solid fa-square" inert></i>{{/each}}</span>
+            </li>
+            {{/each}}
+          </ol>
+          {{#if table.liars.seated}}
+          <div class="stg-own-dice">
+            <span>{{localize "STG.Liars.yourDice"}}</span>
+            {{#if table.liars.mine}}{{#each table.liars.mine}}<i class="fa-solid {{icon}} stg-die" inert></i>{{/each}}{{else}}<i class="fa-solid fa-spinner fa-spin" inert></i>{{/if}}
+          </div>
+          {{/if}}
+          <p class="stg-bid">{{table.liars.bid}}{{#if table.liars.bidFace}} <i class="fa-solid {{table.liars.bidFace}} stg-die" inert></i>{{/if}}</p>
+          {{#if table.liars.canBid}}
+          <div class="stg-buttons stg-bid-form">
+            <select name="liarsCount" aria-label="{{localize "STG.Liars.count"}}">{{#each table.liars.counts}}<option value="{{n}}" {{#if selected}}selected{{/if}}>{{n}}</option>{{/each}}</select>
+            <span>×</span>
+            <select name="liarsFace" aria-label="{{localize "STG.Liars.face"}}">{{#each table.liars.faces}}<option value="{{n}}" {{#if selected}}selected{{/if}}>{{n}}</option>{{/each}}</select>
+            <button type="button" data-action="liarsBid"><i class="fa-solid fa-comment" inert></i> {{localize "STG.Liars.bid"}}</button>
+            {{#if table.liars.canCall}}<button type="button" data-action="play" data-move="call"><i class="fa-solid fa-hand-point-up" inert></i> {{localize "STG.Liars.call"}}</button>{{/if}}
+          </div>
+          {{/if}}
+          {{#if table.liars.reveal}}
+          <div class="stg-reveal">
+            <p>{{table.liars.reveal.text}} <i class="fa-solid {{table.liars.reveal.face}} stg-die" inert></i></p>
+            {{#each table.liars.reveal.cups}}
+            <p class="stg-reveal-cup"><span>{{name}}</span> {{#each dice}}<i class="fa-solid {{icon}} stg-die {{#if hit}}hit{{/if}}" inert></i>{{/each}}</p>
+            {{/each}}
+          </div>
+          {{/if}}
+        </div>
+        {{/if}}
+
+        {{#if table.ship}}
+        <div class="stg-ship">
+          <ol class="stg-scores plain">
+            {{#each table.ship.scores}}
+            <li class="{{#if isTurn}}turn{{/if}} {{#if left}}left{{/if}} {{#if winner}}winner{{/if}}">
+              <span>{{name}}{{#if left}} <small>{{localize "STG.Table.left"}}</small>{{/if}}{{#if winner}} <i class="fa-solid fa-trophy" inert></i>{{/if}}</span>
+              <strong>{{#if played}}{{score}}{{/if}}</strong>
+            </li>
+            {{/each}}
+          </ol>
+          {{#unless table.ship.done}}
+          <div class="stg-aboard">
+            {{#each table.ship.crew}}
+            <span class="stg-crew {{#if aboard}}aboard{{/if}}" data-tooltip="{{label}}"><i class="fa-solid {{icon}}" inert></i> <i class="fa-solid {{face}}" inert></i></span>
+            {{/each}}
+          </div>
+          <div class="stg-ship-dice">{{#each table.ship.dice}}<i class="fa-solid {{icon}} stg-die" inert></i>{{/each}}</div>
+          <p class="stg-note">{{table.ship.cargo}} · {{table.ship.throwsLeft}}{{#if table.ship.last}} · {{table.ship.last}}{{/if}}</p>
+          <div class="stg-buttons">
+            <button type="button" {{#if table.ship.canRoll}}data-action="play" data-move="roll"{{else}}disabled{{/if}}><i class="fa-solid fa-dice" inert></i> {{localize "STG.Ship.roll"}}</button>
+            <button type="button" {{#if table.ship.canStop}}data-action="play" data-move="stop"{{else}}disabled{{/if}}><i class="fa-solid fa-anchor" inert></i> {{localize "STG.Ship.stop"}}</button>
+          </div>
+          {{else}}
+          {{#if table.ship.last}}<p class="stg-note">{{table.ship.last}}</p>{{/if}}
+          {{/unless}}
+        </div>
+        {{/if}}
+
+        {{#if table.twentyone}}
+        <div class="stg-twentyone">
+          <div class="stg-hand dealer">
+            <span class="stg-hand-name">{{table.twentyone.dealerName}} <small>{{table.twentyone.dealerTotal}}{{#unless table.twentyone.done}}+?{{/unless}}</small></span>
+            <span class="stg-cards">{{#each table.twentyone.dealer}}<span class="stg-card {{#if hidden}}back{{/if}} {{#if red}}red{{/if}}">{{#unless hidden}}{{label}}<small>{{suit}}</small>{{/unless}}</span>{{/each}}</span>
+          </div>
+          {{#each table.twentyone.hands}}
+          <div class="stg-hand {{#if isTurn}}turn{{/if}} {{resultClass}}">
+            <span class="stg-hand-name">{{name}} <small>{{total}}{{#if busted}} · {{localize "STG.Twentyone.bust"}}{{/if}}{{#if stood}} · {{localize "STG.Twentyone.stood"}}{{/if}}{{#if left}} · {{localize "STG.Table.left"}}{{/if}}</small>
+              {{#if result}}<strong class="stg-result">{{result}}</strong>{{/if}}</span>
+            <span class="stg-cards">{{#each cards}}<span class="stg-card {{#if red}}red{{/if}}">{{label}}<small>{{suit}}</small></span>{{/each}}</span>
+          </div>
+          {{/each}}
+          <div class="stg-buttons">
+            <button type="button" {{#if table.twentyone.canPlay}}data-action="play" data-move="hit"{{else}}disabled{{/if}}><i class="fa-solid fa-plus" inert></i> {{localize "STG.Twentyone.hit"}}</button>
+            <button type="button" {{#if table.twentyone.canPlay}}data-action="play" data-move="stand"{{else}}disabled{{/if}}><i class="fa-solid fa-hand" inert></i> {{localize "STG.Twentyone.stand"}}</button>
+          </div>
+        </div>
+        {{/if}}
+
+      </div>
+
+      <footer class="stg-actions">
+        {{#if table.canJoin}}<button type="button" data-action="join"><i class="fa-solid fa-chair" inert></i> {{localize "STG.Table.join"}}</button>{{/if}}
+        {{#if table.canAddGuest}}<button type="button" data-action="addGuest"><i class="fa-solid fa-user-plus" inert></i> {{localize "STG.Table.addGuest"}}</button>{{/if}}
+        {{#if table.canStart}}<button type="button" data-action="start"><i class="fa-solid fa-play" inert></i> {{localize "STG.Table.start"}}</button>{{/if}}
+        {{#if table.canRematch}}<button type="button" data-action="rematch"><i class="fa-solid fa-rotate" inert></i> {{localize "STG.Table.rematch"}}</button>{{/if}}
+        <span class="stg-spacer"></span>
+        {{#if table.canLeave}}<button type="button" data-action="leave"><i class="fa-solid fa-door-open" inert></i> {{localize "STG.Table.leave"}}</button>{{/if}}
+        {{#if table.canClose}}<button type="button" class="stg-icon" data-action="closeTable" data-tooltip="{{localize "STG.Table.close"}}"><i class="fa-solid fa-trash" inert></i></button>{{/if}}
+      </footer>
+    </div>
+    {{else}}
+    <div class="stg-welcome">
+      <i class="fa-solid fa-beer-mug-empty" inert></i>
+      <p>{{localize "STG.Welcome"}}</p>
+      {{#if canCreate}}<button type="button" data-action="newTable"><i class="fa-solid fa-plus" inert></i> {{localize "STG.Table.new"}}</button>{{/if}}
+    </div>
+    {{/if}}
+  </section>
+</div>

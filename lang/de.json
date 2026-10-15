@@ -44,7 +44,7 @@
     },
     "Guest": {
       "bertram": {
-        "name": "Der alte Bertram"
+        "name": "Bertram Graubart"
       },
       "mirela": {
         "name": "Mirela die Flinke"
@@ -72,7 +72,7 @@
       "game": "Spiel",
       "opponent": "Gegner",
       "players": "Auf andere Spieler warten",
-      "newHint": "Gegen einen Stammgast geht es sofort los. Sonst wartet der Tisch, bis sich jemand dazusetzt, und bei Pig kann der Gastgeber Stammgäste auf die freien Plätze einladen. Einundzwanzig spielt man immer gegen das Haus: Wähle einen Stammgast, um allein zu spielen, oder warte auf Mitspieler.",
+      "newHint": "Gegen einen Stammgast geht es sofort los. Sonst wartet der Tisch, bis sich jemand dazusetzt, und in den Spielen für mehr Spieler kann der Gastgeber Stammgäste auf die freien Plätze einladen. Einundzwanzig spielt man immer gegen das Haus: Wähle einen Stammgast, um allein zu spielen, oder warte auf Mitspieler.",
       "open": "Tisch eröffnen",
       "join": "Dazusetzen",
       "start": "Anfangen",
@@ -81,7 +81,7 @@
       "invite": "Einladen",
       "rematch": "Noch einmal",
       "leave": "Aufstehen",
-      "leaveConfirm": "Das laufende Spiel verlassen? Es zählt als verloren. Bei Pig und Einundzwanzig spielen die anderen weiter.",
+      "leaveConfirm": "Das laufende Spiel verlassen? Es zählt als verloren. In den Spielen für mehr Spieler spielen die anderen weiter.",
       "close": "Tisch abräumen",
       "waiting": "Wartet auf Spieler. Freie Plätze: {free}.",
       "yourTurn": "Du bist dran.",
@@ -95,7 +95,12 @@
       "took": "{name} nahm {count}"
     },
     "Pig": {
-      "busted": "Eine Eins! Der Zug ist verloren.",
+      "busted": "{name} würfelt eine Eins, der Zug ist verloren.",
+      "bustedYou": "Du würfelst eine Eins, dein Zug ist verloren.",
+      "lastHold": "{name} sichert {total} ({rolls})",
+      "lastHoldYou": "Du sicherst {total} ({rolls})",
+      "lastBust": "{name}: {rolls}, Zug verloren",
+      "lastBustYou": "Deine Würfe: {rolls}, Zug verloren",
       "turnTotal": "In diesem Zug: {total}",
       "goal": "Ziel: {goal}",
       "roll": "Würfeln",
@@ -116,7 +121,10 @@
       "throws": "noch {count} Würfe",
       "cargo": "Ladung {value}",
       "noCrew": "Noch keine Mannschaft an Bord",
-      "last": "{name} segelt mit {score} heim"
+      "last": "{name} segelt mit {score} heim ({dice})",
+      "lastYou": "Du segelst mit {score} heim ({dice})",
+      "lastEmpty": "{name} hat keine Mannschaft gefunden und segelt leer heim",
+      "lastEmptyYou": "Du hast keine Mannschaft gefunden und segelst leer heim"
     },
     "Liars": {
       "yourDice": "Deine Würfel",
@@ -126,8 +134,10 @@
       "call": "Lügner!",
       "noBid": "Noch keine Wette.",
       "currentBid": "{name} wettet {count} ×",
-      "revealHolds": "{caller} zweifelte an der Wette von {name} auf {count}, und {shown} liegen auf dem Tisch. Die Wette hält, {loser} verliert einen Würfel.",
-      "revealLie": "{caller} zweifelte an der Wette von {name} auf {count}, und nur {shown} liegen auf dem Tisch. Gelogen, {loser} verliert einen Würfel."
+      "revealHolds": "{name} wettete auf {count} × {face}, {caller} zweifelte die Wette an. Auf dem Tisch: {shown}. Die Wette hält, {loser} verliert einen Würfel.",
+      "revealLie": "{name} wettete auf {count} × {face}, {caller} zweifelte die Wette an. Auf dem Tisch: nur {shown}. Gelogen, {loser} verliert einen Würfel.",
+      "lastRound": "Vorige Runde, die Becher sind neu geschüttelt",
+      "lastLift": "Die zuletzt gehobenen Becher"
     },
     "Twentyone": {
       "hit": "Karte",
@@ -183,7 +193,7 @@
       "personal": "Für dich",
       "save": "Speichern",
       "menuLabel": "Einstellungen der Taverne",
-      "menuHint": "Die Spiele im Angebot, die Chatnachrichten und das Ziel bei Pig in einem Fenster. Das Zahnrad in der Titelleiste der Taverne öffnet es auch.",
+      "menuHint": "Die Spiele im Angebot, die Chatnachrichten und das Ziel bei Schweinchen in einem Fenster. Das Zahnrad in der Titelleiste der Taverne öffnet es auch.",
       "seatsFixed": "{count} Spieler",
       "seatsRange": "{min} bis {max} Spieler"
     },

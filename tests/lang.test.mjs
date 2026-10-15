@@ -76,3 +76,32 @@ test("every key used by scripts and templates exists", async () => {
   assert.deepEqual(missing, []);
 });
 
+
+test("sentences about a seat have a variant for the user, with the same placeholders but the name", () => {
+  const get = (obj, key) => key.split(".").reduce((o, k) => o?.[k], obj);
+  const holes = s => [...String(s).matchAll(/\{(\w+)\}/g)].map(m => m[1]).sort();
+  for ( const key of ["Pig.busted", "Pig.lastHold", "Pig.lastBust", "Ship.last", "Ship.lastEmpty"] ) {
+    for ( const lang of [en, de] ) {
+      const other = get(lang.STG, key);
+      const own = get(lang.STG, `${key}You`);
+      assert.ok(other?.includes("{name}"), key);
+      assert.ok(own && !own.includes("{name}"), `${key}You`);
+      assert.deepEqual(holes(own), holes(other).filter(h => h !== "name"), `${key}You`);
+    }
+  }
+});
+
+test("the reveal at liar's dice names the bid with its face inside the sentence", () => {
+  for ( const lang of [en, de] ) {
+    for ( const key of ["revealHolds", "revealLie"] ) assert.match(lang.STG.Liars[key], /\{count\} × \{face\}/, key);
+  }
+});
+
+test("German calls Pig Schweinchen and Bertram has a name that fits into sentences", () => {
+  const strings = keysOf(de).map(key => key.split(".").reduce((o, k) => o[k], de));
+  assert.deepEqual(strings.filter(s => /\bPig\b/.test(s)), []);
+  assert.equal(de.STG.Game.pig.name, "Schweinchen");
+  assert.equal(de.STG.Guest.bertram.name, "Bertram Graubart");
+  assert.equal(en.STG.Game.pig.name, "Pig");
+  assert.equal(en.STG.Guest.bertram.name, "Old Bertram");
+});

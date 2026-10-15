@@ -2,12 +2,16 @@
  * Pig, the dice game of greed: on your turn roll a die as often as you like and add the pips, or hold and bank the
  * sum. A one ends the turn and loses its sum. Whoever banks the goal first wins. Two to four seats.
  * State: {scores: number[], turnTotal: number, turn: number, rolls: number[], goal: number, lastRoll: number|null,
- *   busted: boolean, out: boolean[]}
+ *   busted: boolean, out: boolean[], lastTurn: {seat, rolls: number[], outcome: "hold"|"bust", banked: number}|null}
+ * lastTurn keeps the turn finished last, so everyone can follow a guest's quick rolls.
  * A player who leaves a running game is out: the others play on, the last one left wins.
  */
 
 /** The goal when the world does not set another one. */
 export const GOAL = 50;
+
+/** Pause before a tavern guest rolls, a little longer than in the other games so everyone sees the dice. */
+export const GUEST_DELAY = 1200;
 
 /**
  * A die roll from a random number in [0, 1).
@@ -37,6 +41,7 @@ export const pig = {
   id: "pig",
   seats: {min: 2, max: 4},
   guests: true,
+  guestDelay: GUEST_DELAY,
 
   /**
    * @param {() => number} rng
@@ -45,7 +50,7 @@ export const pig = {
    */
   init(rng, seats, {goal=GOAL}={}) {
     return {scores: Array(seats).fill(0), turnTotal: 0, turn: 0, rolls: [], goal, lastRoll: null, busted: false,
-      out: Array(seats).fill(false)};
+      out: Array(seats).fill(false), lastTurn: null};
   },
 
   moves(state, seat) {
@@ -69,6 +74,7 @@ export const pig = {
       next.turn = nextSeat(next, seat);
     };
     if ( move === "hold" ) {
+      next.lastTurn = {seat, rolls: [...state.rolls], outcome: "hold", banked: state.turnTotal};
       next.scores[seat] += state.turnTotal;
       next.lastRoll = null;
       if ( next.scores[seat] < next.goal ) pass();
@@ -78,6 +84,7 @@ export const pig = {
     const roll = d6(rng);
     next.lastRoll = roll;
     if ( roll === 1 ) {
+      next.lastTurn = {seat, rolls: [...state.rolls, roll], outcome: "bust", banked: 0};
       next.busted = true;
       pass();
       return next;

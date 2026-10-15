@@ -2,7 +2,7 @@
   "id": "sephrals-tavern-games",
   "title": "Sephral’s Tavern Games",
   "description": "Games for the tavern table: tic-tac-toe, four in a row, nine men's morris, the matchstick game, the dice games Pig, liar's dice and ship, captain and crew, and twenty-one. Play against each other or against the regulars of the tavern, watch the others play and see who wins in the chat.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "compatibility": {
     "minimum": 13,
     "verified": "14.369"

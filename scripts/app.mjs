@@ -21,6 +21,9 @@ export {ICONS};
 /** Die faces as Font Awesome icons. */
 const DICE = ["", "fa-dice-one", "fa-dice-two", "fa-dice-three", "fa-dice-four", "fa-dice-five", "fa-dice-six"];
 
+/** Stands in for the die icon while a sentence is localized, so the icon can sit inside the sentence. */
+const FACE_MARK = "\u0001";
+
 /** Suit symbols. */
 const SUITS = {S: "♠", H: "♥", D: "♦", C: "♣"};
 
@@ -138,6 +141,9 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
   /** Tables whose dice are being asked for. */
   #peeking = new Set();
 
+  /** The user opened or closed the box of the last round at liar's dice: {key, open}. */
+  revealToggle = null;
+
   /** @override */
   get title() {
     return t("STG.Title");
@@ -172,6 +178,11 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
       gear.setAttribute("aria-label", t("STG.Config.open"));
     }
     this.#peekDice();
+    // The box of the last round at liar's dice remembers whether the user opened or closed it
+    const details = this.element.querySelector("details.stg-reveal");
+    details?.querySelector("summary")?.addEventListener("click", () => {
+      this.revealToggle = {key: details.dataset.key, open: !details.open};
+    });
   }
 
   /**
@@ -239,6 +250,8 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
         winner: !!table.result?.winners?.includes(i), left: !!seat.left}))
     };
     const left = (me >= 0) && !!table.seats[me].left;
+    // Only who sits at a running table sees the game's buttons, the spectators just watch
+    view.seated = playing && (me >= 0) && !left;
     // What the user may do at this table
     const free = g.seats.max - table.seats.length;
     view.canJoin = (table.status === "open") && (me < 0) && (free > 0);
@@ -256,6 +269,19 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
     }
     if ( state ) Object.assign(view, this.#boardView(table, myTurn, me));
     return view;
+  }
+
+  /**
+   * The name of a seat as a sentence starts with it: the user reads "You" instead of their own name.
+   * @param {object} table
+   * @param {number} seat
+   * @param {number} me
+   * @param {string} key      Localization key, with a variant for the user ending in "You"
+   * @param {object} [data]
+   * @returns {string}
+   */
+  #say(table, seat, me, key, data={}) {
+    return (seat === me) ? t(`${key}You`, data) : t(key, {...data, name: seatName(table.seats[seat])});
   }
 
   /**
@@ -290,12 +316,7 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
           takes: [1, 2, 3].map(n => ({n, playable: myTurn && (n <= s.left)})),
           last: s.taken.at(-1) ? t("STG.Matches.took", {name: seatName(table.seats[s.taken.at(-1).seat]),
             count: s.taken.at(-1).count}) : ""}};
-      case "pig":
-        return {pig: {goal: s.goal, turnTotal: s.turnTotal, rolls: s.rolls.map(n => DICE[n]),
-          lastRoll: s.lastRoll ? DICE[s.lastRoll] : "", busted: s.busted,
-          scores: table.seats.map((seat, i) => ({name: seatName(seat), score: s.scores[i], left: !!seat.left,
-            percent: Math.min(100, Math.round((s.scores[i] / s.goal) * 100)), isTurn: s.turn === i})),
-          canRoll: myTurn, canHold: myTurn && (s.turnTotal > 0)}};
+      case "pig": return {pig: this.#pigView(table, myTurn, me)};
       case "twentyone": {
         const done = s.phase === "done";
         return {twentyone: {
@@ -313,6 +334,29 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
       case "ship": return {ship: this.#shipView(table, myTurn, me)};
     }
     return {};
+  }
+
+  /**
+   * Pig: the scores, the turn running, who rolled the one and how the last turn ended.
+   * @param {object} table
+   * @param {boolean} myTurn
+   * @param {number} me
+   * @returns {object}
+   */
+  #pigView(table, myTurn, me) {
+    const s = table.state;
+    const last = s.lastTurn;
+    // Tables of an older version have no last turn: the last move tells who rolled the one
+    const buster = last?.outcome === "bust" ? last.seat : table.lastMove?.seat;
+    let lastTurn = "";
+    if ( last?.outcome === "hold" ) lastTurn = this.#say(table, last.seat, me, "STG.Pig.lastHold", {total: last.banked, rolls: last.rolls.join(", ")});
+    else if ( last?.outcome === "bust" ) lastTurn = this.#say(table, last.seat, me, "STG.Pig.lastBust", {rolls: last.rolls.join(", ")});
+    return {goal: s.goal, turnTotal: s.turnTotal, rolls: s.rolls.map(n => DICE[n]),
+      lastRoll: s.lastRoll ? DICE[s.lastRoll] : "", busted: s.busted,
+      bust: s.busted ? this.#say(table, buster, me, "STG.Pig.busted") : "", lastTurn,
+      scores: table.seats.map((seat, i) => ({name: seatName(seat), score: s.scores[i], left: !!seat.left,
+        percent: Math.min(100, Math.round((s.scores[i] / s.goal) * 100)), isTurn: s.turn === i})),
+      canRoll: myTurn, canHold: myTurn && (s.turnTotal > 0)};
   }
 
   /**
@@ -360,15 +404,17 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
     const peek = this.peeked.get(table.id);
     const mine = (peek?.rollId === s.rollId) ? peek.dice : null;
     const total = s.counts.reduce((a, b) => a + b, 0);
+    const playing = table.status === "playing";
     const view = {
       cups: table.seats.map((seat, i) => ({name: seatName(seat), count: s.counts[i], dice: Array(s.counts[i]).fill(0),
         isTurn: s.turn === i, out: s.counts[i] === 0, isMe: i === me})),
-      mine: mine?.map(n => ({icon: DICE[n]})) ?? null, seated: (me >= 0) && !table.seats[me].left && (s.counts[me] > 0),
+      mine: mine?.map(n => ({icon: DICE[n]})) ?? null, seated: playing && (me >= 0) && !table.seats[me].left && (s.counts[me] > 0),
       bid: s.bid ? t("STG.Liars.currentBid", {name: seatName(table.seats[s.bid.seat]), count: s.bid.count}) : t("STG.Liars.noBid"),
       bidFace: s.bid ? DICE[s.bid.face] : "",
       canBid: myTurn, canCall: myTurn && !!s.bid
     };
-    if ( myTurn ) {
+    // The players see the bid form all the time, it opens on their turn
+    if ( view.seated ) {
       const first = s.bid ? s.bid.count : 1;
       const suggested = s.bid ? (s.bid.face < 6 ? s.bid.face + 1 : 1) : 6;
       view.counts = Array.from({length: total - first + 1}, (_, k) => ({n: first + k,
@@ -377,12 +423,21 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
     }
     if ( s.reveal ) {
       const r = s.reveal;
+      // The die of the bid sits inside the sentence
+      const text = t(r.holds ? "STG.Liars.revealHolds" : "STG.Liars.revealLie", {caller: seatName(table.seats[r.caller]),
+        name: seatName(table.seats[r.bid.seat]), count: r.bid.count, face: FACE_MARK, shown: r.shown,
+        loser: seatName(table.seats[r.loser])});
+      const [before, ...after] = text.split(FACE_MARK);
+      // The box shows the round before: once the new round has its first bid it folds to one line
+      const final = table.status === "done";
+      const key = `${table.id}:${r.round}`;
+      const toggled = (this.revealToggle?.key === key) ? this.revealToggle.open : null;
       view.reveal = {
         cups: table.seats.map((seat, i) => ({name: seatName(seat), dice: (r.dice[i] ?? []).map(n => ({icon: DICE[n], hit: n === r.bid.face}))}))
           .filter(cup => cup.dice.length),
-        text: t(r.holds ? "STG.Liars.revealHolds" : "STG.Liars.revealLie", {caller: seatName(table.seats[r.caller]),
-          name: seatName(table.seats[r.bid.seat]), count: r.bid.count, shown: r.shown, loser: seatName(table.seats[r.loser])}),
-        face: DICE[r.bid.face]
+        before, after: after.join(""), face: DICE[r.bid.face], key, final,
+        label: t(final ? "STG.Liars.lastLift" : "STG.Liars.lastRound"),
+        open: toggled ?? (final || !s.bid)
       };
     }
     return view;
@@ -406,10 +461,24 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
       cargo: s.crew ? t("STG.Ship.cargo", {value: cargo(s)}) : t("STG.Ship.noCrew"),
       scores: table.seats.map((seat, i) => ({name: seatName(seat), score: s.scores[i], played: s.scores[i] !== null,
         isTurn: s.turn === i, left: !!seat.left, winner: !!table.result?.winners?.includes(i)})),
-      last: s.last ? t("STG.Ship.last", {name: seatName(table.seats[s.last.seat]), score: s.last.score}) : "",
+      last: s.last ? this.#shipLast(table, s.last, me) : "",
       done: table.status === "done",
       canRoll: moves.includes("roll"), canStop: moves.includes("stop")
     };
+  }
+
+  /**
+   * The line about the turn finished last at ship, captain and crew.
+   * @param {object} table
+   * @param {{seat: number, score: number, crew?: boolean, dice?: number[]}} last
+   * @param {number} me
+   * @returns {string}
+   */
+  #shipLast(table, last, me) {
+    // Tables of an older version know only the score
+    const crew = last.crew ?? (last.score > 0);
+    if ( !crew ) return this.#say(table, last.seat, me, "STG.Ship.lastEmpty");
+    return this.#say(table, last.seat, me, "STG.Ship.last", {score: last.score, dice: (last.dice ?? []).join(" + ") || last.score});
   }
 
   /* -------------------------------------------- */

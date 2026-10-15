@@ -72,7 +72,7 @@
       "game": "Game",
       "opponent": "Opponent",
       "players": "Wait for other players",
-      "newHint": "Against a regular the game starts right away. Otherwise the table waits until somebody joins, and at Pig the host can invite regulars to the free seats. Twenty-one is always played against the house: pick a regular to play alone, or wait for others to join you.",
+      "newHint": "Against a regular the game starts right away. Otherwise the table waits until somebody joins, and in the games for more players the host can invite regulars to the free seats. Twenty-one is always played against the house: pick a regular to play alone, or wait for others to join you.",
       "open": "Open the table",
       "join": "Join",
       "start": "Start",
@@ -81,7 +81,7 @@
       "invite": "Invite",
       "rematch": "Play again",
       "leave": "Leave",
-      "leaveConfirm": "Leave the running game? It counts as lost. At Pig and twenty-one the others play on.",
+      "leaveConfirm": "Leave the running game? It counts as lost. In the games for more players the others play on.",
       "close": "Take the table away",
       "waiting": "Waiting for players. Free seats: {free}.",
       "yourTurn": "Your turn.",
@@ -95,7 +95,12 @@
       "took": "{name} took {count}"
     },
     "Pig": {
-      "busted": "A one! The turn is lost.",
+      "busted": "{name} rolls a one, the turn is lost.",
+      "bustedYou": "You roll a one, your turn is lost.",
+      "lastHold": "{name} banks {total} ({rolls})",
+      "lastHoldYou": "You bank {total} ({rolls})",
+      "lastBust": "{name}: {rolls}, turn lost",
+      "lastBustYou": "Your rolls: {rolls}, turn lost",
       "turnTotal": "This turn: {total}",
       "goal": "Goal: {goal}",
       "roll": "Roll",
@@ -116,7 +121,10 @@
       "throws": "{count} throws left",
       "cargo": "Cargo {value}",
       "noCrew": "No crew aboard yet",
-      "last": "{name} sails home with {score}"
+      "last": "{name} sails home with {score} ({dice})",
+      "lastYou": "You sail home with {score} ({dice})",
+      "lastEmpty": "{name} found no crew and sails home empty",
+      "lastEmptyYou": "You found no crew and sail home empty"
     },
     "Liars": {
       "yourDice": "Your dice",
@@ -126,8 +134,10 @@
       "call": "Liar!",
       "noBid": "No bid yet.",
       "currentBid": "{name} bids {count} ×",
-      "revealHolds": "{caller} doubted the bid of {name} on {count}, and {shown} lie on the table. The bid holds, {loser} loses a die.",
-      "revealLie": "{caller} doubted the bid of {name} on {count}, and only {shown} lie on the table. A lie, {loser} loses a die."
+      "revealHolds": "{name} bid {count} × {face}, {caller} doubted it. On the table: {shown}. The bid holds, {loser} loses a die.",
+      "revealLie": "{name} bid {count} × {face}, {caller} doubted it. On the table: only {shown}. A lie, {loser} loses a die.",
+      "lastRound": "Last round, the cups are shaken again",
+      "lastLift": "The cups lifted last"
     },
     "Twentyone": {
       "hit": "Card",

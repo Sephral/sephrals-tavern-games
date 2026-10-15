@@ -4,11 +4,16 @@
  * two other dice are the cargo, and the player may throw them again or stop. Without a crew there is no cargo. Every
  * player has one turn, the richest cargo wins; equal cargo shares the win. Two to four seats.
  * Moves: "roll" and "stop". State: {scores: (number|null)[], turn: number, throws: number, dice: number[],
- *   ship: boolean, captain: boolean, crew: boolean, out: boolean[], last: {seat, score}|null}
+ *   ship: boolean, captain: boolean, crew: boolean, out: boolean[],
+ *   last: {seat, score, crew: boolean, dice: number[], throws: number}|null}
+ * last keeps the turn finished last, so everyone can follow a guest's quick throws.
  */
 
 /** Throws per turn. */
 export const THROWS = 3;
+
+/** Pause before a tavern guest throws, a little longer than in the other games so everyone sees the dice. */
+export const GUEST_DELAY = 1200;
 
 /**
  * A die roll.
@@ -47,7 +52,7 @@ function nextToPlay(state, from) {
  */
 function endTurn(state, seat, score) {
   state.scores[seat] = score;
-  state.last = {seat, score};
+  state.last = {seat, score, crew: state.crew, dice: state.crew ? [...state.dice] : [], throws: state.throws};
   Object.assign(state, {throws: 0, dice: [], ship: false, captain: false, crew: false});
   state.turn = nextToPlay(state, seat + 1);
 }
@@ -56,6 +61,7 @@ export const ship = {
   id: "ship",
   seats: {min: 2, max: 4},
   guests: true,
+  guestDelay: GUEST_DELAY,
 
   init(rng, seats) {
     return {scores: Array(seats).fill(null), turn: 0, throws: 0, dice: [], ship: false, captain: false, crew: false,

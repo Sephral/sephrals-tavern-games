@@ -10,7 +10,7 @@ import {GUESTS, gameOffered, game as rules, publicState} from "./games/index.mjs
 /** Finished tables kept in the list. */
 const KEEP_DONE = 8;
 
-/** Pause before a tavern guest moves, so everyone can follow. */
+/** Pause before a tavern guest moves, so everyone can follow. A game may set its own (guestDelay). */
 const GUEST_DELAY = 900;
 
 /** Full states with hidden information, by table id (active GM only). */
@@ -129,8 +129,8 @@ async function syncPublic(id) {
 function start(table) {
   const g = rules(table.game);
   const state = g.init(rng, table.seats.length, {goal: setting("pigGoal")});
-  full.set(table.id, state);
-  return {...table, status: "playing", state: publicState(g, state), result: null, started: Date.now()};
+  // A game can be decided by the deal alone (twenty-one with two cards for everyone)
+  return settle({...table, status: "playing", result: null, started: Date.now()}, state);
 }
 
 /**
@@ -279,6 +279,7 @@ const ACTIONS = {
     const ready = !!guest;
     if ( ready ) table = start(table);
     await save([...tables(), table]);
+    if ( table.status === "done" ) await postResult(table);
     if ( !ready ) {
       await postCard("invite", `<p class="stg-card-title"><i class="fa-solid fa-beer-mug-empty" inert></i> `
         + `${esc(loc("STG.Card.invite", {name: seatName(seats[0]), game: loc(`STG.Game.${gameId}.name`)}))}</p>`
@@ -299,6 +300,7 @@ const ACTIONS = {
       const seated = {...t, seats: [...t.seats, userSeat(user)]};
       return (seated.seats.length >= g.seats.max) && (g.seats.max === 2) ? start(seated) : seated;
     });
+    if ( next.status === "done" ) await postResult(next);
     return ok({tableId: next.id});
   },
 
@@ -310,10 +312,11 @@ const ACTIONS = {
     const g = rules(table.game);
     if ( (table.status !== "open") || !g.guests ) return fail("STG.Error.notOpen");
     if ( table.seats.length >= g.seats.max ) return fail("STG.Error.full");
-    await update(tableId, t => {
+    const next = await update(tableId, t => {
       const seated = {...t, seats: [...t.seats, guestSeat(guest)]};
       return (seated.seats.length >= g.seats.max) && (g.seats.max === 2) ? start(seated) : seated;
     });
+    if ( next.status === "done" ) await postResult(next);
     return ok({tableId});
   },
 
@@ -324,7 +327,8 @@ const ACTIONS = {
     if ( (table.host !== user.id) && !user.isGM ) return fail("STG.Error.notHost");
     if ( table.status !== "open" ) return fail("STG.Error.notOpen");
     if ( table.seats.length < rules(table.game).seats.min ) return fail("STG.Error.tooFew");
-    await update(tableId, start);
+    const next = await update(tableId, start);
+    if ( next.status === "done" ) await postResult(next);
     return ok({tableId});
   },
 
@@ -351,10 +355,11 @@ const ACTIONS = {
     // Who left the table does not play again
     const stay = table.seats.filter(seat => !seat.left);
     if ( stay.length < rules(table.game).seats.min ) return fail("STG.Error.tooFew");
-    await update(tableId, t => {
+    const next = await update(tableId, t => {
       const seats = (stay.length === 2) ? [stay[1], stay[0]] : stay;
       return start({...t, seats, round: (t.round ?? 1) + 1});
     });
+    if ( next.status === "done" ) await postResult(next);
     return ok({tableId});
   },
 
@@ -417,6 +422,15 @@ const ACTIONS = {
 };
 
 /**
+ * The pause before a tavern guest moves in a game.
+ * @param {string} gameId
+ * @returns {number}
+ */
+function guestDelay(gameId) {
+  return rules(gameId).guestDelay ?? GUEST_DELAY;
+}
+
+/**
  * Let the tavern guests play while it is their turn.
  * @param {string} tableId
  */
@@ -427,7 +441,7 @@ async function guestTurns(tableId) {
     const seat = table.state?.turn;
     const occupant = table.seats[seat];
     if ( (seat === null) || (seat === undefined) || (occupant?.kind !== "guest") ) return;
-    await new Promise(resolve => setTimeout(resolve, GUEST_DELAY));
+    await new Promise(resolve => setTimeout(resolve, guestDelay(table.game)));
     const done = await (queue = queue.then(async () => {
       const current = tableById(tableId);
       if ( !current || (current.status !== "playing") || (current.state.turn !== seat) ) return true;
@@ -457,4 +471,4 @@ export function resumeGuests() {
   }
 }
 
-export const __test__ = {ACTIONS};
+export const __test__ = {ACTIONS, guestDelay, GUEST_DELAY, start};

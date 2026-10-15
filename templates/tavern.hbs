@@ -76,11 +76,13 @@
             {{#each table.matches.sticks}}<span class="stg-stick {{#if gone}}gone{{/if}}"></span>{{/each}}
           </div>
           <p class="stg-note">{{localize "STG.Matches.left" count=table.matches.left}}{{#if table.matches.last}} · {{table.matches.last}}{{/if}}</p>
+          {{#if table.seated}}
           <div class="stg-buttons">
             {{#each table.matches.takes}}
             <button type="button" {{#if playable}}data-action="play" data-move="{{n}}"{{else}}disabled{{/if}}>{{localize "STG.Matches.take" count=n}}</button>
             {{/each}}
           </div>
+          {{/if}}
         </div>
         {{/if}}
 
@@ -97,13 +99,16 @@
           </ol>
           <div class="stg-pig-turn {{#if table.pig.busted}}busted{{/if}}">
             {{#if table.pig.lastRoll}}<i class="fa-solid {{table.pig.lastRoll}} stg-die" inert></i>{{/if}}
-            <span>{{#if table.pig.busted}}{{localize "STG.Pig.busted"}}{{else}}{{localize "STG.Pig.turnTotal" total=table.pig.turnTotal}}{{/if}}</span>
+            <span>{{#if table.pig.busted}}{{table.pig.bust}}{{else}}{{localize "STG.Pig.turnTotal" total=table.pig.turnTotal}}{{/if}}</span>
           </div>
           <p class="stg-note">{{localize "STG.Pig.goal" goal=table.pig.goal}}</p>
+          {{#if table.pig.lastTurn}}<p class="stg-note stg-last-turn">{{table.pig.lastTurn}}</p>{{/if}}
+          {{#if table.seated}}
           <div class="stg-buttons">
             <button type="button" {{#if table.pig.canRoll}}data-action="play" data-move="roll"{{else}}disabled{{/if}}><i class="fa-solid fa-dice" inert></i> {{localize "STG.Pig.roll"}}</button>
             <button type="button" {{#if table.pig.canHold}}data-action="play" data-move="hold"{{else}}disabled{{/if}}><i class="fa-solid fa-hand" inert></i> {{localize "STG.Pig.hold"}}</button>
           </div>
+          {{/if}}
         </div>
         {{/if}}
 
@@ -144,22 +149,23 @@
           </div>
           {{/if}}
           <p class="stg-bid">{{table.liars.bid}}{{#if table.liars.bidFace}} <i class="fa-solid {{table.liars.bidFace}} stg-die" inert></i>{{/if}}</p>
-          {{#if table.liars.canBid}}
+          {{#if table.liars.seated}}
           <div class="stg-buttons stg-bid-form">
-            <select name="liarsCount" aria-label="{{localize "STG.Liars.count"}}">{{#each table.liars.counts}}<option value="{{n}}" {{#if selected}}selected{{/if}}>{{n}}</option>{{/each}}</select>
+            <select name="liarsCount" aria-label="{{localize "STG.Liars.count"}}" {{#unless table.liars.canBid}}disabled{{/unless}}>{{#each table.liars.counts}}<option value="{{n}}" {{#if selected}}selected{{/if}}>{{n}}</option>{{/each}}</select>
             <span>×</span>
-            <select name="liarsFace" aria-label="{{localize "STG.Liars.face"}}">{{#each table.liars.faces}}<option value="{{n}}" {{#if selected}}selected{{/if}}>{{n}}</option>{{/each}}</select>
-            <button type="button" data-action="liarsBid"><i class="fa-solid fa-comment" inert></i> {{localize "STG.Liars.bid"}}</button>
-            {{#if table.liars.canCall}}<button type="button" data-action="play" data-move="call"><i class="fa-solid fa-hand-point-up" inert></i> {{localize "STG.Liars.call"}}</button>{{/if}}
+            <select name="liarsFace" aria-label="{{localize "STG.Liars.face"}}" {{#unless table.liars.canBid}}disabled{{/unless}}>{{#each table.liars.faces}}<option value="{{n}}" {{#if selected}}selected{{/if}}>{{n}}</option>{{/each}}</select>
+            <button type="button" {{#if table.liars.canBid}}data-action="liarsBid"{{else}}disabled{{/if}}><i class="fa-solid fa-comment" inert></i> {{localize "STG.Liars.bid"}}</button>
+            <button type="button" {{#if table.liars.canCall}}data-action="play" data-move="call"{{else}}disabled{{/if}}><i class="fa-solid fa-hand-point-up" inert></i> {{localize "STG.Liars.call"}}</button>
           </div>
           {{/if}}
           {{#if table.liars.reveal}}
-          <div class="stg-reveal">
-            <p>{{table.liars.reveal.text}} <i class="fa-solid {{table.liars.reveal.face}} stg-die" inert></i></p>
+          <details class="stg-reveal {{#if table.liars.reveal.final}}final{{/if}}" data-key="{{table.liars.reveal.key}}" {{#if table.liars.reveal.open}}open{{/if}}>
+            <summary><i class="fa-solid fa-clock-rotate-left" inert></i> {{table.liars.reveal.label}}</summary>
+            <p class="stg-reveal-text">{{table.liars.reveal.before}}<i class="fa-solid {{table.liars.reveal.face}} stg-die hit" inert></i>{{table.liars.reveal.after}}</p>
             {{#each table.liars.reveal.cups}}
             <p class="stg-reveal-cup"><span>{{name}}</span> {{#each dice}}<i class="fa-solid {{icon}} stg-die {{#if hit}}hit{{/if}}" inert></i>{{/each}}</p>
             {{/each}}
-          </div>
+          </details>
           {{/if}}
         </div>
         {{/if}}
@@ -181,11 +187,14 @@
             {{/each}}
           </div>
           <div class="stg-ship-dice">{{#each table.ship.dice}}<i class="fa-solid {{icon}} stg-die" inert></i>{{/each}}</div>
-          <p class="stg-note">{{table.ship.cargo}} · {{table.ship.throwsLeft}}{{#if table.ship.last}} · {{table.ship.last}}{{/if}}</p>
+          <p class="stg-note">{{table.ship.cargo}} · {{table.ship.throwsLeft}}</p>
+          {{#if table.ship.last}}<p class="stg-note stg-last-turn">{{table.ship.last}}</p>{{/if}}
+          {{#if table.seated}}
           <div class="stg-buttons">
             <button type="button" {{#if table.ship.canRoll}}data-action="play" data-move="roll"{{else}}disabled{{/if}}><i class="fa-solid fa-dice" inert></i> {{localize "STG.Ship.roll"}}</button>
             <button type="button" {{#if table.ship.canStop}}data-action="play" data-move="stop"{{else}}disabled{{/if}}><i class="fa-solid fa-anchor" inert></i> {{localize "STG.Ship.stop"}}</button>
           </div>
+          {{/if}}
           {{else}}
           {{#if table.ship.last}}<p class="stg-note">{{table.ship.last}}</p>{{/if}}
           {{/unless}}
@@ -205,10 +214,12 @@
             <span class="stg-cards">{{#each cards}}<span class="stg-card {{#if red}}red{{/if}}">{{label}}<small>{{suit}}</small></span>{{/each}}</span>
           </div>
           {{/each}}
+          {{#if table.seated}}
           <div class="stg-buttons">
             <button type="button" {{#if table.twentyone.canPlay}}data-action="play" data-move="hit"{{else}}disabled{{/if}}><i class="fa-solid fa-plus" inert></i> {{localize "STG.Twentyone.hit"}}</button>
             <button type="button" {{#if table.twentyone.canPlay}}data-action="play" data-move="stand"{{else}}disabled{{/if}}><i class="fa-solid fa-hand" inert></i> {{localize "STG.Twentyone.stand"}}</button>
           </div>
+          {{/if}}
         </div>
         {{/if}}
 

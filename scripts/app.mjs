@@ -15,6 +15,7 @@ import {winningLine as tttLine} from "./games/tictactoe.mjs";
 import {handValue} from "./games/twentyone.mjs";
 import {request} from "./net.mjs";
 import {resultText, seatName, tables} from "./tables.mjs";
+import {markUsed} from "./usage.mjs";
 
 export {ICONS};
 
@@ -38,6 +39,7 @@ export async function openTavern({tableId}={}) {
   if ( tableId ) app.tableId = tableId;
   await app.render({force: true});
   app.bringToFront?.();
+  markUsed(MODULE_ID);
   return app;
 }
 

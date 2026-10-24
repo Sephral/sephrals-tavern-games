@@ -6,9 +6,14 @@
 
 import {MODULE_ID, esc, setting, t as loc} from "./config.mjs";
 import {GUESTS, gameOffered, game as rules, publicState} from "./games/index.mjs";
+import {countFeature} from "./usage.mjs";
 
 /** Finished tables kept in the list. */
 const KEEP_DONE = 8;
+
+/** Usage counters by game, counted once per game started (also a rematch). */
+export const GAME_FEATURES = {tictactoe: "gameTictactoe", fourinarow: "gameFourinarow", morris: "gameMorris",
+  matches: "gameMatches", pig: "gamePig", ship: "gameShip", liars: "gameLiars", twentyone: "gameTwentyone"};
 
 /** Pause before a tavern guest moves, so everyone can follow. A game may set its own (guestDelay). */
 const GUEST_DELAY = 900;
@@ -129,6 +134,7 @@ async function syncPublic(id) {
 function start(table) {
   const g = rules(table.game);
   const state = g.init(rng, table.seats.length, {goal: setting("pigGoal")});
+  if ( GAME_FEATURES[table.game] ) countFeature(MODULE_ID, GAME_FEATURES[table.game]);
   // A game can be decided by the deal alone (twenty-one with two cards for everyone)
   return settle({...table, status: "playing", result: null, started: Date.now()}, state);
 }

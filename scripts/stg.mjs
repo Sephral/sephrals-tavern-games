@@ -6,13 +6,15 @@ import {registerSocket, request} from "./net.mjs";
 import {noticeNewVersions, runSelfTest} from "./selftest.mjs";
 import {registerSettings} from "./settings.mjs";
 import {openSettings} from "./config-app.mjs";
-import {handleRequest, resumeGuests, tables} from "./tables.mjs";
+import {GAME_FEATURES, handleRequest, resumeGuests, tables} from "./tables.mjs";
+import {registerUsage} from "./usage.mjs";
 
 /** The tool in the token controls. */
 const TOOL = "stg-tavern";
 
 Hooks.once("init", () => {
   registerSettings();
+  registerUsage(MODULE_ID, {features: Object.values(GAME_FEATURES), settings: ["chatCards", "pigGoal"]});
   Hooks.on("getSceneControlButtons", onGetSceneControlButtons);
   Hooks.on("renderChatMessageHTML", onRenderChatMessage);
   game.modules.get(MODULE_ID).api = {

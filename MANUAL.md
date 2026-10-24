@@ -4,7 +4,7 @@
 
 Open the tavern from the token controls on the left (mug icon) or with the button of a tavern chat message. The tables are on the left, the chosen table on the right. Everyone sees every table and can watch. The gear in the title bar opens the tavern settings.
 
-* **New table:** pick the game and an opponent. The dialog shows the guide of the chosen game. Against a regular the game starts right away (games for more players with two seats). *Wait for other players* opens the table and posts an invitation in the chat; whoever clicks *Join* sits down.
+* **New table:** pick the game and an opponent. The dialog shows the guide of the chosen game. Against a regular the game starts right away (games for more players with two seats). *Wait for other players* opens the table and posts an invitation in the chat. Whoever clicks *Join* sits down.
 * **More seats:** Pig, liar's dice and ship, captain and crew take two to four players, twenty-one one to four. The host can invite regulars to free seats (not at twenty-one) and starts the game with *Start*.
 * **Your turn:** the line under the title says whose turn it is. When the tavern is closed and your turn comes, a notification tells you.
 * **Buttons:** the players at a table see the buttons of the game (roll, hold, take, card, bid and so on), greyed out while it is somebody else's turn. Spectators and whoever left the table see the board without buttons.
@@ -52,7 +52,7 @@ The gear in the tavern's title bar opens the tavern settings. The GM also finds 
 
 ## How it runs
 
-* The active GM's client runs every table. Players send their moves over the module socket; the server names the sender, so nobody can move for somebody else.
+* The active GM's client runs every table. Players send their moves over the module socket. The server names the sender, so nobody can move for somebody else.
 * The games switched off are kept in a world setting, so a game of a later version is on offer at once.
 * The tables are kept in a world setting, so everyone sees the same table and a reload changes nothing. The last eight finished tables stay in the list.
 * The dealer's face down card in twenty-one never leaves the GM's client until the players are done. At liar's dice nobody's dice go into the shared tables: every player asks the GM's client for their own dice. If the GM reloads, the cups are shaken again and everyone gets new dice for the round. If the GM reloads in the middle of a hand, a new face down card is dealt from the cards nobody has seen.

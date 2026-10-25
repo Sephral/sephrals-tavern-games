@@ -50,6 +50,19 @@ The gear in the tavern's title bar opens the tavern settings. The GM also finds 
 | Goal in Pig | The score that wins a game of Pig (20 to 100) |
 | Self test | Every game plays a round against itself (GM) |
 
+## Usage statistics
+
+The module can take part in a small usage report shared by all of Sephral’s modules. Nothing is counted or sent until the GM agrees: shortly after the world starts, the active GM is asked, and the question comes back at every start until there is an answer. The answer counts for all of Sephral’s modules in the world. *Share usage statistics* in the module settings turns the report on or off at any time, and *Manage statistics* below it shows what the report contains right now.
+
+With the GM’s consent only the active GM’s browser counts, and it sends at most one report a day. The question lists everything the report contains, from the Foundry version to a random world ID. For Tavern Games it holds:
+
+* on how many of the last 30 days the module was used
+* how often each game is started (one number per game)
+* the settings *Chat messages* and *Goal in Pig* (only the chosen option)
+* where errors occur in the module code: file, line and error type, never the error message
+
+No names, chat messages, notes, dice results or other content of the world are sent.
+
 ## How it runs
 
 * The active GM's client runs every table. Players send their moves over the module socket. The server names the sender, so nobody can move for somebody else.

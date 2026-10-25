@@ -17,6 +17,7 @@ Hooks.once("init", () => {
   registerUsage(MODULE_ID, {features: Object.values(GAME_FEATURES), settings: ["chatCards", "pigGoal"]});
   Hooks.on("getSceneControlButtons", onGetSceneControlButtons);
   Hooks.on("renderChatMessageHTML", onRenderChatMessage);
+  Hooks.on("renderChatInput", (app, elements) => addChatButton(elements?.["#chat-controls"]));
   game.modules.get(MODULE_ID).api = {
     /** Open the tavern, optionally at a table. */
     open: openTavern,
@@ -47,7 +48,40 @@ Hooks.once("ready", async () => {
   resumeGuests();
   noticeNewVersions();
   refreshTavern();
+  addChatButton(document.getElementById("chat-controls"));
 });
+
+/**
+ * The tavern button in the chat controls, for everyone. Foundry ignores the token controls while no scene is shown,
+ * so in theater of the mind this is the way in. Gamemasters get it next to Export and Clear, which Foundry hides
+ * while the chat floats over the canvas; players get their own group, hidden the same way.
+ * @param {HTMLElement|null} controls   The element #chat-controls, which Foundry moves between sidebar and canvas
+ */
+export function addChatButton(controls) {
+  if ( !(controls instanceof HTMLElement) ) return;
+  let button = controls.querySelector(".stg-chat-button");
+  if ( !button ) {
+    button = document.createElement("button");
+    button.type = "button";
+    button.className = "ui-control icon fa-solid fa-beer-mug-empty stg-chat-button";
+    button.dataset.tooltip = "";
+    button.addEventListener("click", event => {
+      event.preventDefault();
+      openTavern();
+    });
+    const core = game.user.isGM ? controls.querySelector(".control-buttons:not(.stg-chat-controls)") : null;
+    if ( core ) core.prepend(button);
+    else {
+      const group = document.createElement("div");
+      group.className = "control-buttons stg-chat-controls";
+      group.append(button);
+      controls.append(group);
+    }
+  }
+  button.setAttribute("aria-label", t("STG.Title"));
+  const group = button.closest(".stg-chat-controls");
+  if ( group ) group.hidden = !!controls.closest("#chat-notifications");
+}
 
 /**
  * Hook "getSceneControlButtons": the tavern in the token controls.

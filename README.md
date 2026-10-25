@@ -21,7 +21,7 @@
 ## How it works
 
 1. Enable the module.
-2. Open the tavern from the token controls and click *New table*.
+2. Open the tavern with the mug in the token controls or below the chat and click *New table*.
 3. Pick a game and a regular, or wait for a friend to join, and play.
 
 ## Good to know

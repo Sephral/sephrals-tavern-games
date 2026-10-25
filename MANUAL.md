@@ -2,7 +2,7 @@
 
 ## The tavern
 
-Open the tavern from the token controls on the left (mug icon) or with the button of a tavern chat message. The tables are on the left, the chosen table on the right. Everyone sees every table and can watch. The gear in the title bar opens the tavern settings.
+Open the tavern from the token controls on the left (mug icon), with the mug below the chat log or with the button of a tavern chat message. Foundry ignores the token controls while no scene is shown, so in theater of the mind the mug in the chat is the way in. It shows while the chat tab is open in the sidebar. The tables are on the left, the chosen table on the right. Everyone sees every table and can watch. The gear in the title bar opens the tavern settings.
 
 * **New table:** pick the game and an opponent. The dialog shows the guide of the chosen game. Against a regular the game starts right away (games for more players with two seats). *Wait for other players* opens the table and posts an invitation in the chat. Whoever clicks *Join* sits down.
 * **More seats:** Pig, liar's dice and ship, captain and crew take two to four players, twenty-one one to four. The host can invite regulars to free seats (not at twenty-one) and starts the game with *Start*.

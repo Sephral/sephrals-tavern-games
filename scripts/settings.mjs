@@ -29,6 +29,7 @@ function onLanguageChange(value) {
   applyModuleLanguage(value).then(() => {
     // The window title is part of the frame, which a normal redraw keeps
     foundry.applications.instances.get("stg-tavern")?.render({window: {title: t("STG.Title")}});
+    document.querySelector("#chat-controls .stg-chat-button")?.setAttribute("aria-label", t("STG.Title"));
     refreshTavern();
     ui.controls?.render({reset: true});
     if ( game.settings.sheet?.rendered ) game.settings.sheet.render();

@@ -1,10 +1,10 @@
 {
   "name": "sephrals-tavern-games",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check scripts/app.mjs && node --check scripts/config-app.mjs && node --check scripts/config.mjs && node --check scripts/games/fourinarow.mjs && node --check scripts/games/index.mjs && node --check scripts/games/liars.mjs && node --check scripts/games/matches.mjs && node --check scripts/games/morris.mjs && node --check scripts/games/pig.mjs && node --check scripts/games/ship.mjs && node --check scripts/games/tictactoe.mjs && node --check scripts/games/twentyone.mjs && node --check scripts/language.mjs && node --check scripts/net.mjs && node --check scripts/selftest.mjs && node --check scripts/settings.mjs && node --check scripts/stg.mjs && node --check scripts/tables.mjs",
+    "check": "node --check scripts/app.mjs && node --check scripts/config-app.mjs && node --check scripts/config.mjs && node --check scripts/debug.mjs && node --check scripts/debug-file.mjs && node --check scripts/games/fourinarow.mjs && node --check scripts/games/index.mjs && node --check scripts/games/liars.mjs && node --check scripts/games/matches.mjs && node --check scripts/games/morris.mjs && node --check scripts/games/pig.mjs && node --check scripts/games/ship.mjs && node --check scripts/games/tictactoe.mjs && node --check scripts/games/twentyone.mjs && node --check scripts/language.mjs && node --check scripts/net.mjs && node --check scripts/selftest.mjs && node --check scripts/settings.mjs && node --check scripts/stg.mjs && node --check scripts/tables.mjs",
     "check:manifest": "node build/validate-manifest.mjs",
     "test": "node --test",
     "test:coverage": "node --test --experimental-test-coverage",

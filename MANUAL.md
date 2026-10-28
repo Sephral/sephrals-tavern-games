@@ -49,6 +49,13 @@ The gear in the tavern's title bar opens the tavern settings. The GM also finds 
 | Chat messages | Invitations and results, only results, or none |
 | Goal in Pig | The score that wins a game of Pig (20 to 100) |
 | Self test | Every game plays a round against itself (GM) |
+| Save debug file | One file for bug reports about all of Sephral’s modules (GM). See [Debug file](#debug-file) |
+
+## Debug file
+
+For bug reports, the GM saves one file about all of Sephral’s modules in this world: `Save debug file` in the module settings, or `Save Debug File (Sephral’s Modules)` in the context menu of a chat message. It holds the versions of Foundry, the system and the active modules, the settings of the modules and what they recorded, for the tavern the tables in short (game, status, round, whose turn and who sits there), the games on offer and the GM who runs the tables. Hidden dice and the dealer's face down card never go into it. Macros call `game.modules.get("sephrals-tavern-games").api.saveDebugFile()`.
+
+The file contains chat text and whispers. Check it before you share it.
 
 ## Usage statistics
 
@@ -73,7 +80,7 @@ No names, chat messages, notes, dice results or other content of the world are s
 
 ## API
 
-`game.modules.get("sephrals-tavern-games").api` offers `open({tableId})`, `settings()` (the tavern settings), `request(action, payload)` with the actions `create`, `join`, `addGuest`, `start`, `move`, `rematch`, `leave` and `close`, `tables()`, the `games` and `guests`, and `runSelfTest()`.
+`game.modules.get("sephrals-tavern-games").api` offers `open({tableId})`, `settings()` (the tavern settings), `request(action, payload)` with the actions `create`, `join`, `addGuest`, `start`, `move`, `rematch`, `leave` and `close`, `tables()`, the `games` and `guests`, `runSelfTest()` and `saveDebugFile()` (see [Debug file](#debug-file)).
 
 ## Limits
 

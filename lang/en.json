@@ -226,6 +226,13 @@
       "NoGM": "No GM is online, the tables cannot run.",
       "Game": "{game} could not be played to the end."
     },
-    "NoGames": "The tavern offers no games right now."
+    "NoGames": "The tavern offers no games right now.",
+    "DEBUG": {
+      "Title": "Debug file",
+      "Save": "Save debug file",
+      "Hint": "Saves one file for bug reports about all of Sephral’s modules in this world: versions, settings and what the modules recorded, such as the latest chat messages they read. It contains chat text and whispers, check it before you share it.",
+      "Entry": "Save Debug File (Sephral’s Modules)",
+      "Saved": "Debug file {file} saved. It contains chat text and whispers, check it before you share it."
+    }
   }
 }

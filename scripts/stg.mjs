@@ -1,5 +1,7 @@
 import {MODULE_ID, t} from "./config.mjs";
 import {openTavern, refreshTavern, report} from "./app.mjs";
+import {registerDebug} from "./debug.mjs";
+import {saveDebugFile} from "./debug-file.mjs";
 import {GAMES, GUESTS} from "./games/index.mjs";
 import {applyModuleLanguage} from "./language.mjs";
 import {registerSocket, request} from "./net.mjs";
@@ -14,6 +16,7 @@ const TOOL = "stg-tavern";
 
 Hooks.once("init", () => {
   registerSettings();
+  registerDebug();
   registerUsage(MODULE_ID, {features: Object.values(GAME_FEATURES), settings: ["chatCards", "pigGoal"]});
   Hooks.on("getSceneControlButtons", onGetSceneControlButtons);
   Hooks.on("renderChatMessageHTML", onRenderChatMessage);
@@ -31,7 +34,9 @@ Hooks.once("init", () => {
     games: GAMES,
     guests: GUESTS,
     /** Every game plays a round against itself (GM). */
-    runSelfTest
+    runSelfTest,
+    /** Save the debug file of Sephral's modules (GM): about one chat message, or without an id the latest picture. */
+    saveDebugFile: messageId => saveDebugFile(messageId ?? null, {moduleId: MODULE_ID})
   };
 });
 

@@ -226,6 +226,13 @@
       "NoGM": "Keine Spielleitung online, die Tische können nicht laufen.",
       "Game": "{game} konnte nicht zu Ende gespielt werden."
     },
-    "NoGames": "Die Taverne bietet gerade keine Spiele an."
+    "NoGames": "Die Taverne bietet gerade keine Spiele an.",
+    "DEBUG": {
+      "Title": "Debug-Datei",
+      "Save": "Debug-Datei speichern",
+      "Hint": "Speichert eine Datei für Fehlerberichte über alle Module von Sephral in dieser Welt: Versionen, Einstellungen und was die Module aufgezeichnet haben, etwa die letzten Chatnachrichten, die sie gelesen haben. Sie enthält Chattext und Flüsternachrichten, prüfe sie vor dem Teilen.",
+      "Entry": "Debug-Datei speichern (Sephral’s Module)",
+      "Saved": "Debug-Datei {file} gespeichert. Sie enthält Chattext und Flüsternachrichten, prüfe sie vor dem Teilen."
+    }
   }
 }

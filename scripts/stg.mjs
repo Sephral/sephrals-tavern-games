@@ -1,7 +1,8 @@
-import {MODULE_ID, t} from "./config.mjs";
+import {MODULE_ID, TESTED_VERSIONS, t} from "./config.mjs";
 import {openTavern, refreshTavern, report} from "./app.mjs";
 import {registerDebug} from "./debug.mjs";
 import {saveDebugFile} from "./debug-file.mjs";
+import {registerHubModule} from "./hub.mjs";
 import {GAMES, GUESTS} from "./games/index.mjs";
 import {applyModuleLanguage} from "./language.mjs";
 import {registerSocket, request} from "./net.mjs";
@@ -15,6 +16,7 @@ import {registerUsage} from "./usage.mjs";
 const TOOL = "stg-tavern";
 
 Hooks.once("init", () => {
+  registerHubModule({moduleId: MODULE_ID, tested: TESTED_VERSIONS});
   registerSettings();
   registerDebug();
   registerUsage(MODULE_ID, {features: Object.values(GAME_FEATURES), settings: ["chatCards", "pigGoal"]});

@@ -968,3 +968,78 @@
 .stg-tavern .stg-ship .stg-scores li.winner span:first-child {
   color: #ffd27a;
 }
+
+/* Suggestion for the break */
+.stg-tavern .stg-offer-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 6px 0;
+  padding: 6px 8px;
+  border: 1px dashed rgb(255 255 255 / 0.25);
+  border-radius: 6px;
+  font-size: var(--font-size-12, 12px);
+}
+
+.stg-tavern .stg-offer-bar p {
+  margin: 0;
+}
+
+.stg-tavern .stg-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0 0 8px;
+  padding: 7px 10px;
+  border-left: 3px solid var(--color-warm-2, #d9a441);
+  border-radius: 4px;
+  background: rgb(217 164 65 / 0.15);
+  font-size: var(--font-size-13, 13px);
+}
+
+.stg-offer .window-content {
+  padding: 10px 12px 12px;
+}
+
+.stg-offer .stg-offer-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stg-offer .stg-offer-body p {
+  margin: 0;
+}
+
+.stg-offer .stg-offer-lead {
+  font-size: var(--font-size-16, 16px);
+  font-weight: 700;
+}
+
+.stg-offer .stg-offer-note {
+  opacity: 0.85;
+}
+
+.stg-offer .stg-offer-small {
+  font-size: var(--font-size-11, 11px);
+  opacity: 0.6;
+}
+
+.stg-offer .stg-offer-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.stg-offer .stg-offer-buttons button {
+  width: auto;
+  height: 32px;
+  margin: 0;
+  padding: 0 14px;
+  line-height: 30px;
+  white-space: nowrap;
+}
+
+.stg-offer .stg-offer-buttons .stg-offer-join {
+  flex: 1;
+  font-weight: 700;
+}

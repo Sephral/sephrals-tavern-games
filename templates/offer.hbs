@@ -1,0 +1,10 @@
+<div class="stg-offer-body">
+  <p class="stg-offer-lead"><i class="fa-solid {{icon}}" inert></i> {{lead}}</p>
+  {{#if waiting}}<p class="stg-offer-note">{{waiting}}</p>{{/if}}
+  {{#if alone}}<p class="stg-offer-note">{{alone}}</p>{{/if}}
+  <div class="stg-offer-buttons">
+    <button type="button" class="stg-offer-join" data-action="join"><i class="fa-solid fa-chair" inert></i> {{localize "STG.Offer.join"}}</button>
+    <button type="button" data-action="later">{{localize "STG.Offer.later"}}</button>
+  </div>
+  <p class="stg-offer-small">{{localize "STG.Offer.note"}}</p>
+</div>

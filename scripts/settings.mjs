@@ -5,6 +5,7 @@
 
 import {MODULE_ID, t} from "./config.mjs";
 import {refreshTavern} from "./app.mjs";
+import {syncOffer} from "./offer-app.mjs";
 import {FOLLOW_FOUNDRY, applyModuleLanguage} from "./language.mjs";
 import {runSelfTest} from "./selftest.mjs";
 import {TavernSettings} from "./config-app.mjs";
@@ -18,7 +19,8 @@ export const SETTINGS = {
     [FOLLOW_FOUNDRY]: "STG.LANGUAGE.default", de: "STG.LANGUAGE.de", en: "STG.LANGUAGE.en"}},
   chatCards: {type: String, default: "all", choices: {
     all: "STG.SETTINGS.chatCards.all", results: "STG.SETTINGS.chatCards.results", off: "STG.SETTINGS.chatCards.off"}},
-  pigGoal: {type: Number, default: 50, range: {min: 20, max: 100, step: 10}}
+  pigGoal: {type: Number, default: 50, range: {min: 20, max: 100, step: 10}},
+  breakOffer: {type: Boolean, default: true}
 };
 
 /**
@@ -63,10 +65,25 @@ export function registerSettings() {
   }
   // The tables, written by the active GM's client; every change redraws the tavern
   game.settings.register(MODULE_ID, "tables", {scope: "world", config: false, type: Array, default: [],
+    onChange: () => {
+      refreshTavern();
+      syncOffer();
+    }});
+  // The suggestion for the break, the games started so far and the users who finished their first game
+  game.settings.register(MODULE_ID, "offer", {scope: "world", config: false, type: Object, default: {},
+    onChange: () => {
+      syncOffer();
+      refreshTavern();
+    }});
+  game.settings.register(MODULE_ID, "played", {scope: "world", config: false, type: Object, default: {}});
+  game.settings.register(MODULE_ID, "introduced", {scope: "world", config: false, type: Array, default: [],
     onChange: () => refreshTavern()});
   // The games the GM switched off in the tavern settings; a new game of a later version is on offer at once
   game.settings.register(MODULE_ID, "disabledGames", {scope: "world", config: false, type: Array, default: [],
-    onChange: () => refreshTavern()});
+    onChange: () => {
+      refreshTavern();
+      syncOffer();
+    }});
   game.settings.register(MODULE_ID, "acknowledgedVersions", {scope: "client", config: false, type: String, default: ""});
   game.settings.registerMenu(MODULE_ID, "tavernSettings", {
     name: "STG.Config.title",

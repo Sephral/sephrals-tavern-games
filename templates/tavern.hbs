@@ -7,6 +7,17 @@
       <button type="button" data-action="openSettings"><i class="fa-solid fa-gear" inert></i> {{localize "STG.Config.open"}}</button>{{/if}}</p>
     {{/if}}
     {{#if noGM}}<p class="stg-warning"><i class="fa-solid fa-triangle-exclamation" inert></i> {{localize "STG.NoGM"}}</p>{{/if}}
+    {{#if isGM}}
+    <div class="stg-offer-bar">
+      {{#if offer}}
+      <p><i class="fa-solid fa-bell-concierge" inert></i> {{offer.text}}</p>
+      <button type="button" data-action="offerEnd">{{localize "STG.Offer.end"}}</button>
+      {{else}}
+      <button type="button" data-action="offerNow" {{#unless canCreate}}disabled{{/unless}}
+        data-tooltip="{{localize "STG.Offer.nowHint"}}"><i class="fa-solid fa-bell-concierge" inert></i> {{localize "STG.Offer.now"}}</button>
+      {{/if}}
+    </div>
+    {{/if}}
     <ol class="plain">
       {{#each tables}}
       <li class="stg-entry {{statusClass}} {{#if selected}}selected{{/if}}" data-table-id="{{id}}">
@@ -34,6 +45,13 @@
             data-tooltip="{{localize "STG.Table.guide"}}" aria-label="{{localize "STG.Table.guide"}}"><i class="fa-solid fa-scroll" inert></i></button></h2>
         <p class="stg-line {{#if table.myTurn}}mine{{/if}}">{{table.line}}</p>
       </header>
+      {{#if table.intro}}
+      <div class="stg-intro" role="note">
+        <strong><i class="fa-solid fa-lightbulb" inert></i> {{table.intro.title}}</strong>
+        <span>{{table.intro.how}}</span>
+        <span>{{table.intro.goal}}</span>
+      </div>
+      {{/if}}
       {{#if table.showGuide}}<blockquote class="stg-guide">{{table.guide}}</blockquote>{{/if}}
 
       <ol class="stg-seats plain">

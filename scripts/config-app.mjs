@@ -62,6 +62,7 @@ export class TavernSettings extends HandlebarsApplicationMixin(ApplicationV2) {
     context.chatCards = ["all", "results", "off"].map(value => ({value, label: t(`STG.SETTINGS.chatCards.${value}`),
       selected: setting("chatCards") === value}));
     context.pigGoal = setting("pigGoal");
+    context.breakOffer = setting("breakOffer") !== false;
     context.languages = [FOLLOW_FOUNDRY, "de", "en"].map(value => ({value, selected: language === value,
       label: t(`STG.LANGUAGE.${value === FOLLOW_FOUNDRY ? "default" : value}`)}));
     context.buttons = [{type: "submit", icon: "fa-solid fa-floppy-disk", label: "STG.Config.save"}];
@@ -82,6 +83,7 @@ export class TavernSettings extends HandlebarsApplicationMixin(ApplicationV2) {
       const disabled = disabledFromForm(data.games);
       if ( JSON.stringify(disabled) !== JSON.stringify(setting("disabledGames") ?? []) ) changes.push(["disabledGames", disabled]);
       if ( data.chatCards && (data.chatCards !== setting("chatCards")) ) changes.push(["chatCards", data.chatCards]);
+      if ( typeof data.breakOffer === "boolean" && (data.breakOffer !== (setting("breakOffer") !== false)) ) changes.push(["breakOffer", data.breakOffer]);
       const goal = Number(data.pigGoal);
       if ( Number.isFinite(goal) && (goal !== setting("pigGoal")) ) changes.push(["pigGoal", Math.clamp(goal, 20, 100)]);
     }

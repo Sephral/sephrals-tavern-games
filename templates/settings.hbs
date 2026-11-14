@@ -29,6 +29,13 @@
       <p class="hint">{{localize "STG.SETTINGS.chatCards.hint"}}</p>
     </div>
     <div class="form-group">
+      <label for="stg-break-offer">{{localize "STG.SETTINGS.breakOffer.name"}}</label>
+      <div class="form-fields">
+        <input type="checkbox" id="stg-break-offer" name="breakOffer" {{#if breakOffer}}checked{{/if}}>
+      </div>
+      <p class="hint">{{localize "STG.SETTINGS.breakOffer.hint"}}</p>
+    </div>
+    <div class="form-group">
       <label for="stg-pig-goal">{{localize "STG.SETTINGS.pigGoal.name"}}</label>
       <div class="form-fields">
         <range-picker id="stg-pig-goal" name="pigGoal" value="{{pigGoal}}" min="20" max="100" step="10"></range-picker>

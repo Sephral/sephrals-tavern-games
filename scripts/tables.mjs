@@ -5,7 +5,8 @@
  */
 
 import {MODULE_ID, esc, setting, t as loc} from "./config.mjs";
-import {GUESTS, gameOffered, game as rules, publicState} from "./games/index.mjs";
+import {GAMES, GUESTS, gameOffered, game as rules, publicState} from "./games/index.mjs";
+import {cleanOffer, newcomersOf, offerAllowed, pickGame} from "./suggest-rules.mjs";
 import {countFeature} from "./usage.mjs";
 
 /** Finished tables kept in the list. */
@@ -15,6 +16,9 @@ const KEEP_DONE = 8;
 export const GAME_FEATURES = {tictactoe: "gameTictactoe", fourinarow: "gameFourinarow", morris: "gameMorris",
   matches: "gameMatches", pig: "gamePig", ship: "gameShip", liars: "gameLiars", twentyone: "gameTwentyone"};
 
+/** Usage counters of the break suggestion. */
+export const OFFER_FEATURES = {offer: "breakOffer", join: "breakJoin"};
+
 /** Pause before a tavern guest moves, so everyone can follow. A game may set its own (guestDelay). */
 const GUEST_DELAY = 900;
 
@@ -23,6 +27,13 @@ const full = new Map();
 
 /** Requests run one after another. */
 let queue = Promise.resolve();
+
+/** When and which game the last break suggestion was (active GM). */
+let lastOfferAt = null;
+let lastOfferGame = null;
+
+/** Counting the games started, one after another. */
+let playedQueue = Promise.resolve();
 
 /**
  * A random number in [0, 1), the same source Foundry's dice use.
@@ -135,8 +146,32 @@ function start(table) {
   const g = rules(table.game);
   const state = g.init(rng, table.seats.length, {goal: setting("pigGoal")});
   if ( GAME_FEATURES[table.game] ) countFeature(MODULE_ID, GAME_FEATURES[table.game]);
+  rememberPlayed(table.game);
   // A game can be decided by the deal alone (twenty-one with two cards for everyone)
   return settle({...table, status: "playing", result: null, started: Date.now()}, state);
+}
+
+/**
+ * Count a game started in the world (the break suggestion prefers games nobody played yet).
+ * @param {string} gameId
+ */
+function rememberPlayed(gameId) {
+  playedQueue = playedQueue.then(async () => {
+    const played = {...(setting("played") ?? {})};
+    played[gameId] = (played[gameId] ?? 0) + 1;
+    await game.settings.set(MODULE_ID, "played", played);
+  }).catch(err => console.warn(`${MODULE_ID} | Could not count a game`, err));
+}
+
+/**
+ * Remember the users of a finished table: they know the tavern now and no longer get the short introduction.
+ * @param {object} table
+ * @returns {Promise<void>}
+ */
+async function markIntroduced(table) {
+  const current = setting("introduced") ?? [];
+  const add = newcomersOf(table, current);
+  if ( add.length ) await game.settings.set(MODULE_ID, "introduced", [...current, ...add]);
 }
 
 /**
@@ -221,6 +256,7 @@ export function resultText(table) {
  * @returns {Promise<void>}
  */
 async function postResult(table) {
+  await markIntroduced(table);
   await postCard("result", `<p class="stg-card-title"><i class="fa-solid fa-trophy" inert></i> ${esc(loc(`STG.Game.${table.game}.name`))}</p>`
     + `<p>${esc(resultText(table))}</p><button type="button" data-stg-open="${esc(table.id)}"><i class="fa-solid fa-beer-mug-empty" inert></i> `
     + `${esc(loc("STG.Card.open"))}</button>`);
@@ -271,26 +307,115 @@ function seatOf(table, user) {
   return table.seats.findIndex(seat => (seat.kind === "user") && (seat.userId === user.id));
 }
 
+/**
+ * Open a table for a user.
+ * @param {User} user
+ * @param {string} gameId
+ * @param {string|null} [guest]            A tavern guest who sits down at once
+ * @param {object} [options]
+ * @param {boolean} [options.silent]       No invitation in the chat (the break suggestion is the invitation)
+ * @returns {Promise<object>}
+ */
+async function openTable(user, gameId, guest=null, {silent=false}={}) {
+  const g = rules(gameId);
+  if ( !gameOffered(gameId, setting("disabledGames")) ) throw new Error("STG.Error.gameOff");
+  const seats = [userSeat(user)];
+  if ( guest && g.guests ) seats.push(guestSeat(guest));
+  let table = {id: foundry.utils.randomID(), game: gameId, host: user.id, status: "open", seats, state: null,
+    result: null, created: Date.now(), updated: Date.now(), round: 1};
+  // Against a guest the game starts at once; at twenty-one a guest means playing alone against the house
+  const ready = !!guest;
+  if ( ready ) table = start(table);
+  await save([...tables(), table]);
+  if ( table.status === "done" ) await postResult(table);
+  if ( !ready && !silent ) {
+    await postCard("invite", `<p class="stg-card-title"><i class="fa-solid fa-beer-mug-empty" inert></i> `
+      + `${esc(loc("STG.Card.invite", {name: seatName(seats[0]), game: loc(`STG.Game.${gameId}.name`)}))}</p>`
+      + `<button type="button" data-stg-join="${esc(table.id)}"><i class="fa-solid fa-chair" inert></i> ${esc(loc("STG.Table.join"))}</button>`);
+  }
+  return table;
+}
+
+/* -------------------------------------------- */
+/*  The suggestion for the break                */
+/* -------------------------------------------- */
+
+/**
+ * The suggestion as stored, or null.
+ * @returns {{id: string, game: string, at: number, tableId: string|null}|null}
+ */
+export function currentOffer() {
+  return cleanOffer(setting("offer"), Object.keys(GAMES));
+}
+
+/**
+ * Suggest one game to the table (active GM): a game that fits the players online, the least played first.
+ * @returns {Promise<object>}
+ */
+async function makeOffer() {
+  const disabled = setting("disabledGames") ?? [];
+  const info = Object.fromEntries(Object.values(GAMES).map(g => [g.id, {min: g.seats.min, max: g.seats.max, guests: !!g.guests}]));
+  const id = pickGame({games: info, offered: Object.keys(GAMES).filter(gameId => gameOffered(gameId, disabled)),
+    played: setting("played") ?? {}, last: lastOfferGame, online: game.users.filter(u => u.active && !u.isGM).length, rng});
+  if ( !id ) throw new Error("STG.Error.noGames");
+  const offer = {id: foundry.utils.randomID(), game: id, at: Date.now(), tableId: null};
+  lastOfferAt = offer.at;
+  lastOfferGame = id;
+  await game.settings.set(MODULE_ID, "offer", offer);
+  countFeature(MODULE_ID, OFFER_FEATURES.offer);
+  return offer;
+}
+
+/**
+ * Hook "pauseGame": a pause brings the suggestion for the break, if the GM did not turn it off.
+ * @param {boolean} paused
+ */
+export function offerOnPause(paused) {
+  if ( !game.user.isActiveGM ) return;
+  const online = game.users.filter(u => u.active && !u.isGM).length;
+  if ( !offerAllowed({enabled: setting("breakOffer") !== false, paused: !!paused, now: Date.now(), lastAt: lastOfferAt, online}) ) return;
+  queue = queue.then(() => makeOffer()).catch(err => console.warn(`${MODULE_ID} | No suggestion for the break`, err));
+}
+
 const ACTIONS = {
 
   /** Open a table, against a guest or waiting for other players. */
   async create({game: gameId, guest}, user) {
-    const g = rules(gameId);
-    if ( !gameOffered(gameId, setting("disabledGames")) ) return fail("STG.Error.gameOff");
-    const seats = [userSeat(user)];
-    if ( guest && g.guests ) seats.push(guestSeat(guest));
-    let table = {id: foundry.utils.randomID(), game: gameId, host: user.id, status: "open", seats, state: null,
-      result: null, created: Date.now(), updated: Date.now(), round: 1};
-    // Against a guest the game starts at once; at twenty-one a guest means playing alone against the house
-    const ready = !!guest;
-    if ( ready ) table = start(table);
-    await save([...tables(), table]);
-    if ( table.status === "done" ) await postResult(table);
-    if ( !ready ) {
-      await postCard("invite", `<p class="stg-card-title"><i class="fa-solid fa-beer-mug-empty" inert></i> `
-        + `${esc(loc("STG.Card.invite", {name: seatName(seats[0]), game: loc(`STG.Game.${gameId}.name`)}))}</p>`
-        + `<button type="button" data-stg-join="${esc(table.id)}"><i class="fa-solid fa-chair" inert></i> ${esc(loc("STG.Table.join"))}</button>`);
+    const table = await openTable(user, gameId, guest);
+    return ok({tableId: table.id});
+  },
+
+  /** GM: suggest a game to the table now, as a pause does. */
+  async suggest(payload, user) {
+    if ( !user.isGM ) return fail("STG.Error.notGM");
+    await makeOffer();
+    return ok();
+  },
+
+  /** GM: take the suggestion back. */
+  async suggestEnd(payload, user) {
+    if ( !user.isGM ) return fail("STG.Error.notGM");
+    await game.settings.set(MODULE_ID, "offer", {});
+    return ok();
+  },
+
+  /**
+   * One click on the suggestion: sit down at the suggested table. The first one opens it (alone at the tavern with
+   * Old Bertram, and the game starts at once), the others sit down next to them.
+   */
+  async suggestJoin({offerId}, user) {
+    const offer = currentOffer();
+    if ( !offer || (offer.id !== offerId) ) return fail("STG.Error.offerGone");
+    if ( !gameOffered(offer.game, setting("disabledGames")) ) return fail("STG.Error.gameOff");
+    const open = offer.tableId ? tableById(offer.tableId) : null;
+    if ( open && (open.status !== "done") && (seatOf(open, user) >= 0) ) return ok({tableId: open.id});
+    countFeature(MODULE_ID, OFFER_FEATURES.join);
+    if ( open && (open.status === "open") && (open.seats.length < rules(open.game).seats.max) ) {
+      return ACTIONS.join({tableId: open.id}, user);
     }
+    const alone = game.users.filter(u => u.active && !u.isGM).length < 2;
+    const table = await openTable(user, offer.game, (alone && rules(offer.game).guests) ? "bertram" : null, {silent: true});
+    await game.settings.set(MODULE_ID, "offer", {...offer, tableId: table.id});
     return ok({tableId: table.id});
   },
 

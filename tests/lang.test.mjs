@@ -63,6 +63,7 @@ test("every key used by scripts and templates exists", async () => {
   for ( const id of Object.keys(GAMES) ) {
     used.add(`STG.Game.${id}.name`);
     used.add(`STG.Game.${id}.guide`);
+    used.add(`STG.Intro.${id}`);
   }
   for ( const id of [...Object.keys(GUESTS), "dealer"] ) used.add(`STG.Guest.${id}.name`);
   for ( const g of Object.values(GUESTS) ) used.add(`STG.Level.${g.level}`);

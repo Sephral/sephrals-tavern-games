@@ -182,7 +182,10 @@
       "notSeated": "You do not sit at that table.",
       "illegal": "That move is not allowed now.",
       "notDone": "That game is not over yet.",
-      "gameOff": "The tavern does not offer this game right now."
+      "gameOff": "The tavern does not offer this game right now.",
+      "notGM": "Only the GM can do that.",
+      "offerGone": "That suggestion is over.",
+      "noGames": "No game fits the table right now."
     },
     "Config": {
       "title": "Tavern settings",
@@ -212,6 +215,10 @@
       "pigGoal": {
         "name": "Goal in Pig",
         "hint": "The score that wins a game of Pig."
+      },
+      "breakOffer": {
+        "name": "Suggestion for the break",
+        "hint": "When the GM pauses the game, the players see one suggested game with a button to join in, at most every ten minutes. The tavern window has a button for it too."
       }
     },
     "SELFTEST": {
@@ -224,7 +231,9 @@
       "Socket": "The module socket is missing.",
       "Storage": "The storage of the tables is missing.",
       "NoGM": "No GM is online, the tables cannot run.",
-      "Game": "{game} could not be played to the end."
+      "Game": "{game} could not be played to the end.",
+      "Suggest": "The suggestion for the break found no game.",
+      "Intro": "A game has no short introduction."
     },
     "NoGames": "The tavern offers no games right now.",
     "DEBUG": {
@@ -233,6 +242,32 @@
       "Hint": "Saves one file for bug reports about all of Sephral’s modules in this world: versions, settings and what the modules recorded, such as the latest chat messages they read. It contains chat text and whispers, check it before you share it.",
       "Entry": "Save Debug File (Sephral’s Modules)",
       "Saved": "Debug file {file} saved. It contains chat text and whispers, check it before you share it."
+    },
+    "Intro": {
+      "title": "New at the tavern?",
+      "how": "When the line under the title says it is your turn, click on the board or press a button. Everyone else watches.",
+      "tictactoe": "Get three of your marks in a row before the other does.",
+      "fourinarow": "Drop discs into the columns and line up four of your colour.",
+      "morris": "Place nine men, then move them. Three in a row is a mill and takes a man.",
+      "matches": "Take one to three matches in turn. Whoever takes the last match loses.",
+      "pig": "Roll as often as you dare and hold to bank the points. A one loses the turn.",
+      "ship": "Find a six, a five and a four, then keep the cargo of the other two dice.",
+      "liars": "Bid how many dice of one face lie on the table, or call the last bid a lie.",
+      "twentyone": "Get closer to 21 than the dealer without going over."
+    },
+    "Offer": {
+      "title": "A game for the break?",
+      "lead": "How about a round of {game}?",
+      "waiting": "{names} already sit at the table.",
+      "alone": "One click and {name} sits down with you.",
+      "join": "Join in",
+      "later": "Not now",
+      "note": "Your GM can turn these suggestions off.",
+      "now": "Suggest a game",
+      "nowHint": "Show the players one suggested game for the break.",
+      "end": "Take it back",
+      "active": "Suggested: {game}",
+      "sent": "The suggestion is out."
     }
   }
 }

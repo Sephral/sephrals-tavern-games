@@ -13,6 +13,16 @@ Open the tavern from the token controls on the left (mug icon), with the mug bel
 * **Leave:** leaving a waiting table frees the seat (the host takes the table away). Leaving a running game loses it. In the games for more players (Pig, liar's dice, ship, captain and crew, twenty-one) the others play on without whoever left, as long as another player sits at the table or anybody still plays against the house (twenty-one). A regular never plays on alone. *Play again* leaves out whoever left.
 * **Take the table away:** the host or the GM removes a table.
 
+## The suggestion for the break
+
+The tavern can suggest a game when the table takes a break, so that games get played that nobody thought of.
+
+* **When:** the GM pauses the game, or clicks *Suggest a game* above the tables in the tavern (the button shows what is suggested while an offer runs, with *Take it back*). A pause brings a suggestion at most every ten minutes, only while a player is online, and only if the setting *Suggestion for the break* is on. The button always works.
+* **What:** one game from the games on offer. A game nobody started yet in this world comes first, then the least played, never the same game twice in a row unless it is the only one. With one player online only games a regular can play are suggested, with company any game for two or more.
+* **Who sees it:** the players, in a small window with the game, *Join in* and *Not now*. The GM sees no window. A player who sits at a table gets none. It stays for ten minutes (counted on each screen) or until the GM takes it back, switches the game off or the player says *Not now*. A player who joins later sees an offer that still runs.
+* **One click:** the first click opens a table and sits the player down. Alone at the tavern the regular Old Bertram sits down too and the game starts at once. With company the table waits, the window of the others says who already sits there, and their click sits them down: a game for two then starts, a game for more players waits for the host to press *Start*. No invitation appears in the chat, the suggestion is the invitation.
+* **The first game of a newcomer:** whoever has not finished a game in this world yet sees two lines above the board (how a turn works, and how the game is won). They end with the first finished game of that player and do not come back.
+
 ## The games
 
 | Game | Players | Rules |
@@ -47,6 +57,7 @@ The gear in the tavern's title bar opens the tavern settings. The GM also finds 
 | Games on offer | The games a new table can be opened for (GM). Tables already running are played to the end, a game switched off has no *Play again*. With no game on offer the tavern says so and has no *New table* |
 | Module language | Follow Foundry, German or English, for you |
 | Chat messages | Invitations and results, only results, or none |
+| Suggestion for the break | A pause suggests a game to the players (GM, on by default). The button in the tavern always works |
 | Goal in Pig | The score that wins a game of Pig (20 to 100) |
 | Self test | Every game plays a round against itself (GM) |
 | Save debug file | One file for bug reports about all of Sephral’s modules (GM). See [Debug file](#debug-file) |
@@ -69,7 +80,8 @@ With the GM’s consent only the active GM’s browser counts, and it sends at m
 
 * on how many of the last 30 days the module was used
 * how often each game is started (one number per game)
-* the settings *Chat messages* and *Goal in Pig* (only the chosen option)
+* how often the GM makes a suggestion for the break and how often a player takes one up
+* the settings *Chat messages*, *Goal in Pig* and *Suggestion for the break* (only the chosen option)
 * where errors occur in the module code: file, line, error type and whether the error arose in the module itself, in Foundry, in the game system or in another module, never the error message or the name of another module
 
 No names, chat messages, notes, dice results or other content of the world are sent.
@@ -78,13 +90,14 @@ No names, chat messages, notes, dice results or other content of the world are s
 
 * The active GM's client runs every table. Players send their moves over the module socket. The server names the sender, so nobody can move for somebody else.
 * The games switched off are kept in a world setting, so a game of a later version is on offer at once.
+* The suggestion (`offer`), the number of games started per game (`played`) and the players who finished their first game (`introduced`) are world settings written by the active GM's client.
 * The tables are kept in a world setting, so everyone sees the same table and a reload changes nothing. The last eight finished tables stay in the list.
 * The dealer's face down card in twenty-one never leaves the GM's client until the players are done. At liar's dice nobody's dice go into the shared tables: every player asks the GM's client for their own dice. If the GM reloads, the cups are shaken again and everyone gets new dice for the round. If the GM reloads in the middle of a hand, a new face down card is dealt from the cards nobody has seen.
 * Dice and cards use Foundry's random numbers.
 
 ## API
 
-`game.modules.get("sephrals-tavern-games").api` offers `open({tableId})`, `settings()` (the tavern settings), `request(action, payload)` with the actions `create`, `join`, `addGuest`, `start`, `move`, `rematch`, `leave` and `close`, `tables()`, the `games` and `guests`, `runSelfTest()` and `saveDebugFile()` (see [Debug file](#debug-file)).
+`game.modules.get("sephrals-tavern-games").api` offers `open({tableId})`, `settings()` (the tavern settings), `request(action, payload)` with the actions `create`, `join`, `addGuest`, `start`, `move`, `rematch`, `leave`, `close` and, for the suggestion for the break, `suggestJoin` and `suggest` and `suggestEnd` (GM), `suggest()` and `endSuggestion()` as shortcuts for the GM, `offer()` (the suggestion running now), `tables()`, the `games` and `guests`, `runSelfTest()` and `saveDebugFile()` (see [Debug file](#debug-file)).
 
 ## Limits
 

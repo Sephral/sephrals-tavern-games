@@ -14,7 +14,8 @@ import {THROWS, cargo} from "./games/ship.mjs";
 import {winningLine as tttLine} from "./games/tictactoe.mjs";
 import {handValue} from "./games/twentyone.mjs";
 import {request} from "./net.mjs";
-import {resultText, seatName, tables} from "./tables.mjs";
+import {OFFER_MINUTES, needsIntro} from "./suggest-rules.mjs";
+import {currentOffer, resultText, seatName, tables} from "./tables.mjs";
 import {markUsed} from "./usage.mjs";
 
 export {ICONS};
@@ -117,6 +118,8 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
       leave: Tavern.#onLeave,
       closeTable: Tavern.#onCloseTable,
       openSettings: () => openSettings(),
+      offerNow: Tavern.#onOfferNow,
+      offerEnd: Tavern.#onOfferEnd,
       toggleGuide: Tavern.#onToggleGuide,
       morrisPick: Tavern.#onMorrisPick,
       liarsBid: Tavern.#onLiarsBid
@@ -220,6 +223,10 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
       this.tableId = (list.find(table => mine(table) && (table.status !== "done")) ?? list[0])?.id ?? null;
     }
     context.noGM = !game.users.activeGM;
+    // The GM's button for the suggestion, and who is out there: an offer still running
+    const offer = currentOffer();
+    const running = offer && ((Date.now() - offer.at) < (OFFER_MINUTES * 60 * 1000));
+    context.offer = running ? {text: t("STG.Offer.active", {game: t(`STG.Game.${offer.game}.name`)})} : null;
     context.tables = list.map(table => ({
       id: table.id, icon: ICONS[table.game], game: t(`STG.Game.${table.game}.name`),
       players: table.seats.map(seatName).join(", "), status: t(`STG.Status.${table.status}`),
@@ -252,6 +259,10 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
         winner: !!table.result?.winners?.includes(i), left: !!seat.left}))
     };
     const left = (me >= 0) && !!table.seats[me].left;
+    // The first game of a newcomer explains itself in two lines
+    if ( (me >= 0) && !left && (table.status !== "done") && needsIntro(game.user.id, setting("introduced") ?? []) ) {
+      view.intro = {title: t("STG.Intro.title"), how: t("STG.Intro.how"), goal: t(`STG.Intro.${table.game}`)};
+    }
     // Only who sits at a running table sees the game's buttons, the spectators just watch
     view.seated = playing && (me >= 0) && !left;
     // What the user may do at this table
@@ -555,6 +566,16 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
    */
   static #table(target) {
     return target.closest("[data-table-id]")?.dataset.tableId;
+  }
+
+  /** @this {Tavern} */
+  static async #onOfferNow() {
+    if ( report(await request("suggest")) ) ui.notifications.info(t("STG.Offer.sent"));
+  }
+
+  /** @this {Tavern} */
+  static async #onOfferEnd() {
+    report(await request("suggestEnd"));
   }
 
   /** @this {Tavern} */

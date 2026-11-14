@@ -182,7 +182,10 @@
       "notSeated": "Du sitzt nicht an diesem Tisch.",
       "illegal": "Dieser Zug geht gerade nicht.",
       "notDone": "Dieses Spiel ist noch nicht vorbei.",
-      "gameOff": "Dieses Spiel bietet die Taverne gerade nicht an."
+      "gameOff": "Dieses Spiel bietet die Taverne gerade nicht an.",
+      "notGM": "Das kann nur die Spielleitung.",
+      "offerGone": "Dieser Vorschlag ist vorbei.",
+      "noGames": "Gerade passt kein Spiel an den Tisch."
     },
     "Config": {
       "title": "Einstellungen der Taverne",
@@ -212,6 +215,10 @@
       "pigGoal": {
         "name": "Ziel bei Schweinchen",
         "hint": "Die Punktzahl, mit der man ein Spiel Schweinchen gewinnt."
+      },
+      "breakOffer": {
+        "name": "Vorschlag für die Pause",
+        "hint": "Pausiert die Spielleitung das Spiel, sehen die Spieler ein vorgeschlagenes Spiel mit einem Knopf zum Mitspielen, höchstens alle zehn Minuten. Das Fenster der Taverne hat dafür auch einen Knopf."
       }
     },
     "SELFTEST": {
@@ -224,7 +231,9 @@
       "Socket": "Der Socket des Moduls fehlt.",
       "Storage": "Der Speicher der Tische fehlt.",
       "NoGM": "Keine Spielleitung online, die Tische können nicht laufen.",
-      "Game": "{game} konnte nicht zu Ende gespielt werden."
+      "Game": "{game} konnte nicht zu Ende gespielt werden.",
+      "Suggest": "Der Vorschlag für die Pause hat kein Spiel gefunden.",
+      "Intro": "Ein Spiel hat keine kurze Einführung."
     },
     "NoGames": "Die Taverne bietet gerade keine Spiele an.",
     "DEBUG": {
@@ -233,6 +242,32 @@
       "Hint": "Speichert eine Datei für Fehlerberichte über alle Module von Sephral in dieser Welt: Versionen, Einstellungen und was die Module aufgezeichnet haben, etwa die letzten Chatnachrichten, die sie gelesen haben. Sie enthält Chattext und Flüsternachrichten, prüfe sie vor dem Teilen.",
       "Entry": "Debug-Datei speichern (Sephral’s Module)",
       "Saved": "Debug-Datei {file} gespeichert. Sie enthält Chattext und Flüsternachrichten, prüfe sie vor dem Teilen."
+    },
+    "Intro": {
+      "title": "Zum ersten Mal in der Taverne?",
+      "how": "Steht unter dem Titel, dass du dran bist, klickst du aufs Brett oder auf einen Knopf. Alle anderen schauen zu.",
+      "tictactoe": "Bring drei deiner Zeichen in eine Reihe, bevor es der andere schafft.",
+      "fourinarow": "Wirf Scheiben in die Spalten und bring vier deiner Farbe in eine Reihe.",
+      "morris": "Setze neun Steine, dann ziehe sie. Drei in einer Reihe sind eine Mühle und nehmen einen Stein.",
+      "matches": "Nimm abwechselnd ein bis drei Streichhölzer. Wer das letzte nimmt, verliert.",
+      "pig": "Würfle so oft du dich traust und halte, um die Punkte zu sichern. Eine Eins verliert den Zug.",
+      "ship": "Finde eine Sechs, eine Fünf und eine Vier, dann zählt die Fracht der anderen zwei Würfel.",
+      "liars": "Biete, wie viele Würfel einer Augenzahl auf dem Tisch liegen, oder nenne das letzte Gebot eine Lüge.",
+      "twentyone": "Komm näher an 21 heran als die Wirtin, ohne darüber zu gehen."
+    },
+    "Offer": {
+      "title": "Ein Spiel für die Pause?",
+      "lead": "Wie wäre es mit einer Runde {game}?",
+      "waiting": "{names} sitzen schon am Tisch.",
+      "alone": "Ein Klick, und {name} setzt sich zu dir.",
+      "join": "Mitspielen",
+      "later": "Jetzt nicht",
+      "note": "Die Spielleitung kann diese Vorschläge abschalten.",
+      "now": "Spiel vorschlagen",
+      "nowHint": "Zeigt den Spielern ein vorgeschlagenes Spiel für die Pause.",
+      "end": "Zurücknehmen",
+      "active": "Vorgeschlagen: {game}",
+      "sent": "Der Vorschlag ist raus."
     }
   }
 }

@@ -3,13 +3,14 @@ import {openTavern, refreshTavern, report} from "./app.mjs";
 import {registerDebug} from "./debug.mjs";
 import {saveDebugFile} from "./debug-file.mjs";
 import {registerHubModule} from "./hub.mjs";
+import {syncOffer} from "./offer-app.mjs";
 import {GAMES, GUESTS} from "./games/index.mjs";
 import {applyModuleLanguage} from "./language.mjs";
 import {registerSocket, request} from "./net.mjs";
 import {noticeNewVersions, runSelfTest} from "./selftest.mjs";
 import {registerSettings} from "./settings.mjs";
 import {openSettings} from "./config-app.mjs";
-import {GAME_FEATURES, handleRequest, resumeGuests, tables} from "./tables.mjs";
+import {GAME_FEATURES, OFFER_FEATURES, currentOffer, handleRequest, offerOnPause, resumeGuests, tables} from "./tables.mjs";
 import {registerUsage} from "./usage.mjs";
 
 /** The tool in the token controls. */
@@ -19,7 +20,9 @@ Hooks.once("init", () => {
   registerHubModule({moduleId: MODULE_ID, tested: TESTED_VERSIONS});
   registerSettings();
   registerDebug();
-  registerUsage(MODULE_ID, {features: Object.values(GAME_FEATURES), settings: ["chatCards", "pigGoal"]});
+  registerUsage(MODULE_ID, {features: [...Object.values(GAME_FEATURES), ...Object.values(OFFER_FEATURES)],
+    settings: ["chatCards", "pigGoal", "breakOffer"]});
+  Hooks.on("pauseGame", offerOnPause);
   Hooks.on("getSceneControlButtons", onGetSceneControlButtons);
   Hooks.on("renderChatMessageHTML", onRenderChatMessage);
   Hooks.on("renderChatInput", (app, elements) => addChatButton(elements?.["#chat-controls"]));
@@ -30,6 +33,11 @@ Hooks.once("init", () => {
     settings: openSettings,
     /** Send a request like the window does: create, join, addGuest, start, move, rematch, leave, close. */
     request,
+    /** Suggest one game for the break to the table now, as a pause does (GM), or take the suggestion back. */
+    suggest: () => request("suggest"),
+    endSuggestion: () => request("suggestEnd"),
+    /** The suggestion running now, or null. */
+    offer: currentOffer,
     /** The tables as stored. */
     tables,
     /** The games and the tavern guests. */
@@ -55,6 +63,7 @@ Hooks.once("ready", async () => {
   resumeGuests();
   noticeNewVersions();
   refreshTavern();
+  syncOffer();
   addChatButton(document.getElementById("chat-controls"));
 });
 

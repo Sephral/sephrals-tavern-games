@@ -34,7 +34,7 @@ A GM has to be online for the tables to run. Everyone can still watch.
 
 Search for **Tavern Games** in Foundry's module browser or open the [package page](https://foundryvtt.com/packages/sephrals-tavern-games).
 
-Foundry VTT 13 and 14 · any game system · English and German
+Foundry VTT 13 and 14 · any game system · English, German and Russian
 
 ## Learn more
 

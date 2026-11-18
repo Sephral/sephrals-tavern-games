@@ -33,7 +33,7 @@ function onLanguageChange(value) {
     foundry.applications.instances.get("stg-tavern")?.render({window: {title: t("STG.Title")}});
     document.querySelector("#chat-controls .stg-chat-button")?.setAttribute("aria-label", t("STG.Title"));
     refreshTavern();
-    ui.controls?.render({reset: true});
+    ui.controls?.render({reset: true})?.catch?.(() => {});
     if ( game.settings.sheet?.rendered ) game.settings.sheet.render();
   });
 }

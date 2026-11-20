@@ -18,7 +18,8 @@
 * **Fair play:** the GM's client runs every table, checks every move and keeps hidden things hidden: the dealer's face down card and the dice under everyone's cup.
 * **A suggestion for the break:** pause the game and the players see one suggested game, preferably one nobody has tried yet, with one button to join in. The GM can switch it off.
 * **The first game explains itself:** whoever plays for the first time gets two short lines at the table.
-* **Bragging rights:** invitations and results appear in the chat. A ranking of the evening shows who won most tonight, and every player earns a tavern title from Stranger to Tavern Legend.
+* **Play for a stake:** twenty one, liar's dice and Mia can be played for play money, never real coins.
+* **Bragging rights:** invitations and results appear in the chat. The evening ends with a ranking, and every player earns a tavern title from Stranger to Tavern Legend.
 
 ## How it works
 

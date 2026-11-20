@@ -758,6 +758,12 @@
   place-content: center;
 }
 
+/* Foundry draws its own checkbox as an icon in ::before. It would sit over the box drawn here. */
+.stg-settings input[type="checkbox"]::before {
+  content: none;
+  display: none;
+}
+
 .stg-settings input[type="checkbox"]::after {
   content: "";
   width: 9px;

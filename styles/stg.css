@@ -665,31 +665,154 @@
   font-style: italic;
 }
 
-/* Tavern settings */
-.stg-settings .stg-game-choice {
+/* Tavern settings: the body scrolls, the save button stays at the bottom */
+.stg-settings .window-content {
+  min-height: 0;
+}
+
+.stg-settings .stg-settings-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 10px;
+  padding-right: 4px;
+}
+
+.stg-settings fieldset {
   margin: 0;
+  padding: 6px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.stg-settings legend {
+  padding: 0 6px;
+  font-weight: bold;
+}
+
+.stg-settings .form-footer {
+  flex: 0 0 auto;
+}
+
+.stg-settings fieldset > .hint {
+  margin: 0;
+  font-size: var(--font-size-12, 12px);
+  opacity: 0.8;
+}
+
+.stg-settings .form-group {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 2px;
+  margin: 0;
+}
+
+.stg-settings .form-group > label {
+  min-width: 0;
+  white-space: normal;
+}
+
+.stg-settings .form-group .form-fields {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.stg-settings .form-group .form-fields select {
+  max-width: 220px;
+}
+
+.stg-settings .form-group .form-fields input[type="number"] {
+  width: 90px;
+  text-align: right;
+}
+
+.stg-settings .form-group .hint {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--font-size-12, 12px);
+  line-height: 1.35;
+  opacity: 0.8;
+}
+
+.stg-settings input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  border: 2px solid #c9b79a;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  display: inline-grid;
+  place-content: center;
+}
+
+.stg-settings input[type="checkbox"]::after {
+  content: "";
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid #1b1424;
+  border-bottom: 2px solid #1b1424;
+  transform: rotate(-45deg) translate(1px, -1px);
+  opacity: 0;
+}
+
+.stg-settings input[type="checkbox"]:checked {
+  background: #f0a63a;
+  border-color: #f0a63a;
+}
+
+.stg-settings input[type="checkbox"]:checked::after {
+  opacity: 1;
+}
+
+.stg-settings input[type="checkbox"]:focus-visible {
+  outline: 2px solid #f0a63a;
+  outline-offset: 2px;
+}
+
+.stg-settings .stg-game-choice {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .stg-settings .stg-game-choice label {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 3px 0;
+  cursor: pointer;
 }
 
 .stg-settings .stg-game-choice i {
   width: 18px;
   text-align: center;
+  flex: 0 0 auto;
 }
 
 .stg-settings .stg-game-choice span {
   flex: 1;
+  min-width: 0;
 }
 
 .stg-settings .stg-game-choice small {
   opacity: 0.7;
+  white-space: nowrap;
 }
 
 /* Nine men's morris */

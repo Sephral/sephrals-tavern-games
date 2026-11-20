@@ -36,7 +36,7 @@ export class TavernSettings extends HandlebarsApplicationMixin(ApplicationV2) {
     tag: "form",
     classes: ["stg-settings"],
     window: {title: "STG.Config.title", icon: "fa-solid fa-gear", contentClasses: ["standard-form"]},
-    position: {width: 480},
+    position: {width: 540},
     form: {handler: TavernSettings.#onSubmit, closeOnSubmit: true}
   };
 

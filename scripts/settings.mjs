@@ -81,6 +81,9 @@ export function registerSettings() {
   // The chips of every user at the tables that play for chips (user id -> chips)
   game.settings.register(MODULE_ID, "chips", {scope: "world", config: false, type: Object, default: {},
     onChange: () => refreshTavern()});
+  // The ranking of the evening and the wins of all evenings, written by the active GM's client
+  game.settings.register(MODULE_ID, "ranking", {scope: "world", config: false, type: Object, default: {},
+    onChange: () => refreshTavern()});
   game.settings.register(MODULE_ID, "played", {scope: "world", config: false, type: Object, default: {}});
   game.settings.register(MODULE_ID, "introduced", {scope: "world", config: false, type: Array, default: [],
     onChange: () => refreshTavern()});

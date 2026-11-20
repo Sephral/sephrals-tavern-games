@@ -40,6 +40,10 @@
       "twentyone": {
         "name": "Двадцать одно",
         "guide": "Вы играете против заведения, и карты раздаёт Грета, хозяйка таверны. Берите карту или довольствуйтесь тем, что есть на руках. Подберитесь к двадцати одному ближе, чем заведение, но не перебирайте — и вы выиграли. Тузы считаются за одно очко или за одиннадцать, придворные карты — за десять. Заведение обязано брать карты до семнадцати."
+      },
+      "mexico": {
+        "name": "Мексика",
+        "guide": "Две кости под стаканом и блеф в воздухе. Встряхните их, взгляните на них в одиночку и назовите бросок выше предыдущего, правдивый или нет. Разные броски считаются по старшей кости (65 лучший из них), пары их бьют (66 лучшая пара), а двадцать один, Мексика, бьёт всё. Следующий игрок либо верит, встряхивает свои кости и называет что-то выше, либо восклицает «Не верю!» Тогда стакан поднимается. Если бросок стоит не меньше названного, жизнь теряет сомневавшийся, иначе обманщик. Настоящая Мексика обходится сомневавшемуся в две жизни. Проигравший начинает следующий раунд. У каждого три жизни, и побеждает последний, у кого они остались."
       }
     },
     "Guest": {
@@ -161,7 +165,7 @@
       "speaker": "Таверна",
       "open": "К столу",
       "invite": "{name} ищет соперника для игры «{game}».",
-      "inviteStake": "{name} is looking for an opponent at {game} for {stake}."
+      "inviteStake": "{name} ищет соперника для игры «{game}» со ставкой {stake}."
     },
     "Notice": {
       "yourTurn": "Твой ход в игре «{game}»."
@@ -187,13 +191,14 @@
       "notGM": "Это может сделать только ведущий.",
       "offerGone": "Это предложение уже неактуально.",
       "noGames": "Сейчас для стола не подходит ни одна игра.",
-      "stakesOff": "Stakes are switched off in this tavern.",
-      "noStakeGame": "This game cannot be played for a stake.",
-      "badStake": "That is not a usable stake.",
-      "noPurse": "Choose a character with a purse to bet with.",
-      "notYourCharacter": "{name} is not your character.",
-      "cantAfford": "{name} cannot afford the stake.",
-      "payoutFailed": "A payout at the tavern failed. Check the purses and the console."
+      "stakesOff": "В этой таверне ставки отключены.",
+      "noStakeGame": "В эту игру нельзя играть на ставки.",
+      "badStake": "Такую ставку принять нельзя.",
+      "noPurse": "Выбери персонажа с кошельком, чтобы поставить.",
+      "notYourCharacter": "{name} не твой персонаж.",
+      "cantAfford": "У {name} не хватает денег на ставку.",
+      "payoutFailed": "Выплата в таверне не удалась. Проверь кошельки и консоль.",
+      "noRanking": "Пока нечего отправлять, сегодня вечером не закончилась ни одна игра."
     },
     "Config": {
       "title": "Настройки таверны",
@@ -207,7 +212,7 @@
       "menuHint": "Предлагаемые игры, сообщения в чате и цель в «Свинке» — в одном окне. Его также открывает шестерёнка в заголовке таверны.",
       "seatsFixed": "Игроков: {count}",
       "seatsRange": "Игроков: от {min} до {max}",
-      "stakes": "Stakes"
+      "stakes": "Ставки"
     },
     "SETTINGS": {
       "uiLanguage": {
@@ -230,18 +235,18 @@
         "hint": "Когда ведущий ставит игру на паузу, игроки видят одну предложенную игру с кнопкой «Подсесть», не чаще раза в десять минут. В окне таверны для этого есть и своя кнопка."
       },
       "stakes": {
-        "name": "Stakes",
-        "hint": "Lets players open tables of twenty-one and liar's dice with a stake in play money. Off by default, nothing changes at the tables until you switch it on."
+        "name": "Ставки",
+        "hint": "Позволяет игрокам занимать столы «Двадцать одно», «Кости лжеца» и «Мексика» со ставкой в игровых деньгах. По умолчанию выключено, за столами ничего не меняется, пока вы не включите."
       },
       "stakeMoney": {
-        "name": "Money for stakes",
-        "hint": "The purse pays where the tavern knows it (D&D 5e, Pathfinder 2e and Crucible). Chips are kept by the tavern for every player and no character sheet is touched. Systems without a known purse always play with chips.",
-        "auto": "Purse of the character where known",
-        "chips": "Chips only"
+        "name": "Деньги для ставок",
+        "hint": "Платит кошелёк персонажа там, где таверна его знает (D&D 5e, Pathfinder 2e и Crucible). Фишки таверна ведёт для каждого игрока, листы персонажей не затрагиваются. В системах без известного кошелька всегда играют на фишки.",
+        "auto": "Кошелёк персонажа, где известен",
+        "chips": "Только фишки"
       },
       "chipsStart": {
-        "name": "Starting chips",
-        "hint": "The chips every player begins with when playing for chips."
+        "name": "Начальные фишки",
+        "hint": "Столько фишек у каждого игрока в начале, когда играют на фишки."
       }
     },
     "SELFTEST": {
@@ -276,7 +281,8 @@
       "pig": "Бросай, сколько осмелишься, и забирай очки. Единица отнимает ход.",
       "ship": "Выбей шестёрку, пятёрку и четвёрку, затем оставь груз из двух других костей.",
       "liars": "Заяви, сколько костей одной грани лежит на столе, или объяви последнюю заявку ложью.",
-      "twentyone": "Подберись к 21 ближе, чем заведение, но не перебери."
+      "twentyone": "Подберись к 21 ближе, чем заведение, но не перебери.",
+      "mexico": "Назови бросок выше предыдущего, правдивый или нет, или объяви последнюю заявку ложью."
     },
     "Offer": {
       "title": "Игра на перерыв?",
@@ -293,29 +299,68 @@
       "sent": "Предложение отправлено."
     },
     "Money": {
-      "gp": "gp",
-      "sp": "sp",
-      "cp": "cp",
-      "chip": "{count} chip",
-      "chips": "{count} chips",
-      "unitChips": "chips"
+      "gp": "зм",
+      "sp": "см",
+      "cp": "мм",
+      "chip": "{count} фишка",
+      "chips": "фишек: {count}",
+      "unitChips": "фишек"
     },
     "Stake": {
-      "field": "Stake",
-      "fieldHint": "Empty or 0 plays for honor. Everyone pays the stake when the game starts, the house covers the regulars. Winnings go to the purse.",
-      "bet": "Bet with",
-      "noCharacter": "You have no character with a purse to bet with.",
-      "chooseTitle": "Bet with which character?",
-      "line": "Stake: {amount}",
-      "lineHand": "Stake: {amount} per hand",
-      "pot": "Pot: {amount}",
-      "potTaken": "{name} takes the pot of {amount}.",
-      "purse": "Your purse: {amount}",
-      "chipsOwn": "Your chips: {amount}",
-      "payout": "Payout: {text}.",
-      "wins": "{name} wins {amount}",
-      "loses": "{name} loses {amount}",
-      "returned": "The stakes go back to the players."
+      "field": "Ставка",
+      "fieldHint": "Пусто или 0 значит игра на интерес. Все платят ставку в начале игры, а за завсегдатаев платит заведение. Выигрыш идёт в кошелёк.",
+      "bet": "Ставить за",
+      "noCharacter": "У тебя нет персонажа с кошельком, чтобы поставить.",
+      "chooseTitle": "Каким персонажем ставить?",
+      "line": "Ставка: {amount}",
+      "lineHand": "Ставка: {amount} за раздачу",
+      "pot": "Банк: {amount}",
+      "potTaken": "{name} забирает банк: {amount}.",
+      "purse": "Твой кошелёк: {amount}",
+      "chipsOwn": "Твои фишки: {amount}",
+      "payout": "Выплата: {text}.",
+      "wins": "{name} выигрывает {amount}",
+      "loses": "{name} проигрывает {amount}",
+      "returned": "Ставки возвращаются игрокам."
+    },
+    "Mexico": {
+      "yourDice": "Твои кости под стаканом",
+      "value": "Бросок",
+      "announce": "Заявить",
+      "believe": "Верю",
+      "call": "Не верю!",
+      "announced": "{name} заявляет",
+      "noAnnounce": "Заявок пока нет.",
+      "valuePlain": "{a} {b}",
+      "valuePair": "{a} {b}, пара",
+      "valueMexico": "{a} {b}, Мексика",
+      "lossOne": "теряет жизнь",
+      "lossTwo": "теряет две жизни",
+      "revealHolds": "{name} заявляет {value}, {caller} не верит. Под стаканом: {actual}. Заявка верна, {loser} {loss}.",
+      "revealLie": "{name} заявляет {value}, {caller} не верит. Под стаканом: только {actual}. Это ложь, {loser} {loss}.",
+      "lastRound": "Прошлый раунд, стакан встряхнут заново",
+      "lastLift": "Стакан, поднятый последним"
+    },
+    "Rank": {
+      "title": "Сегодня вечером",
+      "none": "Сегодня вечером ещё не закончилась ни одна игра.",
+      "wins": "Победы",
+      "games": "Сыграно игр",
+      "post": "В чат",
+      "posted": "Итоги вечера отправлены в чат.",
+      "newEvening": "Новый вечер",
+      "newEveningConfirm": "Закончить этот вечер? Таблица начнётся заново со следующей игры. Звания останутся.",
+      "cardTitle": "Таблица вечера",
+      "line": "{pos}. {name} ({title}): побед {wins} из {games}{money}",
+      "won": "выиграно: {amount}",
+      "lost": "проиграно: {amount}",
+      "tier": {
+        "stranger": "Незнакомец",
+        "face": "Знакомое лицо",
+        "local": "Местный",
+        "master": "Мастер стола",
+        "legend": "Легенда таверны"
+      }
     }
   }
 }

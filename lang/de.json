@@ -40,6 +40,10 @@
       "twentyone": {
         "name": "Einundzwanzig",
         "guide": "Ihr spielet wider das Haus, und Wirtin Greta gibt die Karten. Ziehet eine Karte oder seid zufrieden mit dem, was ihr haltet. Kommet ihr näher an einundzwanzig als das Haus und doch nicht darüber, so habt ihr gewonnen. Asse zählen eins oder elf, die Hofkarten zehn. Das Haus muss ziehen bis siebzehn."
+      },
+      "mexico": {
+        "name": "Mäxchen",
+        "guide": "Zwei Würfel unter dem Becher und ein Bluff in der Luft. Schüttelt sie, schaut allein darauf und nennet einen Wurf, der höher ist als der zuvor, wahr oder nicht. Gemischte Würfe gelten nach dem höheren Würfel (65 ist der beste davon), Pasche stechen sie (66 ist der beste Pasch), und die 21 ist das Mäxchen, das alles schlägt. Der Nächste glaubt es, schüttelt seine eigenen Würfel und nennet etwas Höheres, oder er ruft \"Lügner!\" Dann wird der Becher gehoben. Ist der Wurf mindestens so viel wert wie genannt, verliert der Zweifler ein Leben, sonst der Schwindler. Ein echtes Mäxchen kostet den Zweifler zwei. Wer verliert, eröffnet die nächste Runde. Jeder beginnt mit drei Leben, und wer zuletzt noch Leben hat, ist Sieger."
       }
     },
     "Guest": {
@@ -193,7 +197,8 @@
       "noPurse": "Wähle einen Charakter mit Geldbeutel zum Setzen.",
       "notYourCharacter": "{name} ist nicht dein Charakter.",
       "cantAfford": "{name} kann sich den Einsatz nicht leisten.",
-      "payoutFailed": "Eine Auszahlung in der Taverne ist fehlgeschlagen. Prüfe die Geldbeutel und die Konsole."
+      "payoutFailed": "Eine Auszahlung in der Taverne ist fehlgeschlagen. Prüfe die Geldbeutel und die Konsole.",
+      "noRanking": "Es gibt noch nichts zu posten, heute Abend ist kein Spiel zu Ende gegangen."
     },
     "Config": {
       "title": "Einstellungen der Taverne",
@@ -231,7 +236,7 @@
       },
       "stakes": {
         "name": "Einsätze",
-        "hint": "Erlaubt es, Tische für Einundzwanzig und Lügenwürfel mit einem Einsatz in Spielgeld zu eröffnen. Standardmäßig aus, an den Tischen ändert sich nichts, bis du es einschaltest."
+        "hint": "Erlaubt es, Tische für Einundzwanzig, Lügenwürfel und Mäxchen mit einem Einsatz in Spielgeld zu eröffnen. Standardmäßig aus, an den Tischen ändert sich nichts, bis du es einschaltest."
       },
       "stakeMoney": {
         "name": "Geld für Einsätze",
@@ -276,7 +281,8 @@
       "pig": "Würfle so oft du dich traust und halte, um die Punkte zu sichern. Eine Eins verliert den Zug.",
       "ship": "Finde eine Sechs, eine Fünf und eine Vier, dann zählt die Fracht der anderen zwei Würfel.",
       "liars": "Biete, wie viele Würfel einer Augenzahl auf dem Tisch liegen, oder nenne das letzte Gebot eine Lüge.",
-      "twentyone": "Komm näher an 21 heran als die Wirtin, ohne darüber zu gehen."
+      "twentyone": "Komm näher an 21 heran als die Wirtin, ohne darüber zu gehen.",
+      "mexico": "Nenne einen höheren Wurf als den letzten, wahr oder nicht, oder nenne den letzten eine Lüge."
     },
     "Offer": {
       "title": "Ein Spiel für die Pause?",
@@ -316,6 +322,45 @@
       "wins": "{name} gewinnt {amount}",
       "loses": "{name} verliert {amount}",
       "returned": "Die Einsätze gehen zurück an die Spieler."
+    },
+    "Mexico": {
+      "yourDice": "Deine Würfel unter dem Becher",
+      "value": "Wurf",
+      "announce": "Ansagen",
+      "believe": "Glauben",
+      "call": "Lügner!",
+      "announced": "{name} sagt an",
+      "noAnnounce": "Noch nichts angesagt.",
+      "valuePlain": "{a} {b}",
+      "valuePair": "{a} {b}, ein Pasch",
+      "valueMexico": "{a} {b}, Mäxchen",
+      "lossOne": "verliert ein Leben",
+      "lossTwo": "verliert zwei Leben",
+      "revealHolds": "{name} sagte {value} an, {caller} zweifelte es an. Unter dem Becher: {actual}. Es stimmt, {loser} {loss}.",
+      "revealLie": "{name} sagte {value} an, {caller} zweifelte es an. Unter dem Becher: nur {actual}. Geschwindelt, {loser} {loss}.",
+      "lastRound": "Vorige Runde, der Becher ist neu geschüttelt",
+      "lastLift": "Der zuletzt gehobene Becher"
+    },
+    "Rank": {
+      "title": "Heute Abend",
+      "none": "Heute Abend ist noch kein Spiel zu Ende gegangen.",
+      "wins": "Siege",
+      "games": "Gespielte Spiele",
+      "post": "In den Chat",
+      "posted": "Die Rangliste steht im Chat.",
+      "newEvening": "Neuer Abend",
+      "newEveningConfirm": "Diesen Abend abschließen? Die Rangliste beginnt mit dem nächsten Spiel neu. Die Titel bleiben.",
+      "cardTitle": "Die Rangliste des Abends",
+      "line": "{pos}. {name} ({title}): {wins} von {games} gewonnen{money}",
+      "won": "{amount} gewonnen",
+      "lost": "{amount} verloren",
+      "tier": {
+        "stranger": "Fremder",
+        "face": "Bekanntes Gesicht",
+        "local": "Einheimischer",
+        "master": "Tischmeister",
+        "legend": "Tavernenlegende"
+      }
     }
   }
 }

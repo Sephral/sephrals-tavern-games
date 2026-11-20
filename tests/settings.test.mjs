@@ -69,6 +69,6 @@ test("all games on offer by default, the tavern settings are a GM menu", async (
   assert.equal(menus.get("tavernSettings").restricted, true);
   assert.equal(menus.get("tavernSettings").icon, "fa-solid fa-gear");
   const {disabledFromForm} = await import("../scripts/config-app.mjs");
-  assert.deepEqual(disabledFromForm({tictactoe: true, fourinarow: false, matches: true, pig: true}), ["fourinarow", "morris", "ship", "liars", "twentyone"]);
-  assert.deepEqual(disabledFromForm(undefined).length, 8);
+  assert.deepEqual(disabledFromForm({tictactoe: true, fourinarow: false, matches: true, pig: true}), ["fourinarow", "morris", "ship", "liars", "mexico", "twentyone"]);
+  assert.deepEqual(disabledFromForm(undefined).length, 9);
 });

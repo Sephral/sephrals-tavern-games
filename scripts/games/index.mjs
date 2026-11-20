@@ -5,6 +5,7 @@
 import {fourinarow} from "./fourinarow.mjs";
 import {liars} from "./liars.mjs";
 import {matches} from "./matches.mjs";
+import {mexico} from "./mexico.mjs";
 import {morris} from "./morris.mjs";
 import {pig} from "./pig.mjs";
 import {ship} from "./ship.mjs";
@@ -12,11 +13,11 @@ import {tictactoe} from "./tictactoe.mjs";
 import {twentyone} from "./twentyone.mjs";
 
 /** The games by id, in the order of the menu. */
-export const GAMES = {tictactoe, fourinarow, morris, matches, pig, ship, liars, twentyone};
+export const GAMES = {tictactoe, fourinarow, morris, matches, pig, ship, liars, mexico, twentyone};
 
 /** Icons of the games (Font Awesome). */
 export const ICONS = {tictactoe: "fa-hashtag", fourinarow: "fa-circle-dot", morris: "fa-chess-board",
-  matches: "fa-grip-lines-vertical", pig: "fa-dice", ship: "fa-ship", liars: "fa-dice-d6", twentyone: "fa-clone"};
+  matches: "fa-grip-lines-vertical", pig: "fa-dice", ship: "fa-ship", liars: "fa-dice-d6", mexico: "fa-dice-two", twentyone: "fa-clone"};
 
 /** The tavern guests: who they are and how well they play. */
 export const GUESTS = {

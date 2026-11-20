@@ -40,6 +40,10 @@
       "twentyone": {
         "name": "Twenty-one",
         "guide": "Ye play against the house, and Greta the innkeeper dealeth. Draw a card, or stand content with what thou holdest. Come nigher to one and twenty than the house, yet never beyond, and thou winnest. Aces count one or eleven, the courtly cards ten. The house must draw unto seventeen."
+      },
+      "mexico": {
+        "name": "Mexico",
+        "guide": "Two dice beneath a cup, and a bluff in the air. Shake them, look upon them alone, and name a throw higher than the one before, true or false. Mixed throws rank by their higher die (65 is the best of them), pairs beat those (66 is the best pair), and 21 is Mexico, which beats all. The next player either believes it, shakes their own dice and names something higher, or cries \"Liar!\" Then the cup is lifted. If the throw is worth at least what was named, the doubter loses a life, else the bluffer. A true Mexico costs the doubter two. The loser opens the next round. Each begins with three lives, and the last one with lives left is victor."
       }
     },
     "Guest": {
@@ -193,7 +197,8 @@
       "noPurse": "Choose a character with a purse to bet with.",
       "notYourCharacter": "{name} is not your character.",
       "cantAfford": "{name} cannot afford the stake.",
-      "payoutFailed": "A payout at the tavern failed. Check the purses and the console."
+      "payoutFailed": "A payout at the tavern failed. Check the purses and the console.",
+      "noRanking": "Nothing to post yet, no game has finished tonight."
     },
     "Config": {
       "title": "Tavern settings",
@@ -231,7 +236,7 @@
       },
       "stakes": {
         "name": "Stakes",
-        "hint": "Lets players open tables of twenty-one and liar's dice with a stake in play money. Off by default, nothing changes at the tables until you switch it on."
+        "hint": "Lets players open tables of twenty-one, liar's dice and Mexico with a stake in play money. Off by default, nothing changes at the tables until you switch it on."
       },
       "stakeMoney": {
         "name": "Money for stakes",
@@ -276,7 +281,8 @@
       "pig": "Roll as often as you dare and hold to bank the points. A one loses the turn.",
       "ship": "Find a six, a five and a four, then keep the cargo of the other two dice.",
       "liars": "Bid how many dice of one face lie on the table, or call the last bid a lie.",
-      "twentyone": "Get closer to 21 than the dealer without going over."
+      "twentyone": "Get closer to 21 than the dealer without going over.",
+      "mexico": "Name a throw higher than the last one, true or not, or call the last one a lie."
     },
     "Offer": {
       "title": "A game for the break?",
@@ -316,6 +322,45 @@
       "wins": "{name} wins {amount}",
       "loses": "{name} loses {amount}",
       "returned": "The stakes go back to the players."
+    },
+    "Mexico": {
+      "yourDice": "Your dice under the cup",
+      "value": "Throw",
+      "announce": "Announce",
+      "believe": "Believe it",
+      "call": "Liar!",
+      "announced": "{name} announces",
+      "noAnnounce": "Nothing announced yet.",
+      "valuePlain": "{a} {b}",
+      "valuePair": "{a} {b}, a pair",
+      "valueMexico": "{a} {b}, Mexico",
+      "lossOne": "loses a life",
+      "lossTwo": "loses two lives",
+      "revealHolds": "{name} announced {value}, {caller} doubted it. Under the cup: {actual}. It holds, {loser} {loss}.",
+      "revealLie": "{name} announced {value}, {caller} doubted it. Under the cup: only {actual}. A lie, {loser} {loss}.",
+      "lastRound": "Last round, the cup is shaken again",
+      "lastLift": "The cup lifted last"
+    },
+    "Rank": {
+      "title": "Tonight",
+      "none": "No game has finished tonight yet.",
+      "wins": "Wins",
+      "games": "Games played",
+      "post": "Post to chat",
+      "posted": "The ranking was posted to the chat.",
+      "newEvening": "New evening",
+      "newEveningConfirm": "Close this evening? The ranking starts again with the next game. The titles stay.",
+      "cardTitle": "The ranking of tonight",
+      "line": "{pos}. {name} ({title}): {wins} of {games} won{money}",
+      "won": "won {amount}",
+      "lost": "lost {amount}",
+      "tier": {
+        "stranger": "Stranger",
+        "face": "Familiar Face",
+        "local": "Local",
+        "master": "Table Master",
+        "legend": "Tavern Legend"
+      }
     }
   }
 }

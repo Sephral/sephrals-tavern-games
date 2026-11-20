@@ -243,6 +243,11 @@
   gap: 8px;
 }
 
+.stg-guide[data-stg-guide] {
+  max-height: 12em;
+  overflow-y: auto;
+}
+
 .stg-tavern .stg-guide-toggle {
   height: 24px;
   padding: 0 6px;
@@ -973,6 +978,81 @@
 
 .stg-tavern .stg-ship .stg-scores li.winner span:first-child {
   color: #ffd27a;
+}
+
+/* Mexico: lives */
+.stg-tavern .stg-lives {
+  display: flex;
+  gap: 3px;
+  color: #d9624a;
+}
+
+.stg-tavern .stg-lives .lost {
+  color: #e9d8b0;
+  opacity: 0.25;
+}
+
+.stg-tavern .stg-mexico .stg-bid small {
+  font-weight: normal;
+  opacity: 0.8;
+}
+
+/* Ranking of the evening */
+.stg-tavern .stg-ranking {
+  margin-top: 6px;
+  padding: 6px 8px;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 6px;
+  font-size: var(--font-size-12, 12px);
+}
+
+.stg-tavern .stg-ranking h3 {
+  margin: 0 0 4px;
+  border: 0;
+  font-size: var(--font-size-13, 13px);
+}
+
+.stg-tavern .stg-ranking .stg-note {
+  margin: 0;
+  opacity: 0.75;
+}
+
+.stg-tavern .stg-ranking ol {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+}
+
+.stg-tavern .stg-ranking li {
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  align-items: baseline;
+  gap: 2px 6px;
+}
+
+.stg-tavern .stg-ranking .stg-rank-money {
+  grid-column: 2 / 4;
+  opacity: 0.8;
+}
+
+.stg-tavern .stg-ranking .stg-rank-score {
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.stg-tavern .stg-rank {
+  font-style: italic;
+  opacity: 0.75;
+}
+
+.stg-tavern .stg-rank-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
 }
 
 /* Suggestion for the break */

@@ -6,6 +6,7 @@
 
 import {MODULE_ID, esc, setting, t as loc} from "./config.mjs";
 import {GAMES, GUESTS, gameOffered, game as rules, publicState} from "./games/index.mjs";
+import {cleanRanking, liveSession, newEvening, recordGame, standings, titleFor} from "./games/ranking.mjs";
 import {hasEscrow, settleStake, stakeGame, validStake} from "./games/stakes.mjs";
 import {adapterOf, checkSeat, chargeSeats, creditSeats, formatMoney, moneyAdapter} from "./stakes.mjs";
 import {cleanOffer, newcomersOf, offerAllowed, pickGame} from "./suggest-rules.mjs";
@@ -16,10 +17,13 @@ const KEEP_DONE = 8;
 
 /** Usage counters by game, counted once per game started (also a rematch). */
 export const GAME_FEATURES = {tictactoe: "gameTictactoe", fourinarow: "gameFourinarow", morris: "gameMorris",
-  matches: "gameMatches", pig: "gamePig", ship: "gameShip", liars: "gameLiars", twentyone: "gameTwentyone"};
+  matches: "gameMatches", pig: "gamePig", ship: "gameShip", liars: "gameLiars", mexico: "gameMexico", twentyone: "gameTwentyone"};
 
 /** Usage counters of the stakes: a table opened with a stake, a stake paid out at the end of a game. */
 export const STAKE_FEATURES = {table: "stakeTable", paid: "stakePaid"};
+
+/** Usage counter of the ranking: looked at once per browser session. */
+export const RANKING_FEATURES = {viewed: "rankingViewed"};
 
 /** Usage counters of the break suggestion. */
 export const OFFER_FEATURES = {offer: "breakOffer", join: "breakJoin"};
@@ -351,9 +355,73 @@ export function stakeLine(table) {
 async function postResult(table) {
   table = await payOut(table);
   await markIntroduced(table);
+  await recordRanking(table);
   await postCard("result", `<p class="stg-card-title"><i class="fa-solid fa-trophy" inert></i> ${esc(loc(`STG.Game.${table.game}.name`))}</p>`
     + `<p>${esc(resultText(table))}</p><button type="button" data-stg-open="${esc(table.id)}"><i class="fa-solid fa-beer-mug-empty" inert></i> `
     + `${esc(loc("STG.Card.open"))}</button>`);
+}
+
+/* -------------------------------------------- */
+/*  Ranking of the evening and reputation       */
+/* -------------------------------------------- */
+
+/**
+ * Count a finished game for the ranking (active GM), once.
+ * @param {object} table
+ * @returns {Promise<void>}
+ */
+async function recordRanking(table) {
+  try {
+    const next = recordGame(setting("ranking"), table, Date.now());
+    if ( next ) await game.settings.set(MODULE_ID, "ranking", next);
+  } catch(err) {
+    console.warn(`${MODULE_ID} | Could not count a game for the ranking`, err);
+  }
+}
+
+/**
+ * The tavern title of a user, from the wins of all evenings.
+ * @param {string} userId
+ * @returns {string}
+ */
+export function titleOfUser(userId) {
+  const total = cleanRanking(setting("ranking")).all[userId];
+  return loc(`STG.Rank.tier.${titleFor(total?.wins ?? 0)}`);
+}
+
+/**
+ * The money of a player in the evening as a short text, empty without stakes.
+ * @param {Record<string, number>} net   Balance per kind of money
+ * @returns {string}
+ */
+export function netText(net) {
+  return Object.entries(net ?? {}).filter(([, amount]) => amount).map(([mode, amount]) =>
+    loc(amount > 0 ? "STG.Rank.won" : "STG.Rank.lost", {amount: formatMoney(Math.abs(amount), adapterOf({stake: {mode}}))})).join(", ");
+}
+
+/**
+ * The ranking of the evening that is still going on.
+ * @param {number} [now]
+ * @returns {{pos: number, name: string, title: string, wins: number, games: number, money: string}[]}
+ */
+export function eveningRows(now=Date.now()) {
+  const ranking = cleanRanking(setting("ranking"));
+  return standings(liveSession(ranking, now)).map((row, i) => ({pos: i + 1, name: row.name,
+    title: loc(`STG.Rank.tier.${titleFor(ranking.all[row.key]?.wins ?? 0)}`), wins: row.wins, games: row.games, money: netText(row.net)}));
+}
+
+/**
+ * The summary of the evening for the chat (active GM).
+ * @returns {Promise<void>}
+ */
+async function postRanking() {
+  const rows = eveningRows();
+  if ( !rows.length ) throw new Error("STG.Error.noRanking");
+  const lines = rows.map(row => `<li>${esc(loc("STG.Rank.line", {pos: row.pos, name: row.name, title: row.title, wins: row.wins,
+    games: row.games, money: row.money ? `, ${row.money}` : ""}))}</li>`).join("");
+  await ChatMessage.implementation.create({content: `<div class="stg-chat"><p class="stg-card-title"><i class="fa-solid fa-ranking-star" inert></i> `
+    + `${esc(loc("STG.Rank.cardTitle"))}</p><ol>${lines}</ol></div>`,
+  speaker: {alias: loc("STG.Card.speaker")}, flags: {[MODULE_ID]: {card: "ranking"}}});
 }
 
 /* -------------------------------------------- */
@@ -499,6 +567,20 @@ const ACTIONS = {
   async suggest(payload, user) {
     if ( !user.isGM ) return fail("STG.Error.notGM");
     await makeOffer();
+    return ok();
+  },
+
+  /** GM: post the ranking of the evening to the chat. */
+  async postRanking(payload, user) {
+    if ( !user.isGM ) return fail("STG.Error.notGM");
+    await postRanking();
+    return ok();
+  },
+
+  /** GM: close the evening, the next game starts a new ranking. */
+  async newEvening(payload, user) {
+    if ( !user.isGM ) return fail("STG.Error.notGM");
+    await game.settings.set(MODULE_ID, "ranking", newEvening(setting("ranking")));
     return ok();
   },
 

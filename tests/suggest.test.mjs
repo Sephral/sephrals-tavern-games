@@ -52,10 +52,10 @@ test("only a GM can suggest a game, and the offer holds a game that is on offer"
   const offer = currentOffer();
   assert.ok(offer.id && offer.game);
   assert.equal(offer.tableId, null);
-  values.set("disabledGames", ["tictactoe", "fourinarow", "morris", "matches", "pig", "ship", "liars"]);
+  values.set("disabledGames", ["tictactoe", "fourinarow", "morris", "matches", "pig", "ship", "liars", "mexico"]);
   await ACTIONS.suggest({}, users.gm);
   assert.equal(currentOffer().game, "twentyone");
-  values.set("disabledGames", ["tictactoe", "fourinarow", "morris", "matches", "pig", "ship", "liars", "twentyone"]);
+  values.set("disabledGames", ["tictactoe", "fourinarow", "morris", "matches", "pig", "ship", "liars", "mexico", "twentyone"]);
   await assert.rejects(() => ACTIONS.suggest({}, users.gm), /noGames/);
   assert.deepEqual(await ACTIONS.suggestEnd({}, users.a), {ok: false, error: "STG.Error.notGM"});
   assert.equal((await ACTIONS.suggestEnd({}, users.gm)).ok, true);

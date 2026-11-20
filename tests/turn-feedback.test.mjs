@@ -108,7 +108,7 @@ test("guests: 1.2 seconds per roll at Pig and ship, the other games keep 0.9 sec
   assert.equal(GUEST_DELAY, 900);
   assert.equal(guestDelay("pig"), 1200);
   assert.equal(guestDelay("ship"), 1200);
-  for ( const id of ["tictactoe", "fourinarow", "morris", "matches", "liars", "twentyone"] ) assert.equal(guestDelay(id), 900, id);
+  for ( const id of ["tictactoe", "fourinarow", "morris", "matches", "liars", "mexico", "twentyone"] ) assert.equal(guestDelay(id), 900, id);
 });
 
 /* -------------------------------------------- */
@@ -119,8 +119,8 @@ test("template: only seated players get the game buttons, the box of the last ro
   const hbs = await readFile(path.join(root, "templates/tavern.hbs"), "utf8");
   const lines = hbs.split(/\r?\n/);
   const buttons = lines.map((line, i) => (/class="stg-buttons/.test(line) ? i : -1)).filter(i => i >= 0);
-  assert.equal(buttons.length, 5, "matches, Pig, liar's dice, ship and twenty-one");
-  for ( const i of buttons ) assert.match(lines[i - 1], /\{\{#if table\.(liars\.)?seated\}\}/, lines[i]);
+  assert.equal(buttons.length, 6, "matches, Pig, liar's dice, Mexico, ship and twenty-one");
+  for ( const i of buttons ) assert.match(lines[i - 1], /\{\{#if table\.(liars\.|mexico\.)?seated\}\}/, lines[i]);
   assert.match(hbs, /<details class="stg-reveal[^>]*\{\{#if table\.liars\.reveal\.open\}\}open\{\{\/if\}\}>/);
   assert.match(hbs, /<summary>.*table\.liars\.reveal\.label/);
   // The die of the bid sits inside the sentence

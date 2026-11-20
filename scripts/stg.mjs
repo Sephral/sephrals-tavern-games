@@ -10,7 +10,7 @@ import {registerSocket, request} from "./net.mjs";
 import {noticeNewVersions, runSelfTest} from "./selftest.mjs";
 import {registerSettings} from "./settings.mjs";
 import {openSettings} from "./config-app.mjs";
-import {GAME_FEATURES, OFFER_FEATURES, STAKE_FEATURES, currentOffer, handleRequest, offerOnPause, resumeGuests, tables} from "./tables.mjs";
+import {GAME_FEATURES, OFFER_FEATURES, RANKING_FEATURES, STAKE_FEATURES, currentOffer, handleRequest, offerOnPause, resumeGuests, tables} from "./tables.mjs";
 import {chipBalance, setChips} from "./stakes.mjs";
 import {registerUsage} from "./usage.mjs";
 
@@ -21,7 +21,7 @@ Hooks.once("init", () => {
   registerHubModule({moduleId: MODULE_ID, tested: TESTED_VERSIONS});
   registerSettings();
   registerDebug();
-  registerUsage(MODULE_ID, {features: [...Object.values(GAME_FEATURES), ...Object.values(OFFER_FEATURES), ...Object.values(STAKE_FEATURES)],
+  registerUsage(MODULE_ID, {features: [...Object.values(GAME_FEATURES), ...Object.values(OFFER_FEATURES), ...Object.values(STAKE_FEATURES), ...Object.values(RANKING_FEATURES)],
     settings: ["chatCards", "pigGoal", "breakOffer", "stakes", "stakeMoney"]});
   Hooks.on("pauseGame", offerOnPause);
   Hooks.on("getSceneControlButtons", onGetSceneControlButtons);

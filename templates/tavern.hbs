@@ -34,6 +34,30 @@
       <li class="stg-empty">{{localize "STG.Table.none"}}</li>
       {{/each}}
     </ol>
+    <section class="stg-ranking" aria-labelledby="stg-ranking-title">
+      <h3 id="stg-ranking-title"><i class="fa-solid fa-ranking-star" inert></i> {{localize "STG.Rank.title"}}</h3>
+      {{#if ranking.empty}}
+      <p class="stg-note">{{localize "STG.Rank.none"}}</p>
+      {{else}}
+      <ol class="plain">
+        {{#each ranking.rows}}
+        <li>
+          <span class="stg-rank-pos">{{pos}}</span>
+          <span class="stg-rank-name"><strong>{{name}}</strong> <small class="stg-rank">{{title}}</small></span>
+          <span class="stg-rank-score"><span data-tooltip="{{localize "STG.Rank.wins"}}"><i class="fa-solid fa-trophy" inert></i> {{wins}}</span>
+            <span data-tooltip="{{localize "STG.Rank.games"}}"><i class="fa-solid fa-dice" inert></i> {{games}}</span></span>
+          {{#if money}}<small class="stg-rank-money">{{money}}</small>{{/if}}
+        </li>
+        {{/each}}
+      </ol>
+      {{/if}}
+      {{#if ranking.isGM}}
+      <div class="stg-rank-buttons">
+        <button type="button" data-action="postRanking" {{#if ranking.empty}}disabled{{/if}}><i class="fa-solid fa-comment" inert></i> {{localize "STG.Rank.post"}}</button>
+        <button type="button" data-action="newEvening" {{#if ranking.empty}}disabled{{/if}}><i class="fa-solid fa-moon" inert></i> {{localize "STG.Rank.newEvening"}}</button>
+      </div>
+      {{/if}}
+    </section>
   </aside>
 
   <section class="stg-table">
@@ -60,7 +84,7 @@
         <li class="stg-seat {{#if isTurn}}turn{{/if}} {{#if isMe}}me{{/if}} {{#if winner}}winner{{/if}} {{#if left}}left{{/if}}">
           {{#if mark}}<span class="stg-mark {{mark}}"></span>{{/if}}
           <img src="{{img}}" alt="">
-          <span>{{name}}{{#if guest}} <small>{{level}}</small>{{/if}}{{#if left}} <small class="stg-left">{{localize "STG.Table.left"}}</small>{{/if}}</span>
+          <span>{{name}}{{#if guest}} <small>{{level}}</small>{{/if}}{{#if rank}} <small class="stg-rank">{{rank}}</small>{{/if}}{{#if left}} <small class="stg-left">{{localize "STG.Table.left"}}</small>{{/if}}</span>
           {{#if winner}}<i class="fa-solid fa-trophy" inert></i>{{/if}}
         </li>
         {{/each}}
@@ -184,6 +208,41 @@
             {{#each table.liars.reveal.cups}}
             <p class="stg-reveal-cup"><span>{{name}}</span> {{#each dice}}<i class="fa-solid {{icon}} stg-die {{#if hit}}hit{{/if}}" inert></i>{{/each}}</p>
             {{/each}}
+          </details>
+          {{/if}}
+        </div>
+        {{/if}}
+
+        {{#if table.mexico}}
+        <div class="stg-liars stg-mexico">
+          <ol class="stg-cups plain">
+            {{#each table.mexico.cups}}
+            <li class="{{#if isTurn}}turn{{/if}} {{#if out}}out{{/if}}">
+              <span>{{name}}</span>
+              <span class="stg-lives">{{#each lives}}<i class="fa-solid fa-heart {{#unless full}}lost{{/unless}}" inert></i>{{/each}}</span>
+            </li>
+            {{/each}}
+          </ol>
+          {{#if table.mexico.holdsCup}}
+          <div class="stg-own-dice">
+            <span>{{localize "STG.Mexico.yourDice"}}</span>
+            {{#if table.mexico.mine}}{{#each table.mexico.mine}}<i class="fa-solid {{icon}} stg-die" inert></i>{{/each}}{{else}}<i class="fa-solid fa-spinner fa-spin" inert></i>{{/if}}
+          </div>
+          {{/if}}
+          <p class="stg-bid">{{table.mexico.announced}}{{#if table.mexico.announcedDice}} {{#each table.mexico.announcedDice}}<i class="fa-solid {{icon}} stg-die" inert></i>{{/each}} <small>{{table.mexico.announcedName}}</small>{{/if}}</p>
+          {{#if table.mexico.seated}}
+          <div class="stg-buttons stg-bid-form">
+            <select name="mexicoValue" aria-label="{{localize "STG.Mexico.value"}}" {{#unless table.mexico.canAnnounce}}disabled{{/unless}}>{{#each table.mexico.values}}<option value="{{n}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+            <button type="button" {{#if table.mexico.canAnnounce}}data-action="mexicoAnnounce"{{else}}disabled{{/if}}><i class="fa-solid fa-comment" inert></i> {{localize "STG.Mexico.announce"}}</button>
+            <button type="button" {{#if table.mexico.canBelieve}}data-action="play" data-move="believe"{{else}}disabled{{/if}}><i class="fa-solid fa-thumbs-up" inert></i> {{localize "STG.Mexico.believe"}}</button>
+            <button type="button" {{#if table.mexico.canCall}}data-action="play" data-move="call"{{else}}disabled{{/if}}><i class="fa-solid fa-hand-point-up" inert></i> {{localize "STG.Mexico.call"}}</button>
+          </div>
+          {{/if}}
+          {{#if table.mexico.reveal}}
+          <details class="stg-reveal {{#if table.mexico.reveal.final}}final{{/if}}" data-key="{{table.mexico.reveal.key}}" {{#if table.mexico.reveal.open}}open{{/if}}>
+            <summary><i class="fa-solid fa-clock-rotate-left" inert></i> {{table.mexico.reveal.label}}</summary>
+            <p class="stg-reveal-text">{{table.mexico.reveal.text}}</p>
+            <p class="stg-reveal-cup">{{#each table.mexico.reveal.dice}}<i class="fa-solid {{icon}} stg-die hit" inert></i>{{/each}}</p>
           </details>
           {{/if}}
         </div>

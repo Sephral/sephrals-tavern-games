@@ -5,7 +5,7 @@
  * paid into escrow when a game starts and settled when it ends:
  *  - twenty-one: every player bets the stake against the house. A win pays 1:1, a natural (21 with the first two
  *    cards) pays 3:2 (rounded down), a tie returns the stake, a loss goes to the house.
- *  - liar's dice: everyone puts the stake into the pot, the tavern guests too (the house pays for them), the winner
+ *  - liar's dice and Mexico: everyone puts the stake into the pot, the tavern guests too (the house pays for them), the winner
  *    takes the pot. When nobody wins the stakes are returned.
  * A game takes part by an entry in RULES: a function from the finished table to what every seat gets back.
  */
@@ -198,7 +198,10 @@ function liars(table, stake) {
 }
 
 /** The games that can be played for a stake, with the function that settles a finished table. */
-export const RULES = {twentyone, liars};
+export const RULES = {twentyone, liars, mexico: liars};
+
+/** The games whose stakes go into one pot for the winner. */
+const POT_GAMES = ["liars", "mexico"];
 
 /**
  * Whether a game can be played for a stake.
@@ -222,13 +225,13 @@ export function settleStake(table) {
 }
 
 /**
- * The pot at a table that runs: what the winner of liar's dice takes.
+ * The pot at a table that runs: what the winner of liar's dice or Mexico takes.
  * @param {object} table
  * @returns {number}
  */
 export function potOf(table) {
   const stake = table?.stake?.amount;
-  return (table?.game === "liars") && validStake(stake) ? stake * table.seats.length : 0;
+  return POT_GAMES.includes(table?.game) && validStake(stake) ? stake * table.seats.length : 0;
 }
 
 /**

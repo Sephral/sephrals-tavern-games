@@ -9,6 +9,7 @@ import {MODULE_ID, TEMPLATES, esc, setting, t} from "./config.mjs";
 import {openSettings} from "./config-app.mjs";
 import {GAMES, GUESTS, ICONS, gameOffered} from "./games/index.mjs";
 import {COLS, ROWS, winningLine as fourLine} from "./games/fourinarow.mjs";
+import {LIVES, MEXICO, VALUES, rank as mexicoRank} from "./games/mexico.mjs";
 import {POINTS as MORRIS_POINTS} from "./games/morris.mjs";
 import {THROWS, cargo} from "./games/ship.mjs";
 import {winningLine as tttLine} from "./games/tictactoe.mjs";
@@ -17,8 +18,8 @@ import {parseStake, potOf, stakeGame} from "./games/stakes.mjs";
 import {request} from "./net.mjs";
 import {adapterOf, balanceOf, candidateActors, formatMoney, moneyAdapter} from "./stakes.mjs";
 import {OFFER_MINUTES, needsIntro} from "./suggest-rules.mjs";
-import {currentOffer, resultText, seatName, tables} from "./tables.mjs";
-import {markUsed} from "./usage.mjs";
+import {RANKING_FEATURES, currentOffer, eveningRows, resultText, seatName, tables, titleOfUser} from "./tables.mjs";
+import {countFeature, markUsed} from "./usage.mjs";
 
 export {ICONS};
 
@@ -52,6 +53,9 @@ export function refreshTavern() {
   if ( app?.rendered ) app.render();
   noticeTurns(!!app?.rendered);
 }
+
+/** Whether this client counted the ranking as viewed in this browser session. */
+let rankingCounted = false;
 
 /** The tables where it was this user's turn at the last change. */
 const myTurns = new Set();
@@ -150,7 +154,10 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
       offerEnd: Tavern.#onOfferEnd,
       toggleGuide: Tavern.#onToggleGuide,
       morrisPick: Tavern.#onMorrisPick,
-      liarsBid: Tavern.#onLiarsBid
+      liarsBid: Tavern.#onLiarsBid,
+      mexicoAnnounce: Tavern.#onMexicoAnnounce,
+      postRanking: Tavern.#onPostRanking,
+      newEvening: Tavern.#onNewEvening
     }
   };
 
@@ -255,6 +262,13 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
     const offer = currentOffer();
     const running = offer && ((Date.now() - offer.at) < (OFFER_MINUTES * 60 * 1000));
     context.offer = running ? {text: t("STG.Offer.active", {game: t(`STG.Game.${offer.game}.name`)})} : null;
+    // The ranking of the evening
+    const rows = eveningRows();
+    context.ranking = {rows: rows.slice(0, 8), empty: !rows.length, isGM: game.user.isGM, more: Math.max(0, rows.length - 8)};
+    if ( rows.length && !rankingCounted ) {
+      rankingCounted = true;
+      countFeature(MODULE_ID, RANKING_FEATURES.viewed);
+    }
     context.tables = list.map(table => ({
       id: table.id, icon: ICONS[table.game], game: t(`STG.Game.${table.game}.name`),
       players: table.seats.map(seatName).join(", "), status: t(`STG.Status.${table.status}`),
@@ -283,6 +297,7 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
       icon: ICONS[table.game], status: table.status, myTurn, isHost: table.host === game.user.id,
       seats: table.seats.map((seat, i) => ({name: seatName(seat), img: seat.img, isTurn: turn === i, isMe: i === me,
         guest: seat.kind === "guest", level: seat.level ? t(`STG.Level.${seat.level}`) : "",
+        rank: (seat.kind === "user") ? titleOfUser(seat.userId) : "",
         mark: (table.game === "tictactoe") ? ["x", "o"][i] : (table.game === "fourinarow") ? ["red", "yellow"][i] : "",
         winner: !!table.result?.winners?.includes(i), left: !!seat.left}))
     };
@@ -383,6 +398,7 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
       }
       case "morris": return {morris: this.#morrisView(table, myTurn, me)};
       case "liars": return {liars: this.#liarsView(table, myTurn, me)};
+      case "mexico": return {mexico: this.#mexicoView(table, myTurn, me)};
       case "ship": return {ship: this.#shipView(table, myTurn, me)};
     }
     return {};
@@ -496,6 +512,63 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   /**
+   * The words for a value of Mexico: the two dice, and what the throw is called.
+   * @param {number} value
+   * @returns {string}
+   */
+  static #mexicoValue(value) {
+    const [a, b] = String(value).split("");
+    if ( value === MEXICO ) return t("STG.Mexico.valueMexico", {a, b});
+    return t(a === b ? "STG.Mexico.valuePair" : "STG.Mexico.valuePlain", {a, b});
+  }
+
+  /**
+   * Mexico: the lives, the dice under the user's own cup, the announcement on the table and the last lifting of the cup.
+   * @param {object} table
+   * @param {boolean} myTurn
+   * @param {number} me
+   * @returns {object}
+   */
+  #mexicoView(table, myTurn, me) {
+    const s = table.state;
+    const peek = this.peeked.get(table.id);
+    const playing = table.status === "playing";
+    // Whoever holds the cup sees the dice under it, until the cup is lifted
+    const mine = ((peek?.rollId === s.rollId) && (s.cup?.seat === me) && playing) ? peek.dice : null;
+    const view = {
+      cups: table.seats.map((seat, i) => ({name: seatName(seat), lives: Array.from({length: LIVES}, (_, k) => ({full: k < s.lives[i]})),
+        isTurn: playing && (s.turn === i), out: s.lives[i] === 0, isMe: i === me})),
+      mine: mine?.length ? mine.map(n => ({icon: DICE[n]})) : null,
+      holdsCup: playing && (me >= 0) && (s.cup?.seat === me),
+      seated: playing && (me >= 0) && !table.seats[me].left && (s.lives[me] > 0),
+      announced: s.announced ? t("STG.Mexico.announced", {name: seatName(table.seats[s.announced.seat])}) : t("STG.Mexico.noAnnounce"),
+      announcedDice: s.announced ? String(s.announced.value).split("").map(n => ({icon: DICE[Number(n)]})) : null,
+      announcedName: s.announced ? Tavern.#mexicoValue(s.announced.value) : "",
+      canAnnounce: myTurn && (s.phase === "announce"),
+      canBelieve: myTurn && (s.phase === "decide") && (s.announced?.value !== MEXICO),
+      canCall: myTurn && (s.phase === "decide")
+    };
+    if ( view.seated ) {
+      const last = s.announced?.value ?? null;
+      // The values above the last announcement, the lowest one chosen
+      const open = VALUES.filter(v => (last === null) || (mexicoRank(v) > mexicoRank(last)));
+      view.values = open.map((v, k) => ({n: v, label: Tavern.#mexicoValue(v), selected: k === 0}));
+    }
+    if ( s.reveal ) {
+      const r = s.reveal;
+      const text = t(r.holds ? "STG.Mexico.revealHolds" : "STG.Mexico.revealLie", {name: seatName(table.seats[r.announced.seat]),
+        value: Tavern.#mexicoValue(r.announced.value), caller: seatName(table.seats[r.caller]), actual: Tavern.#mexicoValue(r.actual),
+        loser: seatName(table.seats[r.loser]), loss: t(r.loss > 1 ? "STG.Mexico.lossTwo" : "STG.Mexico.lossOne")});
+      const final = table.status === "done";
+      const key = `${table.id}:${r.round}`;
+      const toggled = (this.revealToggle?.key === key) ? this.revealToggle.open : null;
+      view.reveal = {text, dice: r.dice.map(n => ({icon: DICE[n]})), key, final,
+        label: t(final ? "STG.Mexico.lastLift" : "STG.Mexico.lastRound"), open: toggled ?? (final || !s.announced)};
+    }
+    return view;
+  }
+
+  /**
    * Ship, captain and crew: what is aboard, the free dice, the throws left and the cargo of everyone.
    * @param {object} table
    * @param {boolean} myTurn
@@ -560,6 +633,27 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   /** @this {Tavern} */
+  static async #onMexicoAnnounce(event, target) {
+    const felt = target.closest("[data-table-id]");
+    const value = felt.querySelector("select[name=mexicoValue]")?.value;
+    for ( const b of this.element.querySelectorAll("[data-action=play], [data-action=mexicoAnnounce]") ) b.disabled = true;
+    const result = await request("move", {tableId: felt.dataset.tableId, move: `a:${value}`});
+    if ( !report(result) ) this.render();
+  }
+
+  /** @this {Tavern} */
+  static async #onPostRanking() {
+    if ( report(await request("postRanking")) ) ui.notifications.info(t("STG.Rank.posted"));
+  }
+
+  /** @this {Tavern} */
+  static async #onNewEvening() {
+    const ok = await DialogV2.confirm({window: {title: t("STG.Rank.newEvening")}, content: `<p>${esc(t("STG.Rank.newEveningConfirm"))}</p>`,
+      rejectClose: false});
+    if ( ok ) report(await request("newEvening"));
+  }
+
+  /** @this {Tavern} */
   static #onToggleGuide() {
     this.showGuide = !this.showGuide;
     this.render();
@@ -608,9 +702,15 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
             row.style.display = stakeGames.includes(select.value) ? "" : "none";
           }
         };
+        // A longer guide must not push the buttons below the screen: the dialog keeps its place, so move it up
+        const keepOnScreen = () => {
+          const rect = dialog.element.getBoundingClientRect();
+          if ( rect.bottom > (window.innerHeight - 8) ) dialog.setPosition?.({top: Math.max(8, window.innerHeight - rect.height - 8)});
+        };
         select?.addEventListener("change", () => {
           guide.textContent = t(`STG.Game.${select.value}.guide`);
           showStake();
+          keepOnScreen();
         });
         showStake();
       },

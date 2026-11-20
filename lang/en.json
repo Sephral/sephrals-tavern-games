@@ -42,8 +42,8 @@
         "guide": "Ye play against the house, and Greta the innkeeper dealeth. Draw a card, or stand content with what thou holdest. Come nigher to one and twenty than the house, yet never beyond, and thou winnest. Aces count one or eleven, the courtly cards ten. The house must draw unto seventeen."
       },
       "mexico": {
-        "name": "Mexico",
-        "guide": "Two dice beneath a cup, and a bluff in the air. Shake them, look upon them alone, and name a throw higher than the one before, true or false. Mixed throws rank by their higher die (65 is the best of them), pairs beat those (66 is the best pair), and 21 is Mexico, which beats all. The next player either believes it, shakes their own dice and names something higher, or cries \"Liar!\" Then the cup is lifted. If the throw is worth at least what was named, the doubter loses a life, else the bluffer. A true Mexico costs the doubter two. The loser opens the next round. Each begins with three lives, and the last one with lives left is victor."
+        "name": "Mia",
+        "guide": "Two dice beneath a cup, and a bluff in the air. Shake them, look upon them alone, and name a throw higher than the one before, true or false. Mixed throws rank by their higher die (65 is the best of them), pairs beat those (66 is the best pair), and 21 is Mia, which beats all. The next player either believes it, shakes their own dice and names something higher, or cries \"Liar!\" Then the cup is lifted. If the throw is worth at least what was named, the doubter loses a life, else the bluffer. A true Mia costs the doubter two. The loser opens the next round. Each begins with three lives, and the last one with lives left is victor."
       }
     },
     "Guest": {
@@ -236,7 +236,7 @@
       },
       "stakes": {
         "name": "Stakes",
-        "hint": "Lets players open tables of twenty-one, liar's dice and Mexico with a stake in play money. Off by default, nothing changes at the tables until you switch it on."
+        "hint": "Lets players open tables of twenty-one, liar's dice and Mia with a stake in play money. Off by default, nothing changes at the tables until you switch it on."
       },
       "stakeMoney": {
         "name": "Money for stakes",
@@ -333,7 +333,7 @@
       "noAnnounce": "Nothing announced yet.",
       "valuePlain": "{a} {b}",
       "valuePair": "{a} {b}, a pair",
-      "valueMexico": "{a} {b}, Mexico",
+      "valueMexico": "{a} {b}, Mia",
       "lossOne": "loses a life",
       "lossTwo": "loses two lives",
       "revealHolds": "{name} announced {value}, {caller} doubted it. Under the cup: {actual}. It holds, {loser} {loss}.",

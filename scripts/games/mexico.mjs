@@ -1,5 +1,5 @@
 /**
- * Mexico, the old bluffing game with two dice (known as Mäxchen or Meier in German pubs). Whoever is up shakes two
+ * Mia, the old bluffing game with two dice (shown as Mia, Mäxchen in German, also known as Meier or Mexico; the id stays "mexico"). Whoever is up shakes two
  * dice under a cup, looks at them alone and announces a value that must beat the announcement before, true or not.
  * The next player either believes it, shakes their own dice and announces something higher, or calls the lie. The
  * cup is lifted: when the announcement holds (the dice are worth at least as much), the caller loses a life, else the

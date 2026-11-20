@@ -5,12 +5,12 @@
 Open the tavern from the token controls on the left (mug icon), with the mug below the chat log or with the button of a tavern chat message. Foundry ignores the token controls while no scene is shown, so in theater of the mind the mug in the chat is the way in. It shows while the chat tab is open in the sidebar. The tables are on the left, the chosen table on the right. Everyone sees every table and can watch. The gear in the title bar opens the tavern settings.
 
 * **New table:** pick the game and an opponent. The dialog shows the guide of the chosen game. Against a regular the game starts right away (games for more players with two seats). *Wait for other players* opens the table and posts an invitation in the chat. Whoever clicks *Join* sits down.
-* **More seats:** Pig, liar's dice, Mexico and ship, captain and crew take two to four players, twenty-one one to four. The host can invite regulars to free seats (not at twenty-one) and starts the game with *Start*.
+* **More seats:** Pig, liar's dice, Mia and ship, captain and crew take two to four players, twenty-one one to four. The host can invite regulars to free seats (not at twenty-one) and starts the game with *Start*.
 * **Your turn:** the line under the title says whose turn it is. When the tavern is closed and your turn comes, a notification tells you.
 * **Buttons:** the players at a table see the buttons of the game (roll, hold, take, card, bid and so on), greyed out while it is somebody else's turn. Spectators and whoever left the table see the board without buttons.
 * **Play again:** after a game, *Play again* starts a new round with the same seats. In games for two, the other one begins.
 * **Guide:** every game has a short guide in the tongue of old. It shows while a table waits, the scroll next to the game's name shows it during the game.
-* **Leave:** leaving a waiting table frees the seat (the host takes the table away). Leaving a running game loses it. In the games for more players (Pig, liar's dice, Mexico, ship, captain and crew, twenty-one) the others play on without whoever left, as long as another player sits at the table or anybody still plays against the house (twenty-one). A regular never plays on alone. *Play again* leaves out whoever left.
+* **Leave:** leaving a waiting table frees the seat (the host takes the table away). Leaving a running game loses it. In the games for more players (Pig, liar's dice, Mia, ship, captain and crew, twenty-one) the others play on without whoever left, as long as another player sits at the table or anybody still plays against the house (twenty-one). A regular never plays on alone. *Play again* leaves out whoever left.
 * **Take the table away:** the host or the GM removes a table.
 
 ## The suggestion for the break
@@ -34,7 +34,7 @@ The tavern can suggest a game when the table takes a break, so that games get pl
 | Pig | 2 to 4 | Roll a die as often as you like and add the pips, or hold to bank them. A one loses the turn. First to the goal (setting, 50 by default). The table names who rolled the one, and a line under the goal tells how the last turn ended: the rolls and the banked sum, or the rolls up to the one |
 | Ship, captain and crew | 2 to 4 | Three throws of five dice. A six (ship), a five (captain) and a four (crew) are set aside in this order. Once all three are aboard, the other two dice are the cargo: throw them again or keep them. Everyone has one turn, the richest cargo wins, equal cargo shares the win. A line tells how the last turn ended: the cargo and its dice, or no crew found |
 | Liar's dice | 2 to 4 | Five dice each under a cup, everyone sees only their own. Bid how many dice of one face lie on the whole table, always higher than before (more dice, or as many of a higher face), or call the last bid a lie. The cups are lifted: when the bid holds the caller loses a die, else the bidder. The loser begins the next round. The last one with dice wins. A dimmed box below shows the lifted cups of the round before, with the bid and its face in one sentence. It is marked as the last round and folds to one line once the new round has its first bid, a click opens it again |
-| Mexico | 2 to 4 | Two dice under a cup, and a bluff. Whoever is up shakes the dice, looks at them alone and announces a value that beats the announcement before, true or not. Values from low to high: the mixed throws by their higher die (31, 32, 41 up to 65), the pairs (11 to 66), and 21, the Mexico, on top. The next player believes it, shakes their own dice and announces something higher, or calls the lie. The cup is lifted: when the dice are worth at least what was announced, the caller loses a life, else the announcer. A real Mexico costs the caller two lives. Nothing beats a Mexico, so the next player has to call. Three lives each, the loser opens the next round, the last one with lives wins. A dimmed box shows the lifted cup of the round before |
+| Mia | 2 to 4 | Two dice under a cup, and a bluff. Whoever is up shakes the dice, looks at them alone and announces a value that beats the announcement before, true or not. Values from low to high: the mixed throws by their higher die (31, 32, 41 up to 65), the pairs (11 to 66), and 21, the Mia, on top. The next player believes it, shakes their own dice and announces something higher, or calls the lie. The cup is lifted: when the dice are worth at least what was announced, the caller loses a life, else the announcer. A real Mia costs the caller two lives. Nothing beats a Mia, so the next player has to call. Three lives each, the loser opens the next round, the last one with lives wins. A dimmed box shows the lifted cup of the round before |
 | Twenty-one | 1 to 4 | Against the house. Aces count 1 or 11, faces 10. The dealer draws to 17. Closer to 21 without going over wins, the same total is a tie |
 
 ## The regulars
@@ -43,7 +43,7 @@ The tavern can suggest a game when the table takes a break, so that games get pl
 | --- | --- |
 | Old Bertram | easy going: mostly random, but no fool |
 | Mirela the Quick | sharp: takes every win and blocks every threat |
-| Jasper One Eye | unbeatable: perfect play at tic-tac-toe and the matchstick game, looks five moves ahead at four in a row and three at nine men's morris, takes risks at Pig when behind, weighs the odds of every bid at liar's dice and bluffs now and then, weighs the odds of every announcement at Mexico and mixes in bluffs, drops anchor at ship, captain and crew when the cargo beats the others |
+| Jasper One Eye | unbeatable: perfect play at tic-tac-toe and the matchstick game, looks five moves ahead at four in a row and three at nine men's morris, takes risks at Pig when behind, weighs the odds of every bid at liar's dice and bluffs now and then, weighs the odds of every announcement at Mia and mixes in bluffs, drops anchor at ship, captain and crew when the cargo beats the others |
 
 Greta the innkeeper deals twenty-one.
 
@@ -70,7 +70,7 @@ The gear in the tavern's title bar opens the tavern settings. The GM also finds 
 | Chat messages | Invitations and results, only results, or none |
 | Suggestion for the break | A pause suggests a game to the players (GM, on by default). The button in the tavern always works |
 | Goal in Pig | The score that wins a game of Pig (20 to 100) |
-| Stakes | Tables of twenty-one, liar's dice and Mexico can be opened with a stake in play money (GM, off by default). See [Stakes](#stakes) |
+| Stakes | Tables of twenty-one, liar's dice and Mia can be opened with a stake in play money (GM, off by default). See [Stakes](#stakes) |
 | Money for stakes | The purse of the character where the tavern knows it (D&D 5e, Pathfinder 2e, Crucible), or chips only (GM) |
 | Starting chips | The chips every player begins with when playing for chips (GM, 10 to 10000) |
 | Self test | Every game plays a round against itself (GM) |
@@ -78,13 +78,13 @@ The gear in the tavern's title bar opens the tavern settings. The GM also finds 
 
 ## Stakes
 
-Twenty-one, liar's dice and Mexico can be played for play money. The GM switches *Stakes* on in the tavern settings, it is off by default and nothing changes at the tables until then. With stakes on, the dialog for a new table has a stake row for these games (empty or 0 plays for honor).
+Twenty-one, liar's dice and Mia can be played for play money. The GM switches *Stakes* on in the tavern settings, it is off by default and nothing changes at the tables until then. With stakes on, the dialog for a new table has a stake row for these games (empty or 0 plays for honor).
 
 * **Where the money comes from:** the purse of the character a player bets with. D&D 5e pays from `system.currency` (the smallest coins first, change in gold, silver and copper, platinum and electrum stay), Pathfinder 2e from the coins of the character's inventory, Crucible from `system.currency` (one number, counted in copper). Other systems, and every world where the GM sets *Money for stakes* to chips, play with chips: the tavern keeps a balance per user in a hidden world setting (starting stack in the settings, 100 by default) and writes nothing to character sheets. A stake is typed in gold pieces (decimals allowed, 0.5 is five silver) or in chips.
 * **Who may bet:** the player names the character (their own is taken without asking, a player with several is asked). It must be owned by the player and able to pay. The check runs when the table opens or the player joins, and again when the game starts. Nobody pays when somebody cannot: the start fails with the name of the player who cannot afford it.
 * **When money moves:** the stakes of all players go into escrow when the game starts (at twenty-one: before the deal). The payout happens when the game ends. A rematch takes new stakes. A table taken away in the middle of a game returns the stakes. Only the active GM's client writes money.
 * **Twenty-one:** every player bets against the house. A win pays 1:1, a natural (21 with the first two cards) 3:2 rounded down, a tie returns the stake, a loss goes to the house. A player who leaves the hand loses the stake.
-* **Liar's dice and Mexico:** everyone puts the stake into the pot, and so does every regular at the table, whom the house stakes. The winner takes the pot, a regular who wins keeps it for the house. If nobody wins the stakes go back.
+* **Liar's dice and Mia:** everyone puts the stake into the pot, and so does every regular at the table, whom the house stakes. The winner takes the pot, a regular who wins keeps it for the house. If nobody wins the stakes go back.
 * **On the table:** the stake (at liar's dice the pot too) and the player's own purse show under the line with the turn. The result line says who won or lost how much, or who took the pot. The chat card of the result has the same line.
 
 ## Debug file
@@ -119,7 +119,7 @@ No names, chat messages, notes, dice results or other content of the world are s
 * The games switched off are kept in a world setting, so a game of a later version is on offer at once.
 * The suggestion (`offer`), the number of games started per game (`played`), the players who finished their first game (`introduced`) and the ranking of the evening (`ranking`, see [The ranking of the evening](#the-ranking-of-the-evening)) are world settings written by the active GM's client.
 * The tables are kept in a world setting, so everyone sees the same table and a reload changes nothing. The last eight finished tables stay in the list.
-* The dealer's face down card in twenty-one never leaves the GM's client until the players are done. At liar's dice nobody's dice go into the shared tables: every player asks the GM's client for their own dice. At Mexico the dice under the cup are the secret: only the player who holds the cup can ask for them, and when the GM reloads, the cup is shaken again (the announcement stays, the dice are new). If the GM reloads, the cups are shaken again and everyone gets new dice for the round. If the GM reloads in the middle of a hand, a new face down card is dealt from the cards nobody has seen.
+* The dealer's face down card in twenty-one never leaves the GM's client until the players are done. At liar's dice nobody's dice go into the shared tables: every player asks the GM's client for their own dice. At Mia the dice under the cup are the secret: only the player who holds the cup can ask for them, and when the GM reloads, the cup is shaken again (the announcement stays, the dice are new). If the GM reloads, the cups are shaken again and everyone gets new dice for the round. If the GM reloads in the middle of a hand, a new face down card is dealt from the cards nobody has seen.
 * Dice and cards use Foundry's random numbers.
 * A table with a stake carries `stake: {amount, mode, paid, payout}` in the tables setting. `amount` is in minor units (copper pieces for a purse, single chips otherwise), `mode` is the adapter that was in use (`dnd5e`, `pf2e`, `crucible`, `chips`), `paid` what every seat put into escrow, `payout` what the finished game pays (`pot`, `credits`, `net`, `paid`). The payout is marked as paid before it is credited, so a failing payment is reported to the GM instead of being paid twice. Seats of a stake table carry the `actorId` of the character that bets. The pure rules are in `scripts/games/stakes.mjs`, the system adapters in `scripts/stakes.mjs`. Another game joins the stakes with an entry in `RULES`.
 
@@ -130,5 +130,5 @@ No names, chat messages, notes, dice results or other content of the world are s
 ## Limits
 
 * A GM has to be online for the tables.
-* Stakes are for twenty-one, liar's dice and Mexico only, and always play money: a game does not move items or real currency beyond the purse of the character.
+* Stakes are for twenty-one, liar's dice and Mia only, and always play money: a game does not move items or real currency beyond the purse of the character.
 * A world that runs on another game system than D&D 5e, Pathfinder 2e or Crucible plays for chips. Everything else is played for honor and bragging rights.

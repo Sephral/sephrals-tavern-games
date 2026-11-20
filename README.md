@@ -10,7 +10,7 @@
 
 ## Highlights
 
-* **Nine tavern classics:** tic tac toe, four in a row, nine men's morris, the matchstick game, the dice games Pig, liar's dice, Mexico and ship, captain and crew, and twenty one against the house.
+* **Nine tavern classics:** tic tac toe, four in a row, nine men's morris, the matchstick game, the dice games Pig, liar's dice, Mia and ship, captain and crew, and twenty one against the house.
 * **Rules in the tongue of old:** every game comes with a short guide, and the GM picks the games the tavern offers.
 * **Against each other:** open a table, a friend joins, and you play in turns. The dice games take up to four players, twenty one up to four against the dealer.
 * **Against the regulars:** Old Bertram plays for fun, Mirela the Quick is sharp, and nobody has ever beaten Jasper One Eye at the matchstick game.

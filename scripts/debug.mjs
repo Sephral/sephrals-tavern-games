@@ -33,6 +33,8 @@ export function tableInfo(table) {
     turn: table.state?.turn ?? null,
     phase: table.state?.phase ?? null,
     result: table.result ?? null,
+    stake: table.stake ? {amount: table.stake.amount, mode: table.stake.mode, paid: table.stake.paid ?? null,
+      payout: table.stake.payout ? {pot: table.stake.payout.pot, net: table.stake.payout.net, paid: table.stake.payout.paid} : null} : null,
     created: table.created ?? null,
     updated: table.updated ?? null
   };
@@ -47,6 +49,8 @@ export function describeState() {
     activeGM: game.users?.activeGM?.id ?? null,
     disabledGames: setting("disabledGames") ?? [],
     chatCards: setting("chatCards") ?? null,
+    stakes: !!setting("stakes"),
+    stakeMoney: setting("stakeMoney") ?? null,
     tables: tables().map(tableInfo)
   };
 }
@@ -65,6 +69,6 @@ export function registerDebug() {
     message: message => ({card: message.flags[MODULE_ID].card, tavern: describeState()}),
     recent: () => ({details: describeState()}),
     // The stored tables are summarized above
-    omitSettings: ["tables"]
+    omitSettings: ["tables", "chips"]
   });
 }

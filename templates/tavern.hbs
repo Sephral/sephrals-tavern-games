@@ -44,6 +44,7 @@
           <button type="button" class="stg-icon stg-guide-toggle {{#if table.showGuide}}active{{/if}}" data-action="toggleGuide"
             data-tooltip="{{localize "STG.Table.guide"}}" aria-label="{{localize "STG.Table.guide"}}"><i class="fa-solid fa-scroll" inert></i></button></h2>
         <p class="stg-line {{#if table.myTurn}}mine{{/if}}">{{table.line}}</p>
+        {{#if table.stake}}<p class="stg-stake"><i class="fa-solid fa-coins" inert></i> {{table.stake.line}}{{#if table.stake.pot}} · {{table.stake.pot}}{{/if}}{{#if table.stake.mine}} · {{table.stake.mine}}{{/if}}</p>{{/if}}
       </header>
       {{#if table.intro}}
       <div class="stg-intro" role="note">

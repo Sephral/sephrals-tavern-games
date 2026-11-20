@@ -160,7 +160,8 @@
     "Card": {
       "speaker": "Tavern",
       "open": "To the table",
-      "invite": "{name} is looking for an opponent at {game}."
+      "invite": "{name} is looking for an opponent at {game}.",
+      "inviteStake": "{name} is looking for an opponent at {game} for {stake}."
     },
     "Notice": {
       "yourTurn": "Your turn at {game}."
@@ -185,7 +186,14 @@
       "gameOff": "The tavern does not offer this game right now.",
       "notGM": "Only the GM can do that.",
       "offerGone": "That suggestion is over.",
-      "noGames": "No game fits the table right now."
+      "noGames": "No game fits the table right now.",
+      "stakesOff": "Stakes are switched off in this tavern.",
+      "noStakeGame": "This game cannot be played for a stake.",
+      "badStake": "That is not a usable stake.",
+      "noPurse": "Choose a character with a purse to bet with.",
+      "notYourCharacter": "{name} is not your character.",
+      "cantAfford": "{name} cannot afford the stake.",
+      "payoutFailed": "A payout at the tavern failed. Check the purses and the console."
     },
     "Config": {
       "title": "Tavern settings",
@@ -198,7 +206,8 @@
       "menuLabel": "Tavern settings",
       "menuHint": "The games on offer, the chat messages and the goal in Pig in one window. The gear in the tavern's title bar opens it too.",
       "seatsFixed": "{count} players",
-      "seatsRange": "{min} to {max} players"
+      "seatsRange": "{min} to {max} players",
+      "stakes": "Stakes"
     },
     "SETTINGS": {
       "uiLanguage": {
@@ -219,6 +228,20 @@
       "breakOffer": {
         "name": "Suggestion for the break",
         "hint": "When the GM pauses the game, the players see one suggested game with a button to join in, at most every ten minutes. The tavern window has a button for it too."
+      },
+      "stakes": {
+        "name": "Stakes",
+        "hint": "Lets players open tables of twenty-one and liar's dice with a stake in play money. Off by default, nothing changes at the tables until you switch it on."
+      },
+      "stakeMoney": {
+        "name": "Money for stakes",
+        "hint": "The purse pays where the tavern knows it (D&D 5e, Pathfinder 2e and Crucible). Chips are kept by the tavern for every player and no character sheet is touched. Systems without a known purse always play with chips.",
+        "auto": "Purse of the character where known",
+        "chips": "Chips only"
+      },
+      "chipsStart": {
+        "name": "Starting chips",
+        "hint": "The chips every player begins with when playing for chips."
       }
     },
     "SELFTEST": {
@@ -268,6 +291,31 @@
       "end": "Take it back",
       "active": "Suggested: {game}",
       "sent": "The suggestion is out."
+    },
+    "Money": {
+      "gp": "gp",
+      "sp": "sp",
+      "cp": "cp",
+      "chip": "{count} chip",
+      "chips": "{count} chips",
+      "unitChips": "chips"
+    },
+    "Stake": {
+      "field": "Stake",
+      "fieldHint": "Empty or 0 plays for honor. Everyone pays the stake when the game starts, the house covers the regulars. Winnings go to the purse.",
+      "bet": "Bet with",
+      "noCharacter": "You have no character with a purse to bet with.",
+      "chooseTitle": "Bet with which character?",
+      "line": "Stake: {amount}",
+      "lineHand": "Stake: {amount} per hand",
+      "pot": "Pot: {amount}",
+      "potTaken": "{name} takes the pot of {amount}.",
+      "purse": "Your purse: {amount}",
+      "chipsOwn": "Your chips: {amount}",
+      "payout": "Payout: {text}.",
+      "wins": "{name} wins {amount}",
+      "loses": "{name} loses {amount}",
+      "returned": "The stakes go back to the players."
     }
   }
 }

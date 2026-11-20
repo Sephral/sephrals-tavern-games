@@ -13,7 +13,9 @@ import {POINTS as MORRIS_POINTS} from "./games/morris.mjs";
 import {THROWS, cargo} from "./games/ship.mjs";
 import {winningLine as tttLine} from "./games/tictactoe.mjs";
 import {handValue} from "./games/twentyone.mjs";
+import {parseStake, potOf, stakeGame} from "./games/stakes.mjs";
 import {request} from "./net.mjs";
+import {adapterOf, balanceOf, candidateActors, formatMoney, moneyAdapter} from "./stakes.mjs";
 import {OFFER_MINUTES, needsIntro} from "./suggest-rules.mjs";
 import {currentOffer, resultText, seatName, tables} from "./tables.mjs";
 import {markUsed} from "./usage.mjs";
@@ -82,8 +84,34 @@ function noticeTurns(open) {
 export function report(result) {
   if ( result?.ok ) return true;
   const key = result?.error ?? "STG.Error.failed";
-  ui.notifications.warn(game.i18n.has(key) ? t(key) : key);
+  ui.notifications.warn(game.i18n.has(key) ? t(key, result?.data) : key);
   return false;
+}
+
+/**
+ * The character a player bets with at a table that plays for money. One character is taken without asking, several
+ * are offered in a small dialog. Null when the table needs none or the player has none (the GM's client answers
+ * with the reason), false when the player cancels.
+ * @param {object|undefined} table
+ * @returns {Promise<string|null|false>}
+ */
+export async function stakeActor(table) {
+  if ( !table?.stake || !setting("stakes") ) return null;
+  const adapter = adapterOf(table);
+  const actors = candidateActors(adapter, game.user);
+  if ( !actors.length ) return null;
+  const own = game.user.character?.id;
+  if ( actors.length === 1 ) return actors[0].id;
+  const options = actors.map(a => `<option value="${a.id}" ${a.id === own ? "selected" : ""}>${esc(a.name)} `
+    + `(${esc(formatMoney(balanceOf(adapter, {actorId: a.id}) ?? 0, adapter))})</option>`).join("");
+  const id = await DialogV2.prompt({
+    window: {title: t("STG.Stake.chooseTitle")},
+    content: `<div class="form-group"><label>${esc(t("STG.Stake.bet"))}</label><select name="actor">${options}</select></div>`
+      + `<p class="hint">${esc(t("STG.Stake.line", {amount: formatMoney(table.stake.amount, adapter)}))}</p>`,
+    rejectClose: false,
+    ok: {label: t("STG.Table.join"), callback: (event, button) => button.form.elements.actor.value}
+  });
+  return id || false;
 }
 
 /**
@@ -265,6 +293,17 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
     }
     // Only who sits at a running table sees the game's buttons, the spectators just watch
     view.seated = playing && (me >= 0) && !left;
+    // The stake and the pot at a table that plays for money
+    if ( table.stake && stakeGame(table.game) ) {
+      const adapter = adapterOf(table);
+      const money = amount => formatMoney(amount, adapter);
+      view.stake = {line: t(table.game === "twentyone" ? "STG.Stake.lineHand" : "STG.Stake.line", {amount: money(table.stake.amount)})};
+      if ( potOf(table) && (table.status !== "open") ) view.stake.pot = t("STG.Stake.pot", {amount: money(potOf(table))});
+      if ( (me >= 0) && !left && (table.status !== "done") ) {
+        const have = balanceOf(adapter, table.seats[me]);
+        if ( have !== null ) view.stake.mine = t(adapter.purse ? "STG.Stake.purse" : "STG.Stake.chipsOwn", {amount: money(have)});
+      }
+    }
     // What the user may do at this table
     const free = g.seats.max - table.seats.length;
     view.canJoin = (table.status === "open") && (me < 0) && (free > 0);
@@ -534,25 +573,62 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
     const games = offered.map(g => `<option value="${g.id}">${esc(t(`STG.Game.${g.id}.name`))}</option>`).join("");
     const guests = Object.entries(GUESTS).map(([id, g]) => `<option value="${id}">${esc(t(`STG.Guest.${id}.name`))} `
       + `(${esc(t(`STG.Level.${g.level}`))})</option>`).join("");
+    // Games that can be played for a stake get a row for it, while the GM allows stakes
+    const stakeGames = setting("stakes") ? offered.filter(g => stakeGame(g.id)).map(g => g.id) : [];
+    const adapter = moneyAdapter();
+    let stakeRows = "";
+    if ( stakeGames.length ) {
+      const unit = adapter.purse ? t("STG.Money.gp") : t("STG.Money.unitChips");
+      const own = game.user.character?.id;
+      const options = candidateActors(adapter, game.user).map(a => `<option value="${a.id}" ${a.id === own ? "selected" : ""}>`
+        + `${esc(a.name)} (${esc(formatMoney(balanceOf(adapter, {actorId: a.id}) ?? 0, adapter))})</option>`).join("");
+      const row = `<div class="form-group stg-stake-row" style="display: none">`;
+      stakeRows = `${row}<label>${esc(t("STG.Stake.field"))} (${esc(unit)})</label>`
+        + `<input type="number" name="stake" min="0" step="${adapter.purse ? "0.01" : "1"}" placeholder="0"></div>`
+        + (adapter.purse ? `${row}<label>${esc(t("STG.Stake.bet"))}</label>`
+          + (options ? `<select name="actor">${options}</select>` : `<span class="hint">${esc(t("STG.Stake.noCharacter"))}</span>`) + `</div>`
+          : `${row}<label>${esc(t("STG.Stake.chipsOwn", {amount: ""}))}</label>`
+            + `<span>${esc(formatMoney(balanceOf(adapter, {userId: game.user.id}) ?? 0, adapter))}</span></div>`)
+        + `<p class="hint stg-stake-row" style="display: none">${esc(t("STG.Stake.fieldHint"))}</p>`;
+    }
     const result = await DialogV2.prompt({
       window: {title: t("STG.Table.new")},
       content: `<div class="form-group"><label>${esc(t("STG.Table.game"))}</label><select name="game">${games}</select></div>`
         + `<div class="form-group"><label>${esc(t("STG.Table.opponent"))}</label><select name="opponent">`
-        + `<option value="">${esc(t("STG.Table.players"))}</option>${guests}</select></div>`
+        + `<option value="">${esc(t("STG.Table.players"))}</option>${guests}</select></div>${stakeRows}`
         + `<blockquote class="stg-guide" data-stg-guide>${esc(t(`STG.Game.${offered[0].id}.guide`))}</blockquote>`
         + `<p class="hint">${esc(t("STG.Table.newHint"))}</p>`,
       rejectClose: false,
-      // The guide follows the chosen game
+      // The guide follows the chosen game, the stake rows show for the games that take a stake
       render: (event, dialog) => {
         const select = dialog.element.querySelector("select[name=game]");
         const guide = dialog.element.querySelector("[data-stg-guide]");
-        select?.addEventListener("change", () => guide.textContent = t(`STG.Game.${select.value}.guide`));
+        const showStake = () => {
+          for ( const row of dialog.element.querySelectorAll(".stg-stake-row") ) {
+            row.style.display = stakeGames.includes(select.value) ? "" : "none";
+          }
+        };
+        select?.addEventListener("change", () => {
+          guide.textContent = t(`STG.Game.${select.value}.guide`);
+          showStake();
+        });
+        showStake();
       },
-      ok: {label: t("STG.Table.open"), callback: (event, button) => ({game: button.form.elements.game.value,
-        guest: button.form.elements.opponent.value || null})}
+      ok: {label: t("STG.Table.open"), callback: (event, button) => {
+        const form = button.form.elements;
+        return {game: form.game.value, guest: form.opponent.value || null, stakeRaw: stakeGames.includes(form.game.value)
+          ? String(form.stake?.value ?? "").trim() : "", actorId: form.actor?.value || null};
+      }}
     });
     if ( !result ) return;
-    const answer = await request("create", result);
+    const payload = {game: result.game, guest: result.guest};
+    if ( result.stakeRaw && (Number(result.stakeRaw.replace(",", ".")) !== 0) ) {
+      const stake = parseStake(result.stakeRaw, adapter.mainValue);
+      if ( stake === null ) return ui.notifications.warn(t("STG.Error.badStake"));
+      payload.stake = stake;
+      payload.actorId = result.actorId;
+    }
+    const answer = await request("create", payload);
     if ( report(answer) ) {
       this.tableId = answer.tableId;
       this.render();
@@ -580,7 +656,10 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
 
   /** @this {Tavern} */
   static async #onJoin(event, target) {
-    report(await request("join", {tableId: Tavern.#table(target)}));
+    const tableId = Tavern.#table(target);
+    const actorId = await stakeActor(tables().find(x => x.id === tableId));
+    if ( actorId === false ) return;
+    report(await request("join", {tableId, actorId}));
   }
 
   /** @this {Tavern} */

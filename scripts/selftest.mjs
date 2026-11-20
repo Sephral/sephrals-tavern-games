@@ -18,7 +18,7 @@ function checkAll() {
     if ( !ok ) problems.push(game.i18n.has(key) ? t(key, data) : key);
   };
   check(typeof game.socket?.emit === "function", "STG.SELFTEST.Socket");
-  check(["tables", "offer", "played", "introduced"].every(key => game.settings.settings.has(`${MODULE_ID}.${key}`)), "STG.SELFTEST.Storage");
+  check(["tables", "offer", "played", "introduced", "chips", "stakes"].every(key => game.settings.settings.has(`${MODULE_ID}.${key}`)), "STG.SELFTEST.Storage");
   const info = Object.fromEntries(Object.values(GAMES).map(g => [g.id, {min: g.seats.min, max: g.seats.max, guests: !!g.guests}]));
   check(!!pickGame({games: info, offered: Object.keys(GAMES), online: 1}) && !!pickGame({games: info, offered: Object.keys(GAMES), online: 3}),
     "STG.SELFTEST.Suggest");

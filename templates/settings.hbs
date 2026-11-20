@@ -43,6 +43,33 @@
       <p class="hint">{{localize "STG.SETTINGS.pigGoal.hint"}}</p>
     </div>
   </fieldset>
+
+  <fieldset>
+    <legend>{{localize "STG.Config.stakes"}}</legend>
+    <div class="form-group">
+      <label for="stg-stakes">{{localize "STG.SETTINGS.stakes.name"}}</label>
+      <div class="form-fields">
+        <input type="checkbox" id="stg-stakes" name="stakes" {{#if stakes}}checked{{/if}}>
+      </div>
+      <p class="hint">{{localize "STG.SETTINGS.stakes.hint"}}</p>
+    </div>
+    <div class="form-group">
+      <label for="stg-stake-money">{{localize "STG.SETTINGS.stakeMoney.name"}}</label>
+      <div class="form-fields">
+        <select id="stg-stake-money" name="stakeMoney">
+          {{#each stakeMoney}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+        </select>
+      </div>
+      <p class="hint">{{localize "STG.SETTINGS.stakeMoney.hint"}}</p>
+    </div>
+    <div class="form-group">
+      <label for="stg-chips-start">{{localize "STG.SETTINGS.chipsStart.name"}}</label>
+      <div class="form-fields">
+        <input type="number" id="stg-chips-start" name="chipsStart" value="{{chipsStart}}" min="10" max="10000" step="10">
+      </div>
+      <p class="hint">{{localize "STG.SETTINGS.chipsStart.hint"}}</p>
+    </div>
+  </fieldset>
   {{/if}}
 
   <fieldset>

@@ -6,6 +6,8 @@
 
 import {MODULE_ID, esc, setting, t as loc} from "./config.mjs";
 import {GAMES, GUESTS, gameOffered, game as rules, publicState} from "./games/index.mjs";
+import {hasEscrow, settleStake, stakeGame, validStake} from "./games/stakes.mjs";
+import {adapterOf, checkSeat, chargeSeats, creditSeats, formatMoney, moneyAdapter} from "./stakes.mjs";
 import {cleanOffer, newcomersOf, offerAllowed, pickGame} from "./suggest-rules.mjs";
 import {countFeature} from "./usage.mjs";
 
@@ -15,6 +17,9 @@ const KEEP_DONE = 8;
 /** Usage counters by game, counted once per game started (also a rematch). */
 export const GAME_FEATURES = {tictactoe: "gameTictactoe", fourinarow: "gameFourinarow", morris: "gameMorris",
   matches: "gameMatches", pig: "gamePig", ship: "gameShip", liars: "gameLiars", twentyone: "gameTwentyone"};
+
+/** Usage counters of the stakes: a table opened with a stake, a stake paid out at the end of a game. */
+export const STAKE_FEATURES = {table: "stakeTable", paid: "stakePaid"};
 
 /** Usage counters of the break suggestion. */
 export const OFFER_FEATURES = {offer: "breakOffer", join: "breakJoin"};
@@ -92,11 +97,15 @@ async function update(id, change) {
 /**
  * The seat of a user.
  * @param {User} user
+ * @param {string|null} [actorId]   The character who bets
  * @returns {object}
  */
-function userSeat(user) {
-  return {kind: "user", userId: user.id, name: user.character?.name || user.name,
+function userSeat(user, actorId=null) {
+  const seat = {kind: "user", userId: user.id, name: user.character?.name || user.name,
     img: user.character?.img || user.avatar || "icons/svg/mystery-man.svg"};
+  // The character whose purse pays the stake
+  if ( actorId ) seat.actorId = actorId;
+  return seat;
 }
 
 /**
@@ -152,6 +161,63 @@ function start(table) {
 }
 
 /**
+ * The stake a table really plays for: the GM may have switched the stakes off since the table was opened.
+ * @param {object} table
+ * @returns {{amount: number, mode: string}|null}
+ */
+function activeStake(table) {
+  return (table.stake && setting("stakes") && validStake(table.stake.amount) && stakeGame(table.game)) ? table.stake : null;
+}
+
+/**
+ * Take the stakes into escrow, then start the game (active GM). Nobody pays when somebody cannot.
+ * @param {object} table
+ * @returns {Promise<object>}
+ */
+async function begin(table) {
+  if ( !activeStake(table) ) return start({...table, stake: null});
+  const paid = await chargeSeats(table);
+  const next = {...table, stake: {...table.stake, paid, payout: null, refunded: false}};
+  try {
+    return start(next);
+  } catch(err) {
+    await creditSeats(next, paid).catch(e => console.error(`${MODULE_ID} | Could not return a stake`, e));
+    throw err;
+  }
+}
+
+/**
+ * A finished table with what the stakes pay, still to be paid out.
+ * @param {object} table
+ * @returns {object}
+ */
+function withPayout(table) {
+  if ( !table.stake || table.stake.payout || (table.status !== "done") ) return table;
+  const payout = settleStake(table);
+  return payout ? {...table, stake: {...table.stake, payout: {...payout, paid: false}}} : table;
+}
+
+/**
+ * Pay out the stakes of a finished table (active GM), once. The table is marked first: a failing payment is reported
+ * rather than paid twice.
+ * @param {object} table
+ * @returns {Promise<object>}
+ */
+async function payOut(table) {
+  const payout = table.stake?.payout;
+  if ( !payout || payout.paid ) return table;
+  const next = await update(table.id, t => ({...t, stake: {...t.stake, payout: {...t.stake.payout, paid: true}}}));
+  try {
+    await creditSeats(next, payout.credits);
+    if ( payout.credits.some(amount => amount > 0) ) countFeature(MODULE_ID, STAKE_FEATURES.paid);
+  } catch(err) {
+    console.error(`${MODULE_ID} | A payout failed`, err);
+    ui.notifications.error(loc("STG.Error.payoutFailed"), {permanent: true});
+  }
+  return next;
+}
+
+/**
  * Count a game started in the world (the break suggestion prefers games nobody played yet).
  * @param {string} gameId
  */
@@ -201,6 +267,7 @@ function settle(table, state) {
     next.status = "done";
     next.result = outcome;
     full.delete(table.id);
+    return withPayout(next);
   }
   return next;
 }
@@ -241,13 +308,39 @@ export function resultText(table) {
   const gameName = loc(`STG.Game.${table.game}.name`);
   const r = table.result;
   if ( !r ) return "";
+  const money = stakeLine(table);
+  const more = money ? ` ${money}` : "";
   if ( table.game === "twentyone" ) {
-    return r.results.map((res, i) => loc(`STG.Result.twentyone.${res}`, {name: names[i]})).join(" · ");
+    return r.results.map((res, i) => loc(`STG.Result.twentyone.${res}`, {name: names[i]})).join(" · ") + more;
   }
-  if ( r.draw ) return loc("STG.Result.draw", {names: names.join(", "), game: gameName});
+  if ( r.draw ) return loc("STG.Result.draw", {names: names.join(", "), game: gameName}) + more;
   const winner = names[r.winners[0]];
   const others = names.filter((_, i) => !r.winners.includes(i));
-  return loc("STG.Result.win", {winner, others: others.join(", "), game: gameName});
+  return loc("STG.Result.win", {winner, others: others.join(", "), game: gameName}) + more;
+}
+
+/**
+ * The payout of a finished table in one sentence, empty without a stake.
+ * @param {object} table
+ * @returns {string}
+ */
+export function stakeLine(table) {
+  const payout = table.stake?.payout;
+  if ( !payout ) return "";
+  const adapter = adapterOf(table);
+  const money = amount => formatMoney(amount, adapter);
+  if ( table.game === "twentyone" ) {
+    const parts = [];
+    table.seats.forEach((seat, i) => {
+      const net = payout.net[i];
+      if ( (seat.kind !== "user") || !net ) return;
+      parts.push(loc(net > 0 ? "STG.Stake.wins" : "STG.Stake.loses", {name: seatName(seat), amount: money(Math.abs(net))}));
+    });
+    return parts.length ? loc("STG.Stake.payout", {text: parts.join(", ")}) : loc("STG.Stake.returned");
+  }
+  const winner = table.result?.winners?.[0];
+  if ( (winner === undefined) || !table.result?.winners?.length ) return loc("STG.Stake.returned");
+  return loc("STG.Stake.potTaken", {name: seatName(table.seats[winner]), amount: money(payout.pot)});
 }
 
 /**
@@ -256,6 +349,7 @@ export function resultText(table) {
  * @returns {Promise<void>}
  */
 async function postResult(table) {
+  table = await payOut(table);
   await markIntroduced(table);
   await postCard("result", `<p class="stg-card-title"><i class="fa-solid fa-trophy" inert></i> ${esc(loc(`STG.Game.${table.game}.name`))}</p>`
     + `<p>${esc(resultText(table))}</p><button type="button" data-stg-open="${esc(table.id)}"><i class="fa-solid fa-beer-mug-empty" inert></i> `
@@ -267,7 +361,7 @@ async function postResult(table) {
 /* -------------------------------------------- */
 
 const ok = (extra={}) => ({ok: true, ...extra});
-const fail = error => ({ok: false, error});
+const fail = (error, data) => ({ok: false, error, ...(data ? {data} : {})});
 
 /**
  * Handle a request (active GM).
@@ -284,7 +378,7 @@ export function handleRequest(action, payload, user) {
       return await fn(payload ?? {}, user);
     } catch(err) {
       const key = String(err?.message ?? "");
-      if ( key.startsWith("STG.") ) return fail(key);
+      if ( key.startsWith("STG.") ) return fail(key, err.data);
       console.error(`${MODULE_ID} | ${action} failed`, err);
       return fail("STG.Error.failed");
     }
@@ -314,23 +408,39 @@ function seatOf(table, user) {
  * @param {string|null} [guest]            A tavern guest who sits down at once
  * @param {object} [options]
  * @param {boolean} [options.silent]       No invitation in the chat (the break suggestion is the invitation)
+ * @param {number|null} [options.stake]    Stake in minor units, when the table plays for money
+ * @param {string|null} [options.actorId]  The character who bets
  * @returns {Promise<object>}
  */
-async function openTable(user, gameId, guest=null, {silent=false}={}) {
+async function openTable(user, gameId, guest=null, {silent=false, stake=null, actorId=null}={}) {
   const g = rules(gameId);
   if ( !gameOffered(gameId, setting("disabledGames")) ) throw new Error("STG.Error.gameOff");
   const seats = [userSeat(user)];
+  let stakeInfo = null;
+  if ( (stake !== null) && (stake !== undefined) ) {
+    if ( !setting("stakes") ) throw new Error("STG.Error.stakesOff");
+    if ( !stakeGame(gameId) ) throw new Error("STG.Error.noStakeGame");
+    if ( !validStake(stake) ) throw new Error("STG.Error.badStake");
+    const adapter = moneyAdapter();
+    const checked = checkSeat(adapter, user, actorId, stake);
+    seats[0] = userSeat(user, checked.actorId);
+    stakeInfo = {amount: stake, mode: adapter.id};
+  }
   if ( guest && g.guests ) seats.push(guestSeat(guest));
   let table = {id: foundry.utils.randomID(), game: gameId, host: user.id, status: "open", seats, state: null,
     result: null, created: Date.now(), updated: Date.now(), round: 1};
+  if ( stakeInfo ) table.stake = stakeInfo;
   // Against a guest the game starts at once; at twenty-one a guest means playing alone against the house
   const ready = !!guest;
-  if ( ready ) table = start(table);
+  if ( ready ) table = await begin(table);
   await save([...tables(), table]);
+  if ( stakeInfo ) countFeature(MODULE_ID, STAKE_FEATURES.table);
   if ( table.status === "done" ) await postResult(table);
   if ( !ready && !silent ) {
+    const key = stakeInfo ? "STG.Card.inviteStake" : "STG.Card.invite";
     await postCard("invite", `<p class="stg-card-title"><i class="fa-solid fa-beer-mug-empty" inert></i> `
-      + `${esc(loc("STG.Card.invite", {name: seatName(seats[0]), game: loc(`STG.Game.${gameId}.name`)}))}</p>`
+      + `${esc(loc(key, {name: seatName(seats[0]), game: loc(`STG.Game.${gameId}.name`),
+        stake: stakeInfo ? formatMoney(stakeInfo.amount, adapterOf(table)) : ""}))}</p>`
       + `<button type="button" data-stg-join="${esc(table.id)}"><i class="fa-solid fa-chair" inert></i> ${esc(loc("STG.Table.join"))}</button>`);
   }
   return table;
@@ -380,8 +490,8 @@ export function offerOnPause(paused) {
 const ACTIONS = {
 
   /** Open a table, against a guest or waiting for other players. */
-  async create({game: gameId, guest}, user) {
-    const table = await openTable(user, gameId, guest);
+  async create({game: gameId, guest, stake, actorId}, user) {
+    const table = await openTable(user, gameId, guest, {stake: stake ?? null, actorId: actorId ?? null});
     return ok({tableId: table.id});
   },
 
@@ -420,17 +530,19 @@ const ACTIONS = {
   },
 
   /** Take a seat at an open table; a two player table starts when it is full. */
-  async join({tableId}, user) {
+  async join({tableId, actorId}, user) {
     const table = tableById(tableId);
     if ( !table ) return fail("STG.Error.tableGone");
     if ( table.status !== "open" ) return fail("STG.Error.notOpen");
     if ( seatOf(table, user) >= 0 ) return fail("STG.Error.seated");
     const g = rules(table.game);
     if ( table.seats.length >= g.seats.max ) return fail("STG.Error.full");
-    const next = await update(tableId, t => {
-      const seated = {...t, seats: [...t.seats, userSeat(user)]};
-      return (seated.seats.length >= g.seats.max) && (g.seats.max === 2) ? start(seated) : seated;
-    });
+    // At a table with a stake the player names the character whose purse pays it, and must be able to pay
+    const stake = activeStake(table);
+    const checked = stake ? checkSeat(adapterOf(table), user, actorId ?? null, stake.amount) : null;
+    const seated = {...table, seats: [...table.seats, userSeat(user, checked?.actorId ?? null)]};
+    const started = (seated.seats.length >= g.seats.max) && (g.seats.max === 2) ? await begin(seated) : seated;
+    const next = await update(tableId, () => started);
     if ( next.status === "done" ) await postResult(next);
     return ok({tableId: next.id});
   },
@@ -443,10 +555,9 @@ const ACTIONS = {
     const g = rules(table.game);
     if ( (table.status !== "open") || !g.guests ) return fail("STG.Error.notOpen");
     if ( table.seats.length >= g.seats.max ) return fail("STG.Error.full");
-    const next = await update(tableId, t => {
-      const seated = {...t, seats: [...t.seats, guestSeat(guest)]};
-      return (seated.seats.length >= g.seats.max) && (g.seats.max === 2) ? start(seated) : seated;
-    });
+    const seated = {...table, seats: [...table.seats, guestSeat(guest)]};
+    const started = (seated.seats.length >= g.seats.max) && (g.seats.max === 2) ? await begin(seated) : seated;
+    const next = await update(tableId, () => started);
     if ( next.status === "done" ) await postResult(next);
     return ok({tableId});
   },
@@ -458,7 +569,8 @@ const ACTIONS = {
     if ( (table.host !== user.id) && !user.isGM ) return fail("STG.Error.notHost");
     if ( table.status !== "open" ) return fail("STG.Error.notOpen");
     if ( table.seats.length < rules(table.game).seats.min ) return fail("STG.Error.tooFew");
-    const next = await update(tableId, start);
+    const started = await begin(table);
+    const next = await update(tableId, () => started);
     if ( next.status === "done" ) await postResult(next);
     return ok({tableId});
   },
@@ -486,10 +598,9 @@ const ACTIONS = {
     // Who left the table does not play again
     const stay = table.seats.filter(seat => !seat.left);
     if ( stay.length < rules(table.game).seats.min ) return fail("STG.Error.tooFew");
-    const next = await update(tableId, t => {
-      const seats = (stay.length === 2) ? [stay[1], stay[0]] : stay;
-      return start({...t, seats, round: (t.round ?? 1) + 1});
-    });
+    const seats = (stay.length === 2) ? [stay[1], stay[0]] : stay;
+    const started = await begin({...table, seats, round: (table.round ?? 1) + 1});
+    const next = await update(tableId, () => started);
     if ( next.status === "done" ) await postResult(next);
     return ok({tableId});
   },
@@ -521,7 +632,7 @@ const ACTIONS = {
     }
     if ( table.status === "playing" ) {
       const winners = table.seats.map((_, i) => i).filter(i => (i !== seat) && !table.seats[i].left);
-      const next = await update(tableId, t => ({...t, status: "done", result: {done: true, winners, draw: false,
+      const next = await update(tableId, t => withPayout({...t, status: "done", result: {done: true, winners, draw: false,
         forfeit: seat, results: (t.game === "twentyone") ? t.seats.map((_, i) => (i === seat ? "lose" : "push")) : undefined}}));
       full.delete(tableId);
       await postResult(next);
@@ -546,6 +657,8 @@ const ACTIONS = {
     const table = tableById(tableId);
     if ( !table ) return fail("STG.Error.tableGone");
     if ( (table.host !== user.id) && !user.isGM ) return fail("STG.Error.notHost");
+    // A table taken away in the middle of a game gives the stakes back
+    if ( hasEscrow(table) ) await creditSeats(table, table.stake.paid);
     full.delete(tableId);
     await update(tableId, () => null);
     return ok();

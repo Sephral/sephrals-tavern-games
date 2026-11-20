@@ -143,6 +143,12 @@
   font-weight: bold;
 }
 
+.stg-tavern .stg-stake {
+  margin: 0 0 8px;
+  color: #ffd27a;
+  font-size: var(--font-size-12, 12px);
+}
+
 .stg-tavern .stg-seats {
   display: flex;
   flex-wrap: wrap;

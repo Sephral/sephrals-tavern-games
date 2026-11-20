@@ -160,7 +160,8 @@
     "Card": {
       "speaker": "Таверна",
       "open": "К столу",
-      "invite": "{name} ищет соперника для игры «{game}»."
+      "invite": "{name} ищет соперника для игры «{game}».",
+      "inviteStake": "{name} is looking for an opponent at {game} for {stake}."
     },
     "Notice": {
       "yourTurn": "Твой ход в игре «{game}»."
@@ -185,7 +186,14 @@
       "gameOff": "Сейчас таверна не предлагает эту игру.",
       "notGM": "Это может сделать только ведущий.",
       "offerGone": "Это предложение уже неактуально.",
-      "noGames": "Сейчас для стола не подходит ни одна игра."
+      "noGames": "Сейчас для стола не подходит ни одна игра.",
+      "stakesOff": "Stakes are switched off in this tavern.",
+      "noStakeGame": "This game cannot be played for a stake.",
+      "badStake": "That is not a usable stake.",
+      "noPurse": "Choose a character with a purse to bet with.",
+      "notYourCharacter": "{name} is not your character.",
+      "cantAfford": "{name} cannot afford the stake.",
+      "payoutFailed": "A payout at the tavern failed. Check the purses and the console."
     },
     "Config": {
       "title": "Настройки таверны",
@@ -198,7 +206,8 @@
       "menuLabel": "Настройки таверны",
       "menuHint": "Предлагаемые игры, сообщения в чате и цель в «Свинке» — в одном окне. Его также открывает шестерёнка в заголовке таверны.",
       "seatsFixed": "Игроков: {count}",
-      "seatsRange": "Игроков: от {min} до {max}"
+      "seatsRange": "Игроков: от {min} до {max}",
+      "stakes": "Stakes"
     },
     "SETTINGS": {
       "uiLanguage": {
@@ -219,6 +228,20 @@
       "breakOffer": {
         "name": "Предложение на перерыв",
         "hint": "Когда ведущий ставит игру на паузу, игроки видят одну предложенную игру с кнопкой «Подсесть», не чаще раза в десять минут. В окне таверны для этого есть и своя кнопка."
+      },
+      "stakes": {
+        "name": "Stakes",
+        "hint": "Lets players open tables of twenty-one and liar's dice with a stake in play money. Off by default, nothing changes at the tables until you switch it on."
+      },
+      "stakeMoney": {
+        "name": "Money for stakes",
+        "hint": "The purse pays where the tavern knows it (D&D 5e, Pathfinder 2e and Crucible). Chips are kept by the tavern for every player and no character sheet is touched. Systems without a known purse always play with chips.",
+        "auto": "Purse of the character where known",
+        "chips": "Chips only"
+      },
+      "chipsStart": {
+        "name": "Starting chips",
+        "hint": "The chips every player begins with when playing for chips."
       }
     },
     "SELFTEST": {
@@ -268,6 +291,31 @@
       "end": "Убрать",
       "active": "Предложено: {game}",
       "sent": "Предложение отправлено."
+    },
+    "Money": {
+      "gp": "gp",
+      "sp": "sp",
+      "cp": "cp",
+      "chip": "{count} chip",
+      "chips": "{count} chips",
+      "unitChips": "chips"
+    },
+    "Stake": {
+      "field": "Stake",
+      "fieldHint": "Empty or 0 plays for honor. Everyone pays the stake when the game starts, the house covers the regulars. Winnings go to the purse.",
+      "bet": "Bet with",
+      "noCharacter": "You have no character with a purse to bet with.",
+      "chooseTitle": "Bet with which character?",
+      "line": "Stake: {amount}",
+      "lineHand": "Stake: {amount} per hand",
+      "pot": "Pot: {amount}",
+      "potTaken": "{name} takes the pot of {amount}.",
+      "purse": "Your purse: {amount}",
+      "chipsOwn": "Your chips: {amount}",
+      "payout": "Payout: {text}.",
+      "wins": "{name} wins {amount}",
+      "loses": "{name} loses {amount}",
+      "returned": "The stakes go back to the players."
     }
   }
 }

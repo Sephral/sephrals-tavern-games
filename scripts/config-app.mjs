@@ -63,6 +63,10 @@ export class TavernSettings extends HandlebarsApplicationMixin(ApplicationV2) {
       selected: setting("chatCards") === value}));
     context.pigGoal = setting("pigGoal");
     context.breakOffer = setting("breakOffer") !== false;
+    context.stakes = !!setting("stakes");
+    context.stakeMoney = ["auto", "chips"].map(value => ({value, label: t(`STG.SETTINGS.stakeMoney.${value}`),
+      selected: setting("stakeMoney") === value}));
+    context.chipsStart = setting("chipsStart");
     context.languages = [FOLLOW_FOUNDRY, "de", "en"].map(value => ({value, selected: language === value,
       label: t(`STG.LANGUAGE.${value === FOLLOW_FOUNDRY ? "default" : value}`)}));
     context.buttons = [{type: "submit", icon: "fa-solid fa-floppy-disk", label: "STG.Config.save"}];
@@ -84,6 +88,12 @@ export class TavernSettings extends HandlebarsApplicationMixin(ApplicationV2) {
       if ( JSON.stringify(disabled) !== JSON.stringify(setting("disabledGames") ?? []) ) changes.push(["disabledGames", disabled]);
       if ( data.chatCards && (data.chatCards !== setting("chatCards")) ) changes.push(["chatCards", data.chatCards]);
       if ( typeof data.breakOffer === "boolean" && (data.breakOffer !== (setting("breakOffer") !== false)) ) changes.push(["breakOffer", data.breakOffer]);
+      if ( typeof data.stakes === "boolean" && (data.stakes !== !!setting("stakes")) ) changes.push(["stakes", data.stakes]);
+      if ( data.stakeMoney && ["auto", "chips"].includes(data.stakeMoney) && (data.stakeMoney !== setting("stakeMoney")) ) {
+        changes.push(["stakeMoney", data.stakeMoney]);
+      }
+      const chipsStart = Number(data.chipsStart);
+      if ( Number.isFinite(chipsStart) && (chipsStart !== setting("chipsStart")) ) changes.push(["chipsStart", Math.clamp(chipsStart, 10, 10000)]);
       const goal = Number(data.pigGoal);
       if ( Number.isFinite(goal) && (goal !== setting("pigGoal")) ) changes.push(["pigGoal", Math.clamp(goal, 20, 100)]);
     }

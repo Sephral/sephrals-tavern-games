@@ -36,7 +36,7 @@ test("the menu button and the part of the debug file are registered", () => {
   assert.equal(menu.restricted, true);
   assert.equal(menu.label, "STG.DEBUG.Save");
   const provider = globalThis.sephralsDebugFiles.providers.get(MODULE_ID);
-  assert.deepEqual(provider.omitSettings, ["tables"]);
+  assert.deepEqual(provider.omitSettings, ["tables", "chips"]);
   assert.equal(provider.applies({flags: {[MODULE_ID]: {card: "result"}}}), true);
   assert.equal(provider.applies({flags: {}}), false);
   assert.equal(typeof hooks.get("getChatMessageContextOptions"), "function");
@@ -45,7 +45,7 @@ test("the menu button and the part of the debug file are registered", () => {
 test("the tables appear in short, without cards, names or pictures", () => {
   const state = describeState();
   assert.deepEqual(state.tables, [{id: "t1", game: "twentyone", status: "playing", round: 2, host: "u1",
-    seats: ["user:u1", "guest:bertha"], turn: 0, phase: "play", result: null, created: 1, updated: 2}]);
+    seats: ["user:u1", "guest:bertha"], turn: 0, phase: "play", result: null, stake: null, created: 1, updated: 2}]);
   assert.equal(state.activeGM, "gm");
   assert.deepEqual(state.disabledGames, ["pig"]);
   const text = JSON.stringify(state);

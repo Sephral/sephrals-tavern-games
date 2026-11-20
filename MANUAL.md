@@ -59,8 +59,22 @@ The gear in the tavern's title bar opens the tavern settings. The GM also finds 
 | Chat messages | Invitations and results, only results, or none |
 | Suggestion for the break | A pause suggests a game to the players (GM, on by default). The button in the tavern always works |
 | Goal in Pig | The score that wins a game of Pig (20 to 100) |
+| Stakes | Tables of twenty-one and liar's dice can be opened with a stake in play money (GM, off by default). See [Stakes](#stakes) |
+| Money for stakes | The purse of the character where the tavern knows it (D&D 5e, Pathfinder 2e, Crucible), or chips only (GM) |
+| Starting chips | The chips every player begins with when playing for chips (GM, 10 to 10000) |
 | Self test | Every game plays a round against itself (GM) |
 | Save debug file | One file for bug reports about all of Sephral’s modules (GM). See [Debug file](#debug-file) |
+
+## Stakes
+
+Twenty-one and liar's dice can be played for play money. The GM switches *Stakes* on in the tavern settings, it is off by default and nothing changes at the tables until then. With stakes on, the dialog for a new table has a stake row for these two games (empty or 0 plays for honor).
+
+* **Where the money comes from:** the purse of the character a player bets with. D&D 5e pays from `system.currency` (the smallest coins first, change in gold, silver and copper, platinum and electrum stay), Pathfinder 2e from the coins of the character's inventory, Crucible from `system.currency` (one number, counted in copper). Other systems, and every world where the GM sets *Money for stakes* to chips, play with chips: the tavern keeps a balance per user in a hidden world setting (starting stack in the settings, 100 by default) and writes nothing to character sheets. A stake is typed in gold pieces (decimals allowed, 0.5 is five silver) or in chips.
+* **Who may bet:** the player names the character (their own is taken without asking, a player with several is asked). It must be owned by the player and able to pay. The check runs when the table opens or the player joins, and again when the game starts. Nobody pays when somebody cannot: the start fails with the name of the player who cannot afford it.
+* **When money moves:** the stakes of all players go into escrow when the game starts (at twenty-one: before the deal). The payout happens when the game ends. A rematch takes new stakes. A table taken away in the middle of a game returns the stakes. Only the active GM's client writes money.
+* **Twenty-one:** every player bets against the house. A win pays 1:1, a natural (21 with the first two cards) 3:2 rounded down, a tie returns the stake, a loss goes to the house. A player who leaves the hand loses the stake.
+* **Liar's dice:** everyone puts the stake into the pot, and so does every regular at the table, whom the house stakes. The winner takes the pot, a regular who wins keeps it for the house. If nobody wins the stakes go back.
+* **On the table:** the stake (at liar's dice the pot too) and the player's own purse show under the line with the turn. The result line says who won or lost how much, or who took the pot. The chat card of the result has the same line.
 
 ## Debug file
 
@@ -81,7 +95,8 @@ With the GM’s consent only the active GM’s browser counts, and it sends at m
 * on how many of the last 30 days the module was used
 * how often each game is started (one number per game)
 * how often the GM makes a suggestion for the break and how often a player takes one up
-* the settings *Chat messages*, *Goal in Pig* and *Suggestion for the break* (only the chosen option)
+* how often a table is opened with a stake and how often a stake is paid out (two numbers, never an amount)
+* the settings *Chat messages*, *Goal in Pig*, *Suggestion for the break*, *Stakes* and *Money for stakes* (only the chosen option)
 * where errors occur in the module code: file, line, error type and whether the error arose in the module itself, in Foundry, in the game system or in another module, never the error message or the name of another module
 
 No names, chat messages, notes, dice results or other content of the world are sent.
@@ -94,12 +109,14 @@ No names, chat messages, notes, dice results or other content of the world are s
 * The tables are kept in a world setting, so everyone sees the same table and a reload changes nothing. The last eight finished tables stay in the list.
 * The dealer's face down card in twenty-one never leaves the GM's client until the players are done. At liar's dice nobody's dice go into the shared tables: every player asks the GM's client for their own dice. If the GM reloads, the cups are shaken again and everyone gets new dice for the round. If the GM reloads in the middle of a hand, a new face down card is dealt from the cards nobody has seen.
 * Dice and cards use Foundry's random numbers.
+* A table with a stake carries `stake: {amount, mode, paid, payout}` in the tables setting. `amount` is in minor units (copper pieces for a purse, single chips otherwise), `mode` is the adapter that was in use (`dnd5e`, `pf2e`, `crucible`, `chips`), `paid` what every seat put into escrow, `payout` what the finished game pays (`pot`, `credits`, `net`, `paid`). The payout is marked as paid before it is credited, so a failing payment is reported to the GM instead of being paid twice. Seats of a stake table carry the `actorId` of the character that bets. The pure rules are in `scripts/games/stakes.mjs`, the system adapters in `scripts/stakes.mjs`. Another game joins the stakes with an entry in `RULES`.
 
 ## API
 
-`game.modules.get("sephrals-tavern-games").api` offers `open({tableId})`, `settings()` (the tavern settings), `request(action, payload)` with the actions `create`, `join`, `addGuest`, `start`, `move`, `rematch`, `leave`, `close` and, for the suggestion for the break, `suggestJoin` and `suggest` and `suggestEnd` (GM), `suggest()` and `endSuggestion()` as shortcuts for the GM, `offer()` (the suggestion running now), `tables()`, the `games` and `guests`, `runSelfTest()` and `saveDebugFile()` (see [Debug file](#debug-file)).
+`game.modules.get("sephrals-tavern-games").api` offers `open({tableId})`, `settings()` (the tavern settings), `request(action, payload)` with the actions `create`, `join`, `addGuest`, `start`, `move`, `rematch`, `leave`, `close` and, for the suggestion for the break, `suggestJoin` and `suggest` and `suggestEnd` (GM), `suggest()` and `endSuggestion()` as shortcuts for the GM, `offer()` (the suggestion running now), `tables()`, `chips(userId)` and (GM) `setChips(userId, amount)` for the chips, the `games` and `guests`, `runSelfTest()` and `saveDebugFile()` (see [Debug file](#debug-file)).
 
 ## Limits
 
 * A GM has to be online for the tables.
-* There are no stakes: the games are played for honor and bragging rights.
+* Stakes are for twenty-one and liar's dice only, and always play money: a game does not move items or real currency beyond the purse of the character.
+* A world that runs on another game system than D&D 5e, Pathfinder 2e or Crucible plays for chips. Everything else is played for honor and bragging rights.

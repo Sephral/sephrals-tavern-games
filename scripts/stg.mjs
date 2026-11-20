@@ -1,5 +1,5 @@
 import {MODULE_ID, TESTED_VERSIONS, t} from "./config.mjs";
-import {openTavern, refreshTavern, report} from "./app.mjs";
+import {openTavern, refreshTavern, report, stakeActor} from "./app.mjs";
 import {registerDebug} from "./debug.mjs";
 import {saveDebugFile} from "./debug-file.mjs";
 import {registerHubModule} from "./hub.mjs";
@@ -10,7 +10,8 @@ import {registerSocket, request} from "./net.mjs";
 import {noticeNewVersions, runSelfTest} from "./selftest.mjs";
 import {registerSettings} from "./settings.mjs";
 import {openSettings} from "./config-app.mjs";
-import {GAME_FEATURES, OFFER_FEATURES, currentOffer, handleRequest, offerOnPause, resumeGuests, tables} from "./tables.mjs";
+import {GAME_FEATURES, OFFER_FEATURES, STAKE_FEATURES, currentOffer, handleRequest, offerOnPause, resumeGuests, tables} from "./tables.mjs";
+import {chipBalance, setChips} from "./stakes.mjs";
 import {registerUsage} from "./usage.mjs";
 
 /** The tool in the token controls. */
@@ -20,8 +21,8 @@ Hooks.once("init", () => {
   registerHubModule({moduleId: MODULE_ID, tested: TESTED_VERSIONS});
   registerSettings();
   registerDebug();
-  registerUsage(MODULE_ID, {features: [...Object.values(GAME_FEATURES), ...Object.values(OFFER_FEATURES)],
-    settings: ["chatCards", "pigGoal", "breakOffer"]});
+  registerUsage(MODULE_ID, {features: [...Object.values(GAME_FEATURES), ...Object.values(OFFER_FEATURES), ...Object.values(STAKE_FEATURES)],
+    settings: ["chatCards", "pigGoal", "breakOffer", "stakes", "stakeMoney"]});
   Hooks.on("pauseGame", offerOnPause);
   Hooks.on("getSceneControlButtons", onGetSceneControlButtons);
   Hooks.on("renderChatMessageHTML", onRenderChatMessage);
@@ -40,6 +41,9 @@ Hooks.once("init", () => {
     offer: currentOffer,
     /** The tables as stored. */
     tables,
+    /** The chips of a user at the tables that play for chips, and (GM) setting them. */
+    chips: chipBalance,
+    setChips,
     /** The games and the tavern guests. */
     games: GAMES,
     guests: GUESTS,
@@ -136,7 +140,11 @@ function onRenderChatMessage(message, html) {
       const table = tables().find(x => x.id === tableId);
       if ( !table ) return ui.notifications.warn(t("STG.Error.tableGone"));
       const seated = table.seats.some(seat => seat.userId === game.user.id);
-      if ( !seated && (table.status === "open") ) report(await request("join", {tableId}));
+      if ( !seated && (table.status === "open") ) {
+        const actorId = await stakeActor(table);
+        if ( actorId === false ) return;
+        report(await request("join", {tableId, actorId}));
+      }
       openTavern({tableId});
     });
   }

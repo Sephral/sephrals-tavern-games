@@ -20,7 +20,10 @@ export const SETTINGS = {
   chatCards: {type: String, default: "all", choices: {
     all: "STG.SETTINGS.chatCards.all", results: "STG.SETTINGS.chatCards.results", off: "STG.SETTINGS.chatCards.off"}},
   pigGoal: {type: Number, default: 50, range: {min: 20, max: 100, step: 10}},
-  breakOffer: {type: Boolean, default: true}
+  breakOffer: {type: Boolean, default: true},
+  stakes: {type: Boolean, default: false},
+  stakeMoney: {type: String, default: "auto", choices: {auto: "STG.SETTINGS.stakeMoney.auto", chips: "STG.SETTINGS.stakeMoney.chips"}},
+  chipsStart: {type: Number, default: 100, range: {min: 10, max: 10000, step: 10}}
 };
 
 /**
@@ -75,6 +78,9 @@ export function registerSettings() {
       syncOffer();
       refreshTavern();
     }});
+  // The chips of every user at the tables that play for chips (user id -> chips)
+  game.settings.register(MODULE_ID, "chips", {scope: "world", config: false, type: Object, default: {},
+    onChange: () => refreshTavern()});
   game.settings.register(MODULE_ID, "played", {scope: "world", config: false, type: Object, default: {}});
   game.settings.register(MODULE_ID, "introduced", {scope: "world", config: false, type: Array, default: [],
     onChange: () => refreshTavern()});

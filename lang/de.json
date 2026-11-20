@@ -160,7 +160,8 @@
     "Card": {
       "speaker": "Taverne",
       "open": "Zum Tisch",
-      "invite": "{name} sucht einen Gegner für {game}."
+      "invite": "{name} sucht einen Gegner für {game}.",
+      "inviteStake": "{name} sucht einen Gegner für {game}, Einsatz {stake}."
     },
     "Notice": {
       "yourTurn": "Du bist dran bei {game}."
@@ -185,7 +186,14 @@
       "gameOff": "Dieses Spiel bietet die Taverne gerade nicht an.",
       "notGM": "Das kann nur die Spielleitung.",
       "offerGone": "Dieser Vorschlag ist vorbei.",
-      "noGames": "Gerade passt kein Spiel an den Tisch."
+      "noGames": "Gerade passt kein Spiel an den Tisch.",
+      "stakesOff": "In dieser Taverne ist das Spielen um Geld ausgeschaltet.",
+      "noStakeGame": "Dieses Spiel lässt sich nicht um einen Einsatz spielen.",
+      "badStake": "Das ist kein gültiger Einsatz.",
+      "noPurse": "Wähle einen Charakter mit Geldbeutel zum Setzen.",
+      "notYourCharacter": "{name} ist nicht dein Charakter.",
+      "cantAfford": "{name} kann sich den Einsatz nicht leisten.",
+      "payoutFailed": "Eine Auszahlung in der Taverne ist fehlgeschlagen. Prüfe die Geldbeutel und die Konsole."
     },
     "Config": {
       "title": "Einstellungen der Taverne",
@@ -198,7 +206,8 @@
       "menuLabel": "Einstellungen der Taverne",
       "menuHint": "Die Spiele im Angebot, die Chatnachrichten und das Ziel bei Schweinchen in einem Fenster. Das Zahnrad in der Titelleiste der Taverne öffnet es auch.",
       "seatsFixed": "{count} Spieler",
-      "seatsRange": "{min} bis {max} Spieler"
+      "seatsRange": "{min} bis {max} Spieler",
+      "stakes": "Einsätze"
     },
     "SETTINGS": {
       "uiLanguage": {
@@ -219,6 +228,20 @@
       "breakOffer": {
         "name": "Vorschlag für die Pause",
         "hint": "Pausiert die Spielleitung das Spiel, sehen die Spieler ein vorgeschlagenes Spiel mit einem Knopf zum Mitspielen, höchstens alle zehn Minuten. Das Fenster der Taverne hat dafür auch einen Knopf."
+      },
+      "stakes": {
+        "name": "Einsätze",
+        "hint": "Erlaubt es, Tische für Einundzwanzig und Lügenwürfel mit einem Einsatz in Spielgeld zu eröffnen. Standardmäßig aus, an den Tischen ändert sich nichts, bis du es einschaltest."
+      },
+      "stakeMoney": {
+        "name": "Geld für Einsätze",
+        "hint": "Der Geldbeutel zahlt, wo die Taverne ihn kennt (D&D 5e, Pathfinder 2e und Crucible). Chips führt die Taverne für jeden Spieler selbst, kein Charakterbogen wird angefasst. Systeme ohne bekannten Geldbeutel spielen immer mit Chips.",
+        "auto": "Geldbeutel des Charakters, wo bekannt",
+        "chips": "Nur Chips"
+      },
+      "chipsStart": {
+        "name": "Startchips",
+        "hint": "Mit so vielen Chips beginnt jeder Spieler, wenn um Chips gespielt wird."
       }
     },
     "SELFTEST": {
@@ -268,6 +291,31 @@
       "end": "Zurücknehmen",
       "active": "Vorgeschlagen: {game}",
       "sent": "Der Vorschlag ist raus."
+    },
+    "Money": {
+      "gp": "GM",
+      "sp": "SM",
+      "cp": "KM",
+      "chip": "{count} Chip",
+      "chips": "{count} Chips",
+      "unitChips": "Chips"
+    },
+    "Stake": {
+      "field": "Einsatz",
+      "fieldHint": "Leer oder 0 heißt: nur um die Ehre. Alle zahlen den Einsatz, wenn das Spiel beginnt, das Haus deckt die Stammgäste. Gewinne gehen in den Geldbeutel.",
+      "bet": "Setzen mit",
+      "noCharacter": "Du hast keinen Charakter mit Geldbeutel, mit dem du setzen kannst.",
+      "chooseTitle": "Mit welchem Charakter setzen?",
+      "line": "Einsatz: {amount}",
+      "lineHand": "Einsatz: {amount} pro Runde",
+      "pot": "Topf: {amount}",
+      "potTaken": "{name} gewinnt den Topf von {amount}.",
+      "purse": "Dein Geldbeutel: {amount}",
+      "chipsOwn": "Deine Chips: {amount}",
+      "payout": "Auszahlung: {text}.",
+      "wins": "{name} gewinnt {amount}",
+      "loses": "{name} verliert {amount}",
+      "returned": "Die Einsätze gehen zurück an die Spieler."
     }
   }
 }

@@ -38,6 +38,8 @@ Search for **Tavern Games** in Foundry's module browser or open the [package pag
 
 Foundry VTT 13 and 14 · any game system · English, German and Russian
 
+Russian translation by [ramknot92](https://github.com/ramknot92). Want to add your language? Join us on [Discord](https://discord.gg/7BjCgDYaBP).
+
 ## Learn more
 
 The games, the regulars and the settings are explained in the [manual](MANUAL.md). Questions or ideas? Join us on [Discord](https://discord.gg/7BjCgDYaBP). Looking for more? See [all modules by Sephral](https://github.com/Sephral).

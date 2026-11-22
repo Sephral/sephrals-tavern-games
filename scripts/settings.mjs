@@ -23,6 +23,7 @@ export const SETTINGS = {
   breakOffer: {type: Boolean, default: true},
   stakes: {type: Boolean, default: false},
   stakeMoney: {type: String, default: "auto", choices: {auto: "STG.SETTINGS.stakeMoney.auto", chips: "STG.SETTINGS.stakeMoney.chips"}},
+  shareImageCredit: {type: Boolean, default: true},
   chipsStart: {type: Number, default: 100, range: {min: 10, max: 10000, step: 10}}
 };
 

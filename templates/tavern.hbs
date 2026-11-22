@@ -35,7 +35,8 @@
       {{/each}}
     </ol>
     <section class="stg-ranking" aria-labelledby="stg-ranking-title">
-      <h3 id="stg-ranking-title"><i class="fa-solid fa-ranking-star" inert></i> {{localize "STG.Rank.title"}}</h3>
+      <h3 id="stg-ranking-title"><i class="fa-solid fa-ranking-star" inert></i> {{localize "STG.Rank.title"}}
+        {{#unless ranking.empty}}<button type="button" class="stg-share-button" data-action="shareRanking" data-tooltip="{{localize "STG.Share.button"}}" aria-label="{{localize "STG.Share.button"}}"><i class="fa-solid fa-share-nodes" inert></i></button>{{/unless}}</h3>
       {{#if ranking.empty}}
       <p class="stg-note">{{localize "STG.Rank.none"}}</p>
       {{else}}

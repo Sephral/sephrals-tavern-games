@@ -247,6 +247,10 @@
       "chipsStart": {
         "name": "Startchips",
         "hint": "Mit so vielen Chips beginnt jeder Spieler, wenn um Chips gespielt wird."
+      },
+      "shareImageCredit": {
+        "name": "Hinweis auf dem Abendbild",
+        "hint": "Fügt dem Bild des Abends, das Spieler und SL kopieren, speichern oder in den Chat stellen können, die kleine Zeile „made with Sephral’s Tavern Games“ hinzu."
       }
     },
     "SELFTEST": {
@@ -360,6 +364,73 @@
         "local": "Einheimischer",
         "master": "Tischmeister",
         "legend": "Tavernenlegende"
+      }
+    },
+    "Share": {
+      "button": "Den Abend als Bild teilen",
+      "title": "Der Abend als Bild",
+      "preview": "Vorschau des Bildes",
+      "copy": "Kopieren",
+      "save": "Speichern",
+      "post": "In den Chat",
+      "close": "Schließen",
+      "label": "Der Abend in der Taverne",
+      "players": "Spieler",
+      "games": "Spiele",
+      "gamesTitle": "Heute gespielt",
+      "record": "{wins} von {games} gewonnen",
+      "gameLine": "{game}: {count} gespielt",
+      "gameLineLeader": "{game}: {count} gespielt, die meisten Siege hat {name} ({wins})",
+      "moreGames": "und {count} weitere Spiele",
+      "morePlayers": "und {count} weitere Spieler",
+      "credit": "made with Sephral’s Tavern Games",
+      "none": "Heute Abend ist noch kein Spiel zu Ende gegangen, darum gibt es noch kein Bild.",
+      "copied": "Das Bild liegt in der Zwischenablage.",
+      "saved": "Das Bild wurde als Datei gespeichert.",
+      "copyFallback": "Zum Kopieren eines Bildes braucht der Browser eine sichere Verbindung (https). Das Bild wurde stattdessen als Datei gespeichert.",
+      "plainHttp": "Diese Seite läuft nicht über https, darum kann die Zwischenablage das Bild nicht aufnehmen. Kopieren speichert es stattdessen als Datei.",
+      "failed": "Das Bild konnte nicht gezeichnet werden.",
+      "postNoUpload": "Du darfst hier keine Dateien hochladen. Kopiere oder speichere das Bild stattdessen.",
+      "posted": "Das Bild steht jetzt für alle im Chat.",
+      "postFailed": "Das Bild konnte nicht hochgeladen werden. Kopiere oder speichere es stattdessen."
+    },
+    "Sample": {
+      "Group": {
+        "tavern": "Taverne",
+        "offer": "Vorschlag für die Pause",
+        "questions": "Rückfragen",
+        "chat": "Chatkarten",
+        "share": "Bild des Abends"
+      },
+      "State": {
+        "running": "läuft",
+        "won": "gewonnen",
+        "lost": "verloren",
+        "draw": "unentschieden",
+        "done": "beendet"
+      },
+      "Label": {
+        "table": "{game}, {state}",
+        "waiting": "Tisch wartet auf Spieler",
+        "noGM": "Keine SL online",
+        "gmOffer": "SL mit laufendem Vorschlag",
+        "empty": "Noch keine Tische",
+        "offerWaiting": "Vorschlag mit wartenden Spielern",
+        "offerAlone": "Vorschlag für einen einzelnen Spieler",
+        "offerPlain": "Vorschlag",
+        "newTable": "Neuer Tisch",
+        "addGuest": "Gast einladen",
+        "joinStake": "An einen Tisch mit Einsatz setzen",
+        "leave": "Laufenden Tisch verlassen",
+        "newEvening": "Neuen Abend beginnen",
+        "inviteCard": "Einladung",
+        "inviteStakeCard": "Einladung mit Einsatz",
+        "resultDraw": "Ergebnis, unentschieden",
+        "resultStake": "Ergebnis, mit Topf",
+        "resultTwentyone": "Ergebnis bei Einundzwanzig",
+        "rankingCard": "Rangliste des Abends",
+        "shareCard": "Bild des Abends im Chat",
+        "shareWindow": "Fenster zum Teilen des Abends"
       }
     }
   }

@@ -8,10 +8,12 @@ import {GAMES, GUESTS} from "./games/index.mjs";
 import {applyModuleLanguage} from "./language.mjs";
 import {registerSocket, request} from "./net.mjs";
 import {noticeNewVersions, runSelfTest} from "./selftest.mjs";
+import {sampleWindows} from "./sample-windows.mjs";
 import {registerSettings} from "./settings.mjs";
 import {openSettings} from "./config-app.mjs";
 import {GAME_FEATURES, OFFER_FEATURES, RANKING_FEATURES, STAKE_FEATURES, currentOffer, handleRequest, offerOnPause, resumeGuests, tables} from "./tables.mjs";
 import {chipBalance, setChips} from "./stakes.mjs";
+import {SHARE_FEATURES} from "./share-actions.mjs";
 import {registerUsage} from "./usage.mjs";
 
 /** The tool in the token controls. */
@@ -21,7 +23,7 @@ Hooks.once("init", () => {
   registerHubModule({moduleId: MODULE_ID, tested: TESTED_VERSIONS});
   registerSettings();
   registerDebug();
-  registerUsage(MODULE_ID, {features: [...Object.values(GAME_FEATURES), ...Object.values(OFFER_FEATURES), ...Object.values(STAKE_FEATURES), ...Object.values(RANKING_FEATURES)],
+  registerUsage(MODULE_ID, {features: [...Object.values(GAME_FEATURES), ...Object.values(OFFER_FEATURES), ...Object.values(STAKE_FEATURES), ...Object.values(RANKING_FEATURES), ...Object.values(SHARE_FEATURES)],
     settings: ["chatCards", "pigGoal", "breakOffer", "stakes", "stakeMoney"]});
   Hooks.on("pauseGame", offerOnPause);
   Hooks.on("getSceneControlButtons", onGetSceneControlButtons);
@@ -47,6 +49,8 @@ Hooks.once("init", () => {
     /** The games and the tavern guests. */
     games: GAMES,
     guests: GUESTS,
+    /** The windows and chat cards with made-up players and tables, nothing saved (translators, testing). */
+    samples: () => sampleWindows(),
     /** Every game plays a round against itself (GM). */
     runSelfTest,
     /** Save the debug file of Sephral's modules (GM): about one chat message, or without an id the latest picture. */

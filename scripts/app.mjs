@@ -16,6 +16,7 @@ import {winningLine as tttLine} from "./games/tictactoe.mjs";
 import {handValue} from "./games/twentyone.mjs";
 import {parseStake, potOf, stakeGame} from "./games/stakes.mjs";
 import {request} from "./net.mjs";
+import {openShareWindow} from "./share-actions.mjs";
 import {adapterOf, balanceOf, candidateActors, formatMoney, moneyAdapter} from "./stakes.mjs";
 import {OFFER_MINUTES, needsIntro} from "./suggest-rules.mjs";
 import {RANKING_FEATURES, currentOffer, eveningRows, resultText, seatName, tables, titleOfUser} from "./tables.mjs";
@@ -53,6 +54,20 @@ export function refreshTavern() {
   if ( app?.rendered ) app.render();
   noticeTurns(!!app?.rendered);
 }
+
+/**
+ * Where the window gets what it shows. A sample window (sample-windows.mjs) replaces these with made-up data held in
+ * memory, so it never reads or writes the tables and settings of the world.
+ */
+export const LIVE_DATA = {
+  tables: () => tables(),
+  eveningRows: () => eveningRows(),
+  titleOf: userId => titleOfUser(userId),
+  offer: () => currentOffer(),
+  balance: (adapter, seat) => balanceOf(adapter, seat),
+  intro: () => needsIntro(game.user.id, setting("introduced") ?? []),
+  noGM: () => !game.users.activeGM
+};
 
 /** Whether this client counted the ranking as viewed in this browser session. */
 let rankingCounted = false;
@@ -106,16 +121,101 @@ export async function stakeActor(table) {
   if ( !actors.length ) return null;
   const own = game.user.character?.id;
   if ( actors.length === 1 ) return actors[0].id;
-  const options = actors.map(a => `<option value="${a.id}" ${a.id === own ? "selected" : ""}>${esc(a.name)} `
-    + `(${esc(formatMoney(balanceOf(adapter, {actorId: a.id}) ?? 0, adapter))})</option>`).join("");
   const id = await DialogV2.prompt({
     window: {title: t("STG.Stake.chooseTitle")},
-    content: `<div class="form-group"><label>${esc(t("STG.Stake.bet"))}</label><select name="actor">${options}</select></div>`
-      + `<p class="hint">${esc(t("STG.Stake.line", {amount: formatMoney(table.stake.amount, adapter)}))}</p>`,
+    content: stakeChoiceContent({table, adapter, actors, own, balance: seat => balanceOf(adapter, seat)}),
     rejectClose: false,
     ok: {label: t("STG.Table.join"), callback: (event, button) => button.form.elements.actor.value}
   });
   return id || false;
+}
+
+/**
+ * The question which character bets at a table that plays for money.
+ * @param {object} options
+ * @param {object} options.table
+ * @param {object} options.adapter
+ * @param {{id: string, name: string}[]} options.actors
+ * @param {string} [options.own]                      The user's own character
+ * @param {(seat: object) => number|null} options.balance
+ * @returns {string}
+ */
+export function stakeChoiceContent({table, adapter, actors, own, balance}) {
+  const options = actors.map(a => `<option value="${a.id}" ${a.id === own ? "selected" : ""}>${esc(a.name)} `
+    + `(${esc(formatMoney(balance({actorId: a.id}) ?? 0, adapter))})</option>`).join("");
+  return `<div class="form-group"><label>${esc(t("STG.Stake.bet"))}</label><select name="actor">${options}</select></div>`
+    + `<p class="hint">${esc(t("STG.Stake.line", {amount: formatMoney(table.stake.amount, adapter)}))}</p>`;
+}
+
+/**
+ * The question which tavern guest joins a table.
+ * @returns {string}
+ */
+export function addGuestContent() {
+  const guests = Object.entries(GUESTS).map(([id, g]) => `<option value="${id}">${esc(t(`STG.Guest.${id}.name`))} `
+    + `(${esc(t(`STG.Level.${g.level}`))})</option>`).join("");
+  return `<div class="form-group"><label>${esc(t("STG.Table.guest"))}</label><select name="guest">${guests}</select></div>`;
+}
+
+/**
+ * The question for a new table: game, opponent and, where stakes are allowed, the stake. The window and the sample
+ * window share it.
+ * @param {object} options
+ * @param {object[]} options.offered                  The games on offer
+ * @param {boolean} options.stakes                    Stakes are allowed
+ * @param {object} options.adapter                    The money in use
+ * @param {{id: string, name: string}[]} options.actors   Characters that can bet
+ * @param {string} [options.own]                      The user's own character
+ * @param {(seat: object) => number|null} options.balance
+ * @returns {{content: string, render: Function, stakeGames: string[]}}
+ */
+export function newTableForm({offered, stakes, adapter, actors, own, balance}) {
+  const games = offered.map(g => `<option value="${g.id}">${esc(t(`STG.Game.${g.id}.name`))}</option>`).join("");
+  const guests = Object.entries(GUESTS).map(([id, g]) => `<option value="${id}">${esc(t(`STG.Guest.${id}.name`))} `
+    + `(${esc(t(`STG.Level.${g.level}`))})</option>`).join("");
+  // Games that can be played for a stake get a row for it, while the GM allows stakes
+  const stakeGames = stakes ? offered.filter(g => stakeGame(g.id)).map(g => g.id) : [];
+  let stakeRows = "";
+  if ( stakeGames.length ) {
+    const unit = adapter.purse ? t("STG.Money.gp") : t("STG.Money.unitChips");
+    const options = actors.map(a => `<option value="${a.id}" ${a.id === own ? "selected" : ""}>`
+      + `${esc(a.name)} (${esc(formatMoney(balance({actorId: a.id}) ?? 0, adapter))})</option>`).join("");
+    const row = `<div class="form-group stg-stake-row" style="display: none">`;
+    stakeRows = `${row}<label>${esc(t("STG.Stake.field"))} (${esc(unit)})</label>`
+      + `<input type="number" name="stake" min="0" step="${adapter.purse ? "0.01" : "1"}" placeholder="0"></div>`
+      + (adapter.purse ? `${row}<label>${esc(t("STG.Stake.bet"))}</label>`
+        + (options ? `<select name="actor">${options}</select>` : `<span class="hint">${esc(t("STG.Stake.noCharacter"))}</span>`) + `</div>`
+        : `${row}<label>${esc(t("STG.Stake.chipsOwn", {amount: ""}))}</label>`
+          + `<span>${esc(formatMoney(balance({userId: game.user.id}) ?? 0, adapter))}</span></div>`)
+      + `<p class="hint stg-stake-row" style="display: none">${esc(t("STG.Stake.fieldHint"))}</p>`;
+  }
+  const content = `<div class="form-group"><label>${esc(t("STG.Table.game"))}</label><select name="game">${games}</select></div>`
+    + `<div class="form-group"><label>${esc(t("STG.Table.opponent"))}</label><select name="opponent">`
+    + `<option value="">${esc(t("STG.Table.players"))}</option>${guests}</select></div>${stakeRows}`
+    + `<blockquote class="stg-guide" data-stg-guide>${esc(t(`STG.Game.${offered[0].id}.guide`))}</blockquote>`
+    + `<p class="hint">${esc(t("STG.Table.newHint"))}</p>`;
+  // The guide follows the chosen game, the stake rows show for the games that take a stake
+  const render = (event, dialog) => {
+    const select = dialog.element.querySelector("select[name=game]");
+    const guide = dialog.element.querySelector("[data-stg-guide]");
+    const showStake = () => {
+      for ( const row of dialog.element.querySelectorAll(".stg-stake-row") ) {
+        row.style.display = stakeGames.includes(select.value) ? "" : "none";
+      }
+    };
+    // A longer guide must not push the buttons below the screen: the dialog keeps its place, so move it up
+    const keepOnScreen = () => {
+      const rect = dialog.element.getBoundingClientRect();
+      if ( rect.bottom > (window.innerHeight - 8) ) dialog.setPosition?.({top: Math.max(8, window.innerHeight - rect.height - 8)});
+    };
+    select?.addEventListener("change", () => {
+      guide.textContent = t(`STG.Game.${select.value}.guide`);
+      showStake();
+      keepOnScreen();
+    });
+    showStake();
+  };
+  return {content, render, stakeGames};
 }
 
 /**
@@ -157,6 +257,7 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
       liarsBid: Tavern.#onLiarsBid,
       mexicoAnnounce: Tavern.#onMexicoAnnounce,
       postRanking: Tavern.#onPostRanking,
+      shareRanking: () => openShareWindow(),
       newEvening: Tavern.#onNewEvening
     }
   };
@@ -165,6 +266,9 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
   static PARTS = {
     main: {template: `${TEMPLATES}/tavern.hbs`}
   };
+
+  /** Where the window gets its tables, ranking and offer from (the world, or a sample). */
+  data = LIVE_DATA;
 
   /** The table shown. */
   tableId = null;
@@ -229,6 +333,7 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
    * Ask the GM's client for the dice under the user's cup when the cups were shaken since the last look.
    */
   async #peekDice() {
+    if ( this.isSample ) return;
     const table = tables().find(x => x.id === this.tableId);
     if ( !table || (table.status !== "playing") || !GAMES[table.game]?.peek ) return;
     if ( !table.seats.some(seat => (seat.userId === game.user.id) && !seat.left) ) return;
@@ -249,7 +354,7 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
     const disabled = setting("disabledGames") ?? [];
     context.canCreate = Object.keys(GAMES).some(id => gameOffered(id, disabled));
     context.isGM = game.user.isGM;
-    const list = tables().sort((a, b) => {
+    const list = this.data.tables().sort((a, b) => {
       const rank = {playing: 0, open: 1, done: 2};
       return (rank[a.status] - rank[b.status]) || (b.updated - a.updated);
     });
@@ -257,15 +362,15 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
     if ( !list.some(table => table.id === this.tableId) ) {
       this.tableId = (list.find(table => mine(table) && (table.status !== "done")) ?? list[0])?.id ?? null;
     }
-    context.noGM = !game.users.activeGM;
+    context.noGM = this.data.noGM();
     // The GM's button for the suggestion, and who is out there: an offer still running
-    const offer = currentOffer();
+    const offer = this.data.offer();
     const running = offer && ((Date.now() - offer.at) < (OFFER_MINUTES * 60 * 1000));
     context.offer = running ? {text: t("STG.Offer.active", {game: t(`STG.Game.${offer.game}.name`)})} : null;
     // The ranking of the evening
-    const rows = eveningRows();
+    const rows = this.data.eveningRows();
     context.ranking = {rows: rows.slice(0, 8), empty: !rows.length, isGM: game.user.isGM, more: Math.max(0, rows.length - 8)};
-    if ( rows.length && !rankingCounted ) {
+    if ( rows.length && !rankingCounted && !this.isSample ) {
       rankingCounted = true;
       countFeature(MODULE_ID, RANKING_FEATURES.viewed);
     }
@@ -297,13 +402,13 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
       icon: ICONS[table.game], status: table.status, myTurn, isHost: table.host === game.user.id,
       seats: table.seats.map((seat, i) => ({name: seatName(seat), img: seat.img, isTurn: turn === i, isMe: i === me,
         guest: seat.kind === "guest", level: seat.level ? t(`STG.Level.${seat.level}`) : "",
-        rank: (seat.kind === "user") ? titleOfUser(seat.userId) : "",
+        rank: (seat.kind === "user") ? this.data.titleOf(seat.userId) : "",
         mark: (table.game === "tictactoe") ? ["x", "o"][i] : (table.game === "fourinarow") ? ["red", "yellow"][i] : "",
         winner: !!table.result?.winners?.includes(i), left: !!seat.left}))
     };
     const left = (me >= 0) && !!table.seats[me].left;
     // The first game of a newcomer explains itself in two lines
-    if ( (me >= 0) && !left && (table.status !== "done") && needsIntro(game.user.id, setting("introduced") ?? []) ) {
+    if ( (me >= 0) && !left && (table.status !== "done") && this.data.intro() ) {
       view.intro = {title: t("STG.Intro.title"), how: t("STG.Intro.how"), goal: t(`STG.Intro.${table.game}`)};
     }
     // Only who sits at a running table sees the game's buttons, the spectators just watch
@@ -315,7 +420,7 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
       view.stake = {line: t(table.game === "twentyone" ? "STG.Stake.lineHand" : "STG.Stake.line", {amount: money(table.stake.amount)})};
       if ( potOf(table) && (table.status !== "open") ) view.stake.pot = t("STG.Stake.pot", {amount: money(potOf(table))});
       if ( (me >= 0) && !left && (table.status !== "done") ) {
-        const have = balanceOf(adapter, table.seats[me]);
+        const have = this.data.balance(adapter, table.seats[me]);
         if ( have !== null ) view.stake.mine = t(adapter.purse ? "STG.Stake.purse" : "STG.Stake.chipsOwn", {amount: money(have)});
       }
     }
@@ -664,60 +769,18 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
     const disabled = setting("disabledGames") ?? [];
     const offered = Object.values(GAMES).filter(g => gameOffered(g.id, disabled));
     if ( !offered.length ) return ui.notifications.warn(t("STG.NoGames"));
-    const games = offered.map(g => `<option value="${g.id}">${esc(t(`STG.Game.${g.id}.name`))}</option>`).join("");
-    const guests = Object.entries(GUESTS).map(([id, g]) => `<option value="${id}">${esc(t(`STG.Guest.${id}.name`))} `
-      + `(${esc(t(`STG.Level.${g.level}`))})</option>`).join("");
-    // Games that can be played for a stake get a row for it, while the GM allows stakes
-    const stakeGames = setting("stakes") ? offered.filter(g => stakeGame(g.id)).map(g => g.id) : [];
     const adapter = moneyAdapter();
-    let stakeRows = "";
-    if ( stakeGames.length ) {
-      const unit = adapter.purse ? t("STG.Money.gp") : t("STG.Money.unitChips");
-      const own = game.user.character?.id;
-      const options = candidateActors(adapter, game.user).map(a => `<option value="${a.id}" ${a.id === own ? "selected" : ""}>`
-        + `${esc(a.name)} (${esc(formatMoney(balanceOf(adapter, {actorId: a.id}) ?? 0, adapter))})</option>`).join("");
-      const row = `<div class="form-group stg-stake-row" style="display: none">`;
-      stakeRows = `${row}<label>${esc(t("STG.Stake.field"))} (${esc(unit)})</label>`
-        + `<input type="number" name="stake" min="0" step="${adapter.purse ? "0.01" : "1"}" placeholder="0"></div>`
-        + (adapter.purse ? `${row}<label>${esc(t("STG.Stake.bet"))}</label>`
-          + (options ? `<select name="actor">${options}</select>` : `<span class="hint">${esc(t("STG.Stake.noCharacter"))}</span>`) + `</div>`
-          : `${row}<label>${esc(t("STG.Stake.chipsOwn", {amount: ""}))}</label>`
-            + `<span>${esc(formatMoney(balanceOf(adapter, {userId: game.user.id}) ?? 0, adapter))}</span></div>`)
-        + `<p class="hint stg-stake-row" style="display: none">${esc(t("STG.Stake.fieldHint"))}</p>`;
-    }
+    const form = newTableForm({offered, stakes: !!setting("stakes"), adapter, actors: candidateActors(adapter, game.user),
+      own: game.user.character?.id, balance: seat => balanceOf(adapter, seat)});
     const result = await DialogV2.prompt({
       window: {title: t("STG.Table.new")},
-      content: `<div class="form-group"><label>${esc(t("STG.Table.game"))}</label><select name="game">${games}</select></div>`
-        + `<div class="form-group"><label>${esc(t("STG.Table.opponent"))}</label><select name="opponent">`
-        + `<option value="">${esc(t("STG.Table.players"))}</option>${guests}</select></div>${stakeRows}`
-        + `<blockquote class="stg-guide" data-stg-guide>${esc(t(`STG.Game.${offered[0].id}.guide`))}</blockquote>`
-        + `<p class="hint">${esc(t("STG.Table.newHint"))}</p>`,
+      content: form.content,
       rejectClose: false,
-      // The guide follows the chosen game, the stake rows show for the games that take a stake
-      render: (event, dialog) => {
-        const select = dialog.element.querySelector("select[name=game]");
-        const guide = dialog.element.querySelector("[data-stg-guide]");
-        const showStake = () => {
-          for ( const row of dialog.element.querySelectorAll(".stg-stake-row") ) {
-            row.style.display = stakeGames.includes(select.value) ? "" : "none";
-          }
-        };
-        // A longer guide must not push the buttons below the screen: the dialog keeps its place, so move it up
-        const keepOnScreen = () => {
-          const rect = dialog.element.getBoundingClientRect();
-          if ( rect.bottom > (window.innerHeight - 8) ) dialog.setPosition?.({top: Math.max(8, window.innerHeight - rect.height - 8)});
-        };
-        select?.addEventListener("change", () => {
-          guide.textContent = t(`STG.Game.${select.value}.guide`);
-          showStake();
-          keepOnScreen();
-        });
-        showStake();
-      },
+      render: form.render,
       ok: {label: t("STG.Table.open"), callback: (event, button) => {
-        const form = button.form.elements;
-        return {game: form.game.value, guest: form.opponent.value || null, stakeRaw: stakeGames.includes(form.game.value)
-          ? String(form.stake?.value ?? "").trim() : "", actorId: form.actor?.value || null};
+        const formData = button.form.elements;
+        return {game: formData.game.value, guest: formData.opponent.value || null, stakeRaw: form.stakeGames.includes(formData.game.value)
+          ? String(formData.stake?.value ?? "").trim() : "", actorId: formData.actor?.value || null};
       }}
     });
     if ( !result ) return;
@@ -769,11 +832,9 @@ export class Tavern extends HandlebarsApplicationMixin(ApplicationV2) {
 
   /** @this {Tavern} */
   static async #onAddGuest(event, target) {
-    const guests = Object.entries(GUESTS).map(([id, g]) => `<option value="${id}">${esc(t(`STG.Guest.${id}.name`))} `
-      + `(${esc(t(`STG.Level.${g.level}`))})</option>`).join("");
     const guest = await DialogV2.prompt({
       window: {title: t("STG.Table.addGuest")},
-      content: `<div class="form-group"><label>${esc(t("STG.Table.guest"))}</label><select name="guest">${guests}</select></div>`,
+      content: addGuestContent(),
       rejectClose: false,
       ok: {label: t("STG.Table.invite"), callback: (event, button) => button.form.elements.guest.value}
     });

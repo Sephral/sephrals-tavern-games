@@ -315,7 +315,7 @@ export function resultText(table) {
   const money = stakeLine(table);
   const more = money ? ` ${money}` : "";
   if ( table.game === "twentyone" ) {
-    return r.results.map((res, i) => loc(`STG.Result.twentyone.${res}`, {name: names[i]})).join(" · ") + more;
+    return r.results.map((res, i) => loc(`STG.Result.twentyone.${res}`, {name: names[i]})).join(" · ") + (money ? `. ${money}` : "");
   }
   if ( r.draw ) return loc("STG.Result.draw", {names: names.join(", "), game: gameName}) + more;
   const winner = names[r.winners[0]];
@@ -356,9 +356,31 @@ async function postResult(table) {
   table = await payOut(table);
   await markIntroduced(table);
   await recordRanking(table);
-  await postCard("result", `<p class="stg-card-title"><i class="fa-solid fa-trophy" inert></i> ${esc(loc(`STG.Game.${table.game}.name`))}</p>`
+  await postCard("result", resultCardHtml(table));
+}
+
+/**
+ * The chat card of a finished game.
+ * @param {object} table
+ * @returns {string}
+ */
+export function resultCardHtml(table) {
+  return `<p class="stg-card-title"><i class="fa-solid fa-trophy" inert></i> ${esc(loc(`STG.Game.${table.game}.name`))}</p>`
     + `<p>${esc(resultText(table))}</p><button type="button" data-stg-open="${esc(table.id)}"><i class="fa-solid fa-beer-mug-empty" inert></i> `
-    + `${esc(loc("STG.Card.open"))}</button>`);
+    + `${esc(loc("STG.Card.open"))}</button>`;
+}
+
+/**
+ * The chat card that invites to a table still waiting for players.
+ * @param {object} table   An open table with its host in the first seat
+ * @returns {string}
+ */
+export function inviteCardHtml(table) {
+  const key = table.stake ? "STG.Card.inviteStake" : "STG.Card.invite";
+  return `<p class="stg-card-title"><i class="fa-solid fa-beer-mug-empty" inert></i> `
+    + `${esc(loc(key, {name: seatName(table.seats[0]), game: loc(`STG.Game.${table.game}.name`),
+      stake: table.stake ? formatMoney(table.stake.amount, adapterOf(table)) : ""}))}</p>`
+    + `<button type="button" data-stg-join="${esc(table.id)}"><i class="fa-solid fa-chair" inert></i> ${esc(loc("STG.Table.join"))}</button>`;
 }
 
 /* -------------------------------------------- */
@@ -402,12 +424,24 @@ export function netText(net) {
 /**
  * The ranking of the evening that is still going on.
  * @param {number} [now]
+ * @param {object} [stored]   A ranking to read instead of the world's (sample windows)
  * @returns {{pos: number, name: string, title: string, wins: number, games: number, money: string}[]}
  */
-export function eveningRows(now=Date.now()) {
-  const ranking = cleanRanking(setting("ranking"));
+export function eveningRows(now=Date.now(), stored=undefined) {
+  const ranking = cleanRanking(stored ?? setting("ranking"));
   return standings(liveSession(ranking, now)).map((row, i) => ({pos: i + 1, name: row.name,
     title: loc(`STG.Rank.tier.${titleFor(ranking.all[row.key]?.wins ?? 0)}`), wins: row.wins, games: row.games, money: netText(row.net)}));
+}
+
+/**
+ * The chat card with the standings of the evening.
+ * @param {{pos: number, name: string, title: string, wins: number, games: number, money: string}[]} rows
+ * @returns {string}
+ */
+export function rankingCardHtml(rows) {
+  const lines = rows.map(row => `<li>${esc(loc("STG.Rank.line", {pos: row.pos, name: row.name, title: row.title, wins: row.wins,
+    games: row.games, money: row.money ? `, ${row.money}` : ""}))}</li>`).join("");
+  return `<p class="stg-card-title"><i class="fa-solid fa-ranking-star" inert></i> ${esc(loc("STG.Rank.cardTitle"))}</p><ol>${lines}</ol>`;
 }
 
 /**
@@ -417,10 +451,7 @@ export function eveningRows(now=Date.now()) {
 async function postRanking() {
   const rows = eveningRows();
   if ( !rows.length ) throw new Error("STG.Error.noRanking");
-  const lines = rows.map(row => `<li>${esc(loc("STG.Rank.line", {pos: row.pos, name: row.name, title: row.title, wins: row.wins,
-    games: row.games, money: row.money ? `, ${row.money}` : ""}))}</li>`).join("");
-  await ChatMessage.implementation.create({content: `<div class="stg-chat"><p class="stg-card-title"><i class="fa-solid fa-ranking-star" inert></i> `
-    + `${esc(loc("STG.Rank.cardTitle"))}</p><ol>${lines}</ol></div>`,
+  await ChatMessage.implementation.create({content: `<div class="stg-chat">${rankingCardHtml(rows)}</div>`,
   speaker: {alias: loc("STG.Card.speaker")}, flags: {[MODULE_ID]: {card: "ranking"}}});
 }
 
@@ -505,11 +536,7 @@ async function openTable(user, gameId, guest=null, {silent=false, stake=null, ac
   if ( stakeInfo ) countFeature(MODULE_ID, STAKE_FEATURES.table);
   if ( table.status === "done" ) await postResult(table);
   if ( !ready && !silent ) {
-    const key = stakeInfo ? "STG.Card.inviteStake" : "STG.Card.invite";
-    await postCard("invite", `<p class="stg-card-title"><i class="fa-solid fa-beer-mug-empty" inert></i> `
-      + `${esc(loc(key, {name: seatName(seats[0]), game: loc(`STG.Game.${gameId}.name`),
-        stake: stakeInfo ? formatMoney(stakeInfo.amount, adapterOf(table)) : ""}))}</p>`
-      + `<button type="button" data-stg-join="${esc(table.id)}"><i class="fa-solid fa-chair" inert></i> ${esc(loc("STG.Table.join"))}</button>`);
+    await postCard("invite", inviteCardHtml(table));
   }
   return table;
 }

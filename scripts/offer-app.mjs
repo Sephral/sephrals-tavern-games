@@ -47,13 +47,21 @@ export class BreakOffer extends HandlebarsApplicationMixin(ApplicationV2) {
     return t("STG.Offer.title");
   }
 
+  /**
+   * The offer, the table it points to and whether the player is alone in the tavern. A sample window gives made-up ones.
+   * @returns {{offer: object|null, table: object|null, alone: boolean}}
+   */
+  snapshot() {
+    const offer = currentOffer();
+    const table = offer?.tableId ? tables().find(x => x.id === offer.tableId) : null;
+    return {offer, table, alone: game.users.filter(u => u.active && !u.isGM).length < 2};
+  }
+
   /** @override */
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
-    const offer = currentOffer();
-    const table = offer?.tableId ? tables().find(x => x.id === offer.tableId) : null;
+    const {offer, table, alone} = this.snapshot();
     const waiting = table && (table.status === "open") && (table.seats.length < rules(table.game).seats.max);
-    const alone = game.users.filter(u => u.active && !u.isGM).length < 2;
     context.icon = ICONS[offer?.game] ?? "fa-dice";
     context.lead = offer ? t("STG.Offer.lead", {game: t(`STG.Game.${offer.game}.name`)}) : "";
     context.waiting = waiting ? t("STG.Offer.waiting", {names: table.seats.map(seatName).join(", ")}) : "";

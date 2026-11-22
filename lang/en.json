@@ -247,6 +247,10 @@
       "chipsStart": {
         "name": "Starting chips",
         "hint": "The chips every player begins with when playing for chips."
+      },
+      "shareImageCredit": {
+        "name": "Credit on the evening picture",
+        "hint": "Adds the small line \"made with Sephral’s Tavern Games\" to the picture of the evening that players and the GM can copy, save or post."
       }
     },
     "SELFTEST": {
@@ -360,6 +364,73 @@
         "local": "Local",
         "master": "Table Master",
         "legend": "Tavern Legend"
+      }
+    },
+    "Share": {
+      "button": "Share the evening as a picture",
+      "title": "The evening as a picture",
+      "preview": "Preview of the picture",
+      "copy": "Copy",
+      "save": "Save",
+      "post": "Post in chat",
+      "close": "Close",
+      "label": "The evening at the tavern",
+      "players": "Players",
+      "games": "Games",
+      "gamesTitle": "Played tonight",
+      "record": "{wins} of {games} won",
+      "gameLine": "{game}: {count} played",
+      "gameLineLeader": "{game}: {count} played, most wins for {name} ({wins})",
+      "moreGames": "and {count} more games",
+      "morePlayers": "and {count} more players",
+      "credit": "made with Sephral’s Tavern Games",
+      "none": "No game has finished tonight, so there is no picture yet.",
+      "copied": "The picture is on your clipboard.",
+      "saved": "The picture was saved as a file.",
+      "copyFallback": "Copying a picture needs a secure connection (https). The picture was saved as a file instead.",
+      "plainHttp": "This page is not on https, so the clipboard cannot take the picture. Copy saves it as a file instead.",
+      "failed": "The picture could not be drawn.",
+      "postNoUpload": "You are not allowed to upload files here. Copy or save the picture instead.",
+      "posted": "The picture is now in the chat for everyone.",
+      "postFailed": "The picture could not be uploaded. Copy or save it instead."
+    },
+    "Sample": {
+      "Group": {
+        "tavern": "Tavern",
+        "offer": "Break suggestion",
+        "questions": "Questions",
+        "chat": "Chat cards",
+        "share": "Picture of the evening"
+      },
+      "State": {
+        "running": "running",
+        "won": "won",
+        "lost": "lost",
+        "draw": "draw",
+        "done": "finished"
+      },
+      "Label": {
+        "table": "{game}, {state}",
+        "waiting": "Table waiting for players",
+        "noGM": "No GM online",
+        "gmOffer": "GM with a running suggestion",
+        "empty": "No tables yet",
+        "offerWaiting": "Suggestion with players waiting",
+        "offerAlone": "Suggestion for a player alone",
+        "offerPlain": "Suggestion",
+        "newTable": "New table",
+        "addGuest": "Invite a guest",
+        "joinStake": "Join a table with a stake",
+        "leave": "Leave a running table",
+        "newEvening": "Start a new evening",
+        "inviteCard": "Invitation",
+        "inviteStakeCard": "Invitation with a stake",
+        "resultDraw": "Result, draw",
+        "resultStake": "Result, with a pot",
+        "resultTwentyone": "Result at twenty-one",
+        "rankingCard": "Ranking of the evening",
+        "shareCard": "Picture of the evening in the chat",
+        "shareWindow": "Window to share the evening"
       }
     }
   }

@@ -56,8 +56,20 @@ Under the list of tables the tavern shows *Tonight*: who won how many of how man
 * **An evening:** the games of one session. It ends when the GM clicks *New evening*, or after a break of eight hours between two games, and the ranking then starts empty.
 * **Order:** most wins first, then the better balance, then fewer games played.
 * **Chat:** the GM's button *Post to chat* sends the ranking of the evening as one chat message, whatever the setting *Chat messages* says.
+* **Picture:** the small share button next to the heading *Tonight* (everyone who sees the ranking) opens a preview of the evening as one picture, see [The evening as a picture](#the-evening-as-a-picture).
 * **Titles:** from the wins of all evenings together: Stranger (0), Familiar Face (3), Local (10), Table Master (25), Tavern Legend (50). *New evening* never takes a title away.
-* **Storage:** the world setting `ranking`, written only by the active GM's client: `{session: {id, start, last, players: {userId: {name, wins, games, net}}}, all: {userId: {name, wins, games}}, counted: [...]}`. `net` is the money balance per kind of money, `counted` remembers the last finished games so none is counted twice. Players are told apart by user, the name shown is the one at their last game (the character's name when the user has one). The pure rules are in `scripts/games/ranking.mjs`.
+* **Storage:** the world setting `ranking`, written only by the active GM's client: `{session: {id, start, last, players: {userId: {name, wins, games, net}}, games: {gameId: {n, wins: {userId: number}}}}, all: {userId: {name, wins, games}}, counted: [...]}`. `net` is the money balance per kind of money, `games` counts the games played tonight and who won each (for the picture, older evenings have none), `counted` remembers the last finished games so none is counted twice. Players are told apart by user, the name shown is the one at their last game (the character's name when the user has one). The pure rules are in `scripts/games/ranking.mjs`.
+
+## The evening as a picture
+
+The ranking of the evening can be shared as one picture, 1080 pixels wide and drawn at twice that size: the name of the world as the tavern's name, the day, the number of players, games and wins, the players with their place (a medal for the first three), their tavern title, wins out of games played and the money won or lost, and one short line per game played tonight with the player who won it most often. At most eight players and nine games are drawn, the rest is counted in one line. The picture follows Foundry's light or dark interface, it is drawn on a canvas by the module alone and needs no network.
+
+* **Where:** the small share button right of the heading *Tonight* in the tavern window. It opens a window with a preview and the buttons *Copy*, *Save* and *Post in chat*. Without a finished game tonight there is no button.
+* **Copy:** puts the PNG on the clipboard. The browser allows that on https pages and on localhost only. On plain http (a table played over the LAN, for instance) *Copy* saves the picture as a file instead and says why, the preview window tells it up front.
+* **Save:** downloads the PNG, named after the world and the day.
+* **Post in chat:** uploads the PNG to `worlds/<world>/sephrals-tavern-games/images/` (on The Forge to the Assets Library) and posts it in the chat for everyone. The GM may always do that, a player only with the permission to upload files, the button is missing for everyone else.
+* **Credit:** the setting *Credit on the evening picture* (world, on by default) draws the small line "made with Sephral's Tavern Games" at the bottom. Off, the picture is a little shorter.
+* **Texts:** the picture speaks the module language of the user who draws it. The pure model and layout are in `scripts/share-image.mjs`, the buttons in `scripts/share-actions.mjs`.
 
 ## Settings
 
@@ -72,6 +84,7 @@ The gear in the tavern's title bar opens the tavern settings. The GM also finds 
 | Goal in Pig | The score that wins a game of Pig (20 to 100) |
 | Stakes | Tables of twenty-one, liar's dice and Mia can be opened with a stake in play money (GM, off by default). See [Stakes](#stakes) |
 | Money for stakes | The purse of the character where the tavern knows it (D&D 5e, Pathfinder 2e, Crucible), or chips only (GM) |
+| Credit on the evening picture | The small credit line at the bottom of the shared picture of the evening (GM, on by default) |
 | Starting chips | The chips every player begins with when playing for chips (GM, 10 to 10000) |
 | Self test | Every game plays a round against itself (GM) |
 | Save debug file | One file for bug reports about all of Sephral’s modules (GM). See [Debug file](#debug-file) |
@@ -107,6 +120,7 @@ With the GM’s consent only the active GM’s browser counts, and it sends at m
 * how often each game is started (one number per game)
 * how often the GM makes a suggestion for the break and how often a player takes one up
 * how often the ranking of the evening is looked at (once per browser session, never who or what it shows)
+* how often the picture of the evening is copied, saved or posted in the chat (three numbers, never the picture)
 * how often a table is opened with a stake and how often a stake is paid out (two numbers, never an amount)
 * the settings *Chat messages*, *Goal in Pig*, *Suggestion for the break*, *Stakes* and *Money for stakes* (only the chosen option)
 * where errors occur in the module code: file, line, error type and whether the error arose in the module itself, in Foundry, in the game system or in another module, never the error message or the name of another module
@@ -126,6 +140,8 @@ No names, chat messages, notes, dice results or other content of the world are s
 ## API
 
 `game.modules.get("sephrals-tavern-games").api` offers `open({tableId})`, `settings()` (the tavern settings), `request(action, payload)` with the actions `create`, `join`, `addGuest`, `start`, `move`, `rematch`, `leave`, `close` and, for the suggestion for the break, `suggestJoin` and `suggest` and `suggestEnd` (GM), `suggest()` and `endSuggestion()` as shortcuts for the GM, `offer()` (the suggestion running now), `tables()`, `chips(userId)` and (GM) `setChips(userId, amount)` for the chips, the `games` and `guests`, the GM requests `postRanking` and `newEvening` for the ranking, `runSelfTest()` and `saveDebugFile()` (see [Debug file](#debug-file)).
+
+`samples()` lists sample windows with made up players and tables (every game running and finished, the suggestion for the break, the questions, chat cards and the picture of the evening) for translators and testing. They are built in memory from the game rules in `scripts/games/` (`scripts/sample-tables.mjs`, `scripts/sample-windows.mjs`), save nothing and send nothing over the socket.
 
 ## Limits
 

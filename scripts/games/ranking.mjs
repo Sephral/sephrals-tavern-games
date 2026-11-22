@@ -5,7 +5,8 @@
  * win and, when the table played for a stake, the money won or lost (kept per kind of money). An evening ("session")
  * is the span of games without a break of SESSION_GAP, or until the GM starts a new one. The wins of all evenings
  * together give a tavern title.
- * Stored shape: {session: {id, start, last, players: {userId: {name, wins, games, net}}}|null,
+ * Stored shape: {session: {id, start, last, players: {userId: {name, wins, games, net}},
+ *   games: {gameId: {n, wins: {userId: number}}}}|null,
  *   all: {userId: {name, wins, games}}, counted: string[]}
  */
 
@@ -105,6 +106,12 @@ export function recordGame(stored, table, now) {
   const session = ranking.session;
   session.last = now;
   const won = winnersOf(table);
+  if ( table.game ) {
+    // What was played tonight: a count per game and who won it how often (shown on the picture of the evening)
+    const kind = (session.games ??= {})[table.game] ??= {n: 0, wins: {}};
+    kind.n++;
+    for ( const {seat, i} of users ) if ( won.has(i) ) kind.wins[seat.userId] = (kind.wins[seat.userId] ?? 0) + 1;
+  }
   const mode = table.stake?.mode ?? "chips";
   const net = table.stake?.payout?.net ?? null;
   for ( const {seat, i} of users ) {
@@ -142,4 +149,21 @@ export function standings(session) {
   return Object.entries(session?.players ?? {})
     .map(([key, p]) => ({key, name: p.name, wins: p.wins, games: p.games, net: p.net ?? {}}))
     .sort((a, b) => (b.wins - a.wins) || (total(b.net) - total(a.net)) || (a.games - b.games) || a.name.localeCompare(b.name));
+}
+
+/**
+ * The games played in an evening, the most played first, each with the player who won it most often (none on a tie
+ * for the lead or without a win).
+ * @param {object|null} session
+ * @returns {{id: string, count: number, leader: {name: string, wins: number}|null}[]}
+ */
+export function gamesOf(session) {
+  return Object.entries(session?.games ?? {})
+    .map(([id, kind]) => {
+      const ranked = Object.entries(kind.wins ?? {}).filter(([, wins]) => wins > 0).sort((a, b) => b[1] - a[1]);
+      const lead = ranked.length && (ranked.length === 1 || ranked[0][1] > ranked[1][1]) ? ranked[0] : null;
+      return {id, count: kind.n ?? 0, leader: lead ? {name: session.players?.[lead[0]]?.name ?? "", wins: lead[1]} : null};
+    })
+    .filter(entry => entry.count > 0)
+    .sort((a, b) => (b.count - a.count) || a.id.localeCompare(b.id));
 }

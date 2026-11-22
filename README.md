@@ -20,6 +20,7 @@
 * **The first game explains itself:** whoever plays for the first time gets two short lines at the table.
 * **Play for a stake:** twenty one, liar's dice and Mia can be played for play money, never real coins.
 * **Bragging rights:** invitations and results appear in the chat. The evening ends with a ranking, and every player earns a tavern title from Stranger to Tavern Legend.
+* **The evening as a picture:** one click turns the ranking into a picture with the tavern's name, the podium, the titles and the games played, to copy, save or post in the chat.
 
 ## How it works
 
